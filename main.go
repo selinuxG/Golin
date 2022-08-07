@@ -61,9 +61,7 @@ var (
 //主函数创建成功、失败目录，开启线程，调用ssh
 func main() {
 	log.Println("------即将启动Golin,author:高业尚------")
-
 	runserver()
-
 }
 
 func runserver() {
@@ -168,7 +166,7 @@ func golin() {
 		fmt.Println("读取ip.txt文件错误--->")
 		iptxt()
 		//程序退出，状态码0表示成功,非0表示出错,程序会立刻终止，并且 defer 的函数不会被执行
-		//os.Exit(1)
+		os.Exit(1)
 	}
 	lines := strings.Split(string(fire), "\n")
 	wg.Add(len(lines))
