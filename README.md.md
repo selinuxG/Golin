@@ -1,0 +1,15 @@
+- -run linux “采集linux服务器”
+- -run linux -cmd cmd.txt  “通过指定命令文件采集允许ssh的服务器”（注：命令为一行通过；分隔）
+- -run mysql “采集mysql数据库”
+- -run redis “采集redis数据库”
+- -run postgresql “采集postgresql数据库”
+- -db huawei  “输出等保华为的命令，支持linux，达梦，oracle，mysql，cisco，huawei，aix，postgresql”
+- -webserver www.baidu.com “输出指定地址的开放的web服务并html保存源码，如是windos则弹窗源码目录”
+- -webserver www.baidu.com -img true “输出指定地址的开放的web服务并截图，如是windos则弹窗图片目录”
+- -port  www.baidu.com “输出指定域名的开放端口”
+- -ifconfig true  “输出当前外网地址”
+- -ipinfo 47.94.159.75   “输出ip地址信息，所在地，经纬度”
+- -systeminfo true  “输出系统信息”
+- -fileshare true  “通过web方式共享当前目录,true开启,端口为11111”
+- -imgbing true “获取今日bing官网壁纸”
+
