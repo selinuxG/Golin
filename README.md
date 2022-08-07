@@ -1,18 +1,27 @@
 # 工具介绍
 
-​		在做等保以及其他一部分工作时，经常会遇到几十甚至上百台服务器，人工一个一个尝试登陆在执行命令保存结果时间太长，于此是此工具的由来。执行默认为等保测评项的所需命令，并保存输出结果。
-
-​		支持Linux、Mysql、Redis、Postgresql。
+```
+在做等保以及其他一部分工作时，经常会遇到几十甚至上百台服务器，人工一个一个尝试登陆在执行命令保存结果时间太长，于此是此工具的由来。执行默认为等保测评项的所需命令，并保存输出结果。
+支持Linux、Mysql、Redis、Postgresql。
+```
 
 # 使用方法
 
-	## windos
+## windos
 
- 		cmd下运行golin.exe文件，通过参数控制运行。
+```cmd
+cmd下运行golin.exe文件，通过参数控制运行。
+golinx.exe -run linux(mysql、redis、postgresql)
+```
 
 ## Linux
 
-​		先赋予执行权限，在执行。
+```bash
+先赋予执行权限，在执行。
+chmod 777 golin (权限自己控制，确保具有当前目录创建以及执行权限)
+运行
+./golin -run linux(mysql、redis、postgresql)
+```
 
 
 
