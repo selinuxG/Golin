@@ -168,6 +168,7 @@ func runserver() {
 		dbcp.Nginx()
 	case *db == "mongo":
 		dbcp.Mongo()
+	case *db == "false":
 	default:
 		log.Println("目前只支持输出oracle、aix、huawei、mysql、linux、达梦、cisco、postgresql、nginx、mongo测评命令")
 	}
