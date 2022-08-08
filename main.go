@@ -7,9 +7,12 @@ import (
 	"flag"
 	"fmt"
 	"golin/bing"
+	"golin/checkpass"
 	"golin/dbcp"
+	"golin/files_md5"
 	"golin/osinfo"
 	"golin/redis"
+	"golin/windows"
 	"io/ioutil"
 	"log"
 	"net"
@@ -52,7 +55,8 @@ var (
 	fileshare  = flag.String("fileshare", "flase", "web文件共享当前目录,true开启,端口为11111")
 	systeminfo = flag.String("systeminfo", "flase", "获取当前系统信息,true开启")
 	ifconfig   = flag.String("ifconfig", "flase", "获取当前系统外网ip,true开启")
-
+	checkpsswd = flag.String("checkpass", "flase", "验证密码复杂度是否合规")
+	filesmd5   = flag.String("filesmd5", "flase", "通过对比文件MD5确认文件是否被更改")
 	//goscan端口
 	ar  = [...]int{1, 7, 9, 13, 19, 21, 22, 23, 25, 37, 42, 49, 53, 69, 79, 80, 1723, 81, 85, 105, 109, 111, 113, 123, 135, 137, 139, 143, 161, 179, 222, 264, 384, 389, 402, 407, 443, 446, 465, 500, 502, 512, 515, 523, 524, 540, 548, 554, 587, 617, 623, 689, 705, 771, 783, 873, 888, 902, 910, 912, 921, 993, 995, 998, 1000, 1024, 1030, 1035, 1090, 1098, 1103, 1128, 1129, 1158, 1199, 1211, 1220, 1234, 1241, 1300, 1311, 1352, 1433, 1435, 1440, 1494, 1521, 1530, 1533, 1581, 1582, 1604, 1720, 1723, 1755, 1811, 1900, 2000, 2001, 2049, 2082, 2083, 2100, 2103, 2121, 2199, 2207, 2222, 2323, 2362, 2375, 2380, 2381, 2525, 2533, 2598, 2601, 2604, 2638, 2809, 2947, 2967, 3000, 3037, 3050, 3057, 3128, 3200, 3217, 3273, 3299, 3306, 3311, 3312, 3389, 3460, 3500, 3628, 3632, 3690, 3780, 3790, 3817, 4000, 4322, 4433, 4444, 4445, 4659, 4679, 4848, 5000, 5038, 5040, 5051, 5060, 5061, 5093, 5168, 5247, 5250, 5351, 5353, 5355, 5400, 5405, 5432, 5433, 5498, 5520, 5521, 5554, 5555, 5560, 5580, 5601, 5631, 5632, 5666, 5800, 5814, 5900, 5910, 5920, 5984, 5986, 6000, 6050, 6060, 6070, 6080, 6082, 6101, 6106, 6112, 6262, 6379, 6405, 6502, 6504, 6542, 6660, 6661, 6667, 6905, 6988, 7001, 7021, 7071, 7080, 7144, 7181, 7210, 7443, 7510, 7579, 7580, 7700, 7770, 7777, 7778, 7787, 7800, 7801, 7879, 7902, 8000, 8001, 8008, 8014, 8020, 8023, 8028, 8030, 8080, 8082, 8087, 8090, 8095, 8161, 8180, 8205, 8222, 8300, 8303, 8333, 8400, 8443, 8444, 8503, 8800, 8812, 8834, 8880, 8888, 8890, 8899, 8901, 8903, 9000, 9002, 9060, 9080, 9081, 9084, 9090, 9099, 9100, 9111, 9152, 9200, 9390, 9391, 9443, 9495, 9809, 9815, 9855, 9999, 10001, 10008, 10050, 10051, 10080, 10098, 10162, 10202, 10203, 10443, 10616, 10628, 11000, 11099, 11211, 11234, 11333, 12174, 12203, 12221, 12345, 12397, 12401, 13364, 13500, 13838, 14330, 15200, 16102, 17185, 17200, 18881, 19300, 19810, 20010, 20031, 20034, 20101, 20111, 20171, 20222, 22222, 23472, 23791, 23943, 25000, 25025, 26000, 26122, 27000, 27017, 27888, 28222, 28784, 30000, 30718, 31001, 31099, 32764, 32913, 34205, 34443, 37718, 38080, 38292, 40007, 41025, 41080, 41523, 41524, 44334, 44818, 45230, 46823, 46824, 47001, 47002, 48899, 49152, 50000, 50004, 50013, 50500, 50504, 52302, 55553, 57772, 62078, 62514, 65535}
 	arr = len(ar)
@@ -66,18 +70,28 @@ func main() {
 
 func runserver() {
 	flag.Parse()
-	if *run == "linux" {
+	switch *run {
+	case "linux":
 		golin()
-	}
-	if *run == "mysql" {
+	case "mysql":
 		checkmysql()
-	}
-	if *run == "postgresql" {
+	case "postgresql":
 		checkpostsql()
 		fmt.Println("看见像报错的信息别怕~只是读取的数据字段有空的,直接看文件即可")
-	}
-	if *run == "redis" {
+	case "redis":
 		redis.Run()
+	case "windows":
+		windows.Run()
+	case "false":
+	default:
+		log.Println("-run 参数目前只支持linux、mysql、postgresql、redis、windows")
+	}
+
+	if *checkpsswd == "true" {
+		checkpass.CheckPasswordLever(*run)
+	}
+	if *filesmd5 == "true" {
+		files_md5.Run()
 	}
 
 	//文件共享
@@ -99,12 +113,12 @@ func runserver() {
 	}
 
 	//扫描IP信息
-	if *ipinfo != "flase" {
+	if *ipinfo == "true" {
 		ip_info(*ipinfo)
 	}
 
 	//扫描端口
-	if *port != "false" {
+	if *port == "true" {
 		wg.Add(arr)
 		aaa := *port
 		for i := 0; i < arr; i++ {
@@ -115,8 +129,8 @@ func runserver() {
 		wg.Wait()
 	}
 
-	//webserver确认，只要不是false
-	if *webserver != "false" {
+	//webserver确认
+	if *webserver == "true" {
 		wg.Add(arr)
 		for i := 0; i < arr; i++ {
 			if ar[i] != 443 {
@@ -150,12 +164,20 @@ func runserver() {
 		dbcp.Cisco()
 	case *db == "postgresql":
 		dbcp.Postsql()
+	case *db == "nginx":
+		dbcp.Nginx()
+	case *db == "mongo":
+		dbcp.Mongo()
+	default:
+		log.Println("目前只支持输出oracle、aix、huawei、mysql、linux、达梦、cisco、postgresql、nginx、mongo测评命令")
 	}
 
 }
 
 //采集linux服务器
 func golin() {
+	log.Printf("------即将启动采集功能：%s", *run)
+
 	//flag.Parse()
 	_, err := os.Stat("采集数量汇总.log")
 	if os.IsNotExist(err) {
@@ -272,6 +294,7 @@ func cmd_ssh(sshname string, sshHost string, sshUser string, sshPasswrod string,
 
 //检查postsql文件是否存在
 func checkpostsql() {
+	log.Printf("------即将启动采集功能：%s", *run)
 	_, err := os.Stat("postgresql.txt")
 	if os.IsNotExist(err) {
 		file := "postgresql.txt"
@@ -446,6 +469,7 @@ func runpostsql(myname string, myuser string, mypasswd string, myhost string, my
 
 //采集mysql入口。
 func checkmysql() {
+	log.Printf("------即将启动采集功能：%s", *run)
 	_, err := os.Stat("mysql.txt")
 	if os.IsNotExist(err) {
 		file := "mysql.txt"
@@ -727,8 +751,7 @@ func Read() string {
 
 func iptxt() {
 	file := "ip.txt"
-	var port string = "22"
-	data := "服务器名称~1.1.1.1~user~password~" + port
+	data := "服务器名称~IP地址~用户名称~用户密码~端口"
 	datanew := []byte(data)
 	ioutil.WriteFile(file, datanew, 0600)
 	pwd, _ := os.Getwd()
@@ -871,7 +894,7 @@ func ipip() {
 
 //基于腾讯的地址库信息。https://lbs.qq.com/
 func ip_info(ip string) {
-
+	log.Println("------正在调取腾讯API获取IP信息")
 	url := fmt.Sprintf("https://apis.map.qq.com/ws/location/v1/ip?ip=%s&key=DDTBZ-SPYLJ-R6DF5-FIN4M-G7R5Z-RRBXZ", ip)
 
 	resp, err := http.Get(url)
@@ -893,6 +916,7 @@ func ip_info(ip string) {
 
 //文件共享
 func fileserver() {
+	log.Println("------即将启动当前目录web共享功能")
 	fmt.Println("浏览器打开当前地址,端口为1 127.0.0.1:11111")
 	http.Handle("/", http.FileServer(http.Dir("./"))) //把当前文件目录作为共享目录
 	//如果是windos自动打开

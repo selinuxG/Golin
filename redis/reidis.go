@@ -24,6 +24,7 @@ var (
 )
 
 func Run() {
+	log.Println("------即将启动redis测评功能")
 	fire, err := ioutil.ReadFile("redis.txt")
 	if err != nil {
 		fmt.Println("读取redis.txt文件错误--->")
@@ -41,7 +42,7 @@ func Run() {
 			wg.Done()
 			continue
 		} else {
-			count++
+
 			a := lines[i]
 			//fmt.Println(a)
 			myname := strings.Split(string(a), "~")[0]
@@ -57,6 +58,7 @@ func Run() {
 }
 
 func initClient(myname, myhost, mypasswd, myport1 string) {
+	count++
 	defer wg.Done()
 	log.Println("开启线程--->", count, nowtime(), "---->", "Redis名称:", myname, "---->", myhost)
 	Port := strings.Replace(myport1, "\r", "", -1)
@@ -140,10 +142,6 @@ func succlog() {
 
 func et() {
 	path := "采集数量汇总.log"
-	// _, err := os.Stat(path)
-	// if os.IsNotExist(err) {
-	// 	os.Create(path)
-	// }
 	file, err := os.OpenFile(path, os.O_WRONLY|os.O_APPEND, 0666)
 	if err != nil {
 		fmt.Println("文件打开失败", err)

@@ -14,6 +14,7 @@ func Huawei() {
 	disp memory-usage （查看内存使用情况）有问题。
 	disp acl all  （查看访问控制列表）
 	disp password-control （查看密码策略，超时等）（华三）
+	disp aaa con 查看密码策略，超时等）（华为）
 	disp info-center  （查看日志审计开启情况、日志服务器配置）
 	disp logbuffer  （查看日志审计的内容）
 	disp interface	(接口信息)`)
@@ -176,48 +177,53 @@ func Linux() {
 	开放端口
 	crontab -l
 	计划任务、备份策略
+	
+	一句话测评
+	echo "系统版本:";echo;cat /etc/redhat-release;echo;echo;lsb_release -a;echo;echo "用户唯一性:";echo;cat /etc/passwd |awk -F":" '{print $1}'|uniq -c;echo;echo "特权用户:";echo;awk -F: '$3==0 {print $1}' /etc/passwd;echo;echo "空密码用户:";echo;cat /etc/shadow |awk -F: 'length($2)==0 {print $1}';echo;echo "查看用户登录信息:";last;echo;echo "查看所有用户上次登录信息";echo;lastlog;echo;echo;echo "系统修改密码天数:";echo;cat /etc/login.defs|grep -v "#" |grep -v "^$";echo;echo "用户复杂度:";echo;cat /etc/pam.d/system-auth|grep "password";echo;cat /etc/pam.d/sshd|grep "password";echo;cat /etc/pam.d/login|grep "password";echo;echo "审计服务：";echo;ps aux |grep -E "rsyslog|auditd" |grep -v "echo";echo;echo;echo;echo "audit日志位置:";echo;cat /etc/audit/auditd.conf |grep "log_file ="|grep -v "max";echo;echo "前三行审计日志";echo;head -n 3 /var/log/audit/audit.log;echo;echo "后三行审计日志:";echo;tail -n 3 /var/log/audit/audit.log;echo;echo;echo "前三行messages日志：";echo;head -n 3 /var/log/messages;echo;echo "后五行messages日志";echo;tail -n 5 /var/log/messages;echo;echo;echo "审计策略";echo;auditctl -l;echo;echo;echo "审计目录权限";echo;ls -l /var/log/audit/;echo;echo "超时时间:";echo;cat /etc/profile |grep "TMOUT" |grep -v "echo";set |grep "TMOUT"|grep -v "echo";echo $TMOUT;echo;echo "Selinux状态：";echo;sestatus;echo;echo "IP限制:";echo;echo "IP限制（deny文件）:";cat /etc/hosts.deny |grep -v "#";echo;echo "IP限制(allow文件)";echo;cat /etc/hosts.allow |grep -v "#";echo;echo "防火墙策略：";echo;iptables -L;echo;echo "防火墙状态";echo;firewall-cmd --state;echo;service ufw status;echo;echo "是否开启TELNET,FTT,MAIL高危服务：";echo;ps aux |grep -E "telnet|sshd|ftp|mail" |grep -v "echo";echo;echo "硬盘大小:";echo;df -h;echo;echo "所有开放端口";echo;netstat -anpt;echo;echo "查看syslog配置信息:";cat /etc/rsyslog.conf  |grep -v "#" |grep -v "^$"
+
 	`)
 
 }
 
 func Mysql() {
-	fmt.Println(`版本信息:
-		select version()
+	fmt.Println(`
+	版本信息:
+	select version()
+
+	用户名、主机、密码有效期，远程登录:
+	select user,host,password_expired from mysql.user;
+
+	查看密码策略：
+	show variables like 'validate_password%';
+
+	查看最大连接数和状态：
+	show variables like '%connect%';
+
+	查看超时时间
+	show variables like '%timeout%';
+
+	查看登录失败的次数及延迟响应时间
+	show variables like '%connection_control%';
+
+	查看安装的插件:
+	show plugins;
+
+	查看是否开启ssl:
+	show global variables like '%ssl%';
 	
-		用户名、主机、密码有效期，远程登录:
-		select user,host,password_expired from mysql.user;
+	确定用户是否可以关闭MySQL服务器
+	确定用户是否可以执行SELECT INTO OUTFILE和LOAD DATA INFILE命令
+	确定用户是否可以将已经授予给该用户自己的权限再授予其他用户
+	select Host,User,File_priv,Shutdown_priv,grant_priv from mysql.user;
+
+	查看是否日志审计
+	show variables like 'log_%';
+
+	查看是否开启审计:
+	show global variables like '%general%';
 	
-		查看密码策略：
-		show variables like 'validate_password%';
-	
-		查看最大连接数和状态：
-		show variables like '%connect%';
-	
-		查看超时时间
-		show variables like '%timeout%';
-	
-		查看登录失败的次数及延迟响应时间
-		show variables like '%connection_control%';
-	
-		查看安装的插件:
-		show plugins;
-	
-		查看是否开启ssl:
-		show global variables like '%ssl%';
-		
-		确定用户是否可以关闭MySQL服务器
-		确定用户是否可以执行SELECT INTO OUTFILE和LOAD DATA INFILE命令
-		确定用户是否可以将已经授予给该用户自己的权限再授予其他用户
-		select Host,User,File_priv,Shutdown_priv,grant_priv from mysql.user;
-	
-		查看是否日志审计
-		show variables like 'log_%';
-	
-		查看是否开启审计:
-		show global variables like '%general%';
-		
-		查看节点信息:
-		show master status `)
+	查看节点信息:
+	show master status `)
 }
 
 func Aix() {
@@ -257,6 +263,9 @@ func Postsql() {
 	查看版本
 	select version();
 	
+	查看当前配置文件：
+	show config_file();
+	
 	查看密码复杂度：
 	show shared_preload_libraries;
 	
@@ -266,6 +275,10 @@ func Postsql() {
 	查看ssl:
 	cat $PGDATA/postgresql.conf |grep ssl
 	
+	查看远程登陆
+	cat postgresql.conf |grep listen_addresses
+	
+	
 	查看存储加密算法:
 	show password_encryption;
 	
@@ -273,7 +286,10 @@ func Postsql() {
 	show logging_collector;
 	
 	查看审计类型：  --日志记录类型，默认是stderr，只记录错误输出，推荐csvlog，总共包含：stderr, csvlog, syslog, and eventlog。
-	show log_destination;`)
+	show log_destination;
+	
+	追踪
+	pg_controldata`)
 
 }
 
@@ -308,4 +324,48 @@ func Oracle() {
 	查看安全标记：
 	SELECT VALUE FROM V$OPTION WHERE PARAMETER = 'Oracle Label Security';
 	`)
+}
+
+func Nginx() {
+	fmt.Println(`
+	应启用安全审计功能，审计覆盖到每个用户，对重要的用户行为和重要安全事件进行审计；
+	
+	cat /etc/nginx/nginx.conf
+	error_log的默认值：
+	#error_log  logs/error.log  error;
+	
+	error_log  /www/wwwlogs/nginx_error.log  crit
+	路径以及告警级别
+	debug:调试级别，记录的信息最多；
+	info:普通级别；
+	notice:可能需要注意的信息；
+	warn:警告消息；
+	error:错误消息；
+	crit:严重错误消息；
+	
+	access_log path 
+	默认字段:
+	log_format  main  '$remote_addr - $remote_user [$time_local] "$request" '
+						  '$status $body_bytes_sent "$http_referer" '
+						  '"$http_user_agent" "$http_x_forwarded_for"';`)
+
+}
+
+func Mongo() {
+	fmt.Println(`
+	登陆
+	./mongo ip:port
+	use admin
+	db.auth("user","pass")
+	
+	
+	// 获取全部配置信息
+	db.runCommand( { getParameter : '*' } )
+	
+	//查看用户
+	db.system.users.find().pretty()
+	
+	//地址限制
+	-bind_ip_all`)
+
 }
