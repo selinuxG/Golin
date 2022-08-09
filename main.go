@@ -10,6 +10,7 @@ import (
 	"golin/checkpass"
 	"golin/dbcp"
 	"golin/files_md5"
+	"golin/oracle"
 	"golin/osinfo"
 	"golin/redis"
 	"golin/windows"
@@ -82,6 +83,8 @@ func runserver() {
 		redis.Run()
 	case "windows":
 		windows.Run()
+	case "oracle":
+		oracle.Run()
 	case "false":
 	default:
 		log.Println("-run 参数目前只支持linux、mysql、postgresql、redis、windows")

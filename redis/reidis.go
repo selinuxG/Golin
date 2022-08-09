@@ -94,9 +94,9 @@ func initClient(myname, myhost, mypasswd, myport1 string) {
 	redisport := client.ConfigGet(ctx, "port").Val()
 	redisdir := client.ConfigGet(ctx, "dir").Val()
 	//confinfo := client.Info(ctx).Val()
-	succlog()
+	Succlog()
 	fire := "采集完成目录//" + myname + "--redis.log"
-	succmylog(fire)
+	Succmylog(fire)
 	file, _ := os.OpenFile(fire, os.O_WRONLY|os.O_APPEND, 0666)
 	defer file.Close()
 	write := bufio.NewWriter(file)
@@ -126,13 +126,13 @@ func iptxt(file string) {
 	fmt.Println(echo)
 }
 
-func succmylog(path string) {
+func Succmylog(path string) {
 	_, err := os.Stat(path)
 	if os.IsNotExist(err) {
 		os.Create(path)
 	}
 }
-func succlog() {
+func Succlog() {
 	path := "采集完成目录"
 	_, err := os.Stat(path)
 	if os.IsNotExist(err) {

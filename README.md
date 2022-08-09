@@ -6,10 +6,12 @@
 
 # 等保功能
 
-1. -run linux、redis、mysql、postgresql、windos	"自动化扫描类型主机"
+1. -run linux、redis、mysql、postgresql、oracle、windos	"自动化扫描类型主机"
+1. -run oracle  -con system/oracle@1.1.2.135:1521/sid -name oracle数据库 “oracle为特定参数”
 1. -cmd cmd.txt	"自定义执行指定文件中的命令，多个命令";"分隔。
 1. -db linux	"输出等保测评的常见设备命令，现支持oracle、aix、huawei、mysql、linux、达梦、cisco、postgresql、nginx、mongo"
 1. -checkpass true "需要配合-run参数使用，验证密码是否具备复杂度要求(字⺟⼤⼩写+数字+特殊符号，8位以上)"
+1. 由于官网未提供SDK自动化采集oracle存在不稳定性，经本地测评Oracle11无问题。
 # 安全检测功能
 
 1. -webserver www.baidu.com “输出指定地址的开放的web服务并html保存源码，如是windos则弹窗源码目录”

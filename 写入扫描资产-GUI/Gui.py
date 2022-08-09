@@ -81,7 +81,7 @@ def show():
 def run():
     #pwd = os.path.dirname(os.path.abspath(__file__))
     pwd = os.getcwd()
-    pwffire = os.path.join(pwd,"Golin.exe -h")
+    pwffire = os.path.join(pwd,"Golin.exe -run linux")
     os.system(pwffire)
     tk.messagebox.showinfo('提示','采集完成！')
 
