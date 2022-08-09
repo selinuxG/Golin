@@ -7,6 +7,7 @@ import (
 	"github.com/cengsin/oracle"
 	"golin/redis"
 	"gorm.io/gorm"
+	"gorm.io/gorm/logger"
 	"log"
 	"os"
 	"os/user"
@@ -44,12 +45,15 @@ type Security struct {
 	Value string `json:"Value"`
 }
 
+// Auditlogs 审计日志
 type Auditlogs struct {
 	Username     string
 	Timestamp    string
 	Action_name  string
 	Comment_text string
 }
+
+// Superuser  超级用户
 type Superuser struct {
 	Username string
 	Sysdba   string
@@ -57,11 +61,35 @@ type Superuser struct {
 	Sysasm   string
 }
 
+// Falldlogin   锁定次数
+type Falldlogin struct {
+	Profile string
+	Limit   string
+}
+
+// Fesource   超时开关
+type Fesource struct {
+	Name  string
+	Value string
+}
+
+// IDLETIME   超时时间
+type IDLETIME struct {
+	RESOURCE_NAME string
+	LIMIT         string
+}
+
 func Run() {
 	flag.Parse()
 	log.Println("------即将启动Oracle测评功能")
 	defer et()
-	db, err := gorm.Open(oracle.Open(*con), &gorm.Config{})
+	db, err := gorm.Open(oracle.Open(*con), &gorm.Config{
+		Logger: logger.New(log.New(os.Stdout, "\r\n", log.LstdFlags), logger.Config{
+			SlowThreshold: 1 * time.Millisecond,
+			LogLevel:      logger.Error,
+			Colorful:      true,
+		}),
+	})
 	if err != nil {
 		errco++
 		Errappend()
@@ -78,7 +106,7 @@ func Run() {
 	db.Raw("select * from v$version").Scan(&versionlist)
 	write.WriteString("------版本信息:------\n")
 	for _, tmp := range versionlist {
-		echo := fmt.Sprintf("%v\n", tmp)
+		echo := fmt.Sprintf("%v\n", tmp.Banner)
 		write.WriteString(echo)
 	}
 
@@ -97,6 +125,31 @@ func Run() {
 	db.Raw("select resource_name,limit from dba_profiles where profile= 'DEFAULT'").Scan(&userpass)
 	for _, tmp := range userpass {
 		echo := fmt.Sprintf("字段:%v      值:%v\n", tmp.Resource_name, tmp.Limit)
+		write.WriteString(echo)
+	}
+	//查看失败锁定次数
+	var faildlogin []Falldlogin
+	write.WriteString("\n------查看失败锁定次数(默认锁定一小时)------:\n")
+	db.Raw(`select Profile,Limit from dba_profiles where resource_name = 'FAILED_LOGIN_ATTEMPTS'`).Scan(&faildlogin)
+	for _, tmp := range faildlogin {
+		echo := fmt.Sprintf("字段:%v      值:%v\n", tmp.Profile, tmp.Limit)
+		write.WriteString(echo)
+	}
+	//查看连接超时状态
+	var resource []Fesource
+	write.WriteString("\n------查看连接超时是否开启------:\n")
+	db.Raw(`SELECT name, value FROM gv$parameter WHERE name = 'resource_limit'`).Scan(&resource)
+	for _, tmp := range resource {
+		echo := fmt.Sprintf("字段:%v      状态:%v\n", tmp.Name, tmp.Value)
+		write.WriteString(echo)
+	}
+
+	//查看连接超时时间
+	var idletime []IDLETIME
+	write.WriteString("\n------查看连接超时时间（分钟）------:\n")
+	db.Raw(`select RESOURCE_NAME,LIMIT from dba_profiles where RESOURCE_NAME='IDLE_TIME'`).Scan(&idletime)
+	for _, tmp := range idletime {
+		echo := fmt.Sprintf("字段:%v      状态:%v\n", tmp.RESOURCE_NAME, tmp.LIMIT)
 		write.WriteString(echo)
 	}
 
@@ -139,6 +192,7 @@ func Run() {
 	write.WriteString("\n------当你能用这个工具的时候很大可能是没做地址限制的，严格意义需查看listener.ora文件或访谈------\n")
 	write.Flush()
 	succcount++
+	Errlog()
 }
 
 func et() {

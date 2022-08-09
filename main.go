@@ -65,7 +65,32 @@ var (
 
 //主函数创建成功、失败目录，开启线程，调用ssh
 func main() {
-	log.Println("------即将启动Golin,author:高业尚------")
+	motd := `
+
+
+    ┏┓　　　┏┓
+  ┏┛┻━━━┛┻┓
+  ┃　　　　　　　┃
+  ┃　　　━　　　┃
+  ┃　＞　　　＜　┃
+  ┃　　　　　　　┃
+  ┃...　⌒　...　┃
+  ┃　　　　　　　┃
+  ┗━┓　　　┏━┛
+      ┃　　　┃　
+      ┃　　　┃
+      ┃　　　┃
+      ┃　　　┃  神兽保佑
+      ┃　　　┃  正常运行无bug　
+      ┃　　　┃  author：高业尚
+      ┃　　　┗━━━┓
+      ┃　　　　　　　┣┓
+      ┃　　　　　　　┏┛
+      ┗┓┓┏━┳┓┏┛
+       ┃┫┫　┃┫┫
+       ┗┻┛　┗┻┛`
+	log.Println("------即将启动Golin")
+	log.Println(motd)
 	runserver()
 }
 
@@ -929,4 +954,9 @@ func fileserver() {
 		cmd.Run()
 	}
 	http.ListenAndServe(":11111", nil)
+}
+
+func Breakgolin() {
+	log.Println(`------任务完成即将退出:任务日志"采集数量汇总.log" 输出结果在"采集完成目录"中------`)
+
 }
