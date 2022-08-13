@@ -44,7 +44,8 @@ var (
 	//开始时间
 	start = time.Now()
 	//接收cmd命令参数
-	cmd1       = `echo "系统版本:";echo;cat /etc/redhat-release;echo;echo;lsb_release -a;echo;echo "用户唯一性:";echo;cat /etc/passwd |awk -F":" '{print $1}'|uniq -c;echo;echo "特权用户:";echo;awk -F: '$3==0 {print $1}' /etc/passwd;echo;echo "空密码用户:";echo;cat /etc/shadow |awk -F: 'length($2)==0 {print $1}';echo;echo "查看用户登录信息:";last;echo;echo "查看所有用户上次登录信息";echo;lastlog;echo;echo;echo "系统修改密码天数:";echo;cat /etc/login.defs|grep -v "#" |grep -v "^$";echo;echo "用户复杂度:";echo;cat /etc/pam.d/system-auth|grep "password";echo;cat /etc/pam.d/sshd|grep "password";echo;cat /etc/pam.d/login|grep "password";echo;echo "审计服务：";echo;ps aux |grep -E "rsyslog|auditd" |grep -v "echo";echo;echo;echo;echo "audit日志位置:";echo;cat /etc/audit/auditd.conf |grep "log_file ="|grep -v "max";echo;echo "前三行审计日志";echo;head -n 3 /var/log/audit/audit.log;echo;echo "后三行审计日志:";echo;tail -n 3 /var/log/audit/audit.log;echo;echo;echo "前三行messages日志：";echo;head -n 3 /var/log/messages;echo;echo "后五行messages日志";echo;tail -n 5 /var/log/messages;echo;echo;echo "审计策略";echo;auditctl -l;echo;echo;echo "审计目录权限";echo;ls -l /var/log/audit/;echo;echo "超时时间:";echo;cat /etc/profile |grep "TMOUT" |grep -v "echo";set |grep "TMOUT"|grep -v "echo";echo $TMOUT;echo;echo "Selinux状态：";echo;sestatus;echo;echo "IP限制:";echo;cat /etc/hosts.deny |grep -v "#";echo;cat /etc/hosts.allow |grep -v "#";echo;echo "防火墙策略：";echo;iptables -L;echo;echo "防火墙状态";echo;firewall-cmd --state;echo;service ufw status;echo;echo "是否开启TELNET,FTT,MAIL高危服务：";echo;ps aux |grep -E "telnet|sshd|ftp|mail" |grep -v "echo";echo;echo "硬盘大小:";echo;df -h;echo;echo "所有开放端口";echo;netstat -anpt;echo;echo "查看syslog配置信息:";cat /etc/rsyslog.conf  |grep -v "#" |grep -v "^$"`
+	cmd1 = dbcp.CMD1()
+	//cmd1       = `echo "系统版本:";echo;cat /etc/redhat-release;echo;echo;lsb_release -a;echo;echo "用户唯一性:";echo;cat /etc/passwd |awk -F":" '{print $1}'|uniq -c;echo;echo "特权用户:";echo;awk -F: '$3==0 {print $1}' /etc/passwd;echo;echo "空密码用户:";echo;cat /etc/shadow |awk -F: 'length($2)==0 {print $1}';echo;echo "查看用户登录信息:";last;echo;echo "查看所有用户上次登录信息";echo;lastlog;echo;echo;echo "系统修改密码天数:";echo;cat /etc/login.defs|grep -v "#" |grep -v "^$";echo;echo "用户复杂度:";echo;cat /etc/pam.d/system-auth|grep "password";echo;cat /etc/pam.d/sshd|grep "password";echo;cat /etc/pam.d/login|grep "password";echo;echo "审计服务：";echo;ps aux |grep -E "rsyslog|auditd" |grep -v "echo";echo;echo;echo;echo "audit日志位置:";echo;cat /etc/audit/auditd.conf |grep "log_file ="|grep -v "max";echo;echo "前三行审计日志";echo;head -n 3 /var/log/audit/audit.log;echo;echo "后三行审计日志:";echo;tail -n 3 /var/log/audit/audit.log;echo;echo;echo "前三行messages日志：";echo;head -n 3 /var/log/messages;echo;echo "后五行messages日志";echo;tail -n 5 /var/log/messages;echo;echo;echo "审计策略";echo;auditctl -l;echo;echo;echo "审计目录权限";echo;ls -l /var/log/audit/;echo;echo "超时时间:";echo;cat /etc/profile |grep "TMOUT" |grep -v "echo";set |grep "TMOUT"|grep -v "echo";echo $TMOUT;echo;echo "Selinux状态：";echo;sestatus;echo;echo "IP限制:";echo;cat /etc/hosts.deny |grep -v "#";echo;cat /etc/hosts.allow |grep -v "#";echo;echo "防火墙策略：";echo;iptables -L;echo;echo "防火墙状态";echo;firewall-cmd --state;echo;service ufw status;echo;echo "是否开启TELNET,FTT,MAIL高危服务：";echo;ps aux |grep -E "telnet|sshd|ftp|mail" |grep -v "echo";echo;echo "硬盘大小:";echo;df -h;echo;echo "所有开放端口";echo;netstat -anpt;echo;echo "查看syslog配置信息:";cat /etc/rsyslog.conf  |grep -v "#" |grep -v "^$"`
 	cmd        = flag.String("cmd", cmd1, "此参数是自定义linux模式下执行的命令")
 	run        = flag.String("run", "false", "此参数是定义采集模式,-run mysql采集mysql,-run linux采集linux，-run postgresql采集postgresql,")
 	db         = flag.String("db", "false", "此参数是输出等保常用命令,现支持:oracle、mysql、linux、达梦、cisco、huawei、aix、postgresql")
@@ -65,8 +66,8 @@ var (
 
 //主函数创建成功、失败目录，开启线程，调用ssh
 func main() {
-	motd := `
 
+	motd := `
 
     ┏┓　　　┏┓
   ┏┛┻━━━┛┻┓
@@ -92,10 +93,16 @@ func main() {
 	log.Println("------即将启动Golin")
 	log.Println(motd)
 	runserver()
+
 }
 
 func runserver() {
 	flag.Parse()
+	defer func() {
+		if *run != "false" {
+			Breakgolin()
+		}
+	}()
 	switch *run {
 	case "linux":
 		golin()
@@ -946,7 +953,7 @@ func ip_info(ip string) {
 //文件共享
 func fileserver() {
 	log.Println("------即将启动当前目录web共享功能")
-	fmt.Println("浏览器打开当前地址,端口为1 127.0.0.1:11111")
+	fmt.Println("浏览器打开当前地址,端口为:11111")
 	http.Handle("/", http.FileServer(http.Dir("./"))) //把当前文件目录作为共享目录
 	//如果是windos自动打开
 	if runtime.GOOS == "windows" {
@@ -958,5 +965,18 @@ func fileserver() {
 
 func Breakgolin() {
 	log.Println(`------任务完成即将退出:任务日志"采集数量汇总.log" 输出结果在"采集完成目录"中------`)
-
+	_, err := os.Stat("采集完成目录")
+	if os.IsNotExist(err) {
+		return
+	}
+	if runtime.GOOS == "windows" {
+		pwd, _ := os.Getwd()
+		pwd += "\\采集完成目录"
+		log.Println(pwd)
+		cmd := exec.Command("explorer", pwd)
+		err := cmd.Run()
+		if err != nil {
+			return
+		}
+	}
 }

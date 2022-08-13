@@ -83,6 +83,7 @@ func Run() {
 	flag.Parse()
 	log.Println("------即将启动Oracle测评功能")
 	defer et()
+
 	db, err := gorm.Open(oracle.Open(*con), &gorm.Config{
 		Logger: logger.New(log.New(os.Stdout, "\r\n", log.LstdFlags), logger.Config{
 			SlowThreshold: 1 * time.Millisecond,
@@ -91,6 +92,7 @@ func Run() {
 		}),
 	})
 	if err != nil {
+		log.Println(err)
 		errco++
 		Errappend()
 		return
