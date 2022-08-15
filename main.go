@@ -321,7 +321,7 @@ func cmd_ssh(sshname string, sshHost string, sshUser string, sshPasswrod string,
 	succcount++
 	//追加写出文件
 	succlog()
-	fire := "采集完成目录//" + sshname + ".log"
+	fire := "采集完成目录//" + sshname + "---linux.log"
 	datanew := []byte(string(combo))
 	ioutil.WriteFile(fire, datanew, 0666)
 	time.Sleep(time.Second * 1)
