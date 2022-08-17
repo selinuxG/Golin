@@ -98,11 +98,11 @@ func main() {
 
 func runserver() {
 	flag.Parse()
-	defer func() {
-		if *run != "false" {
-			Breakgolin()
-		}
-	}()
+	//defer func() {
+	//	if *run != "false" {
+	//		Breakgolin()
+	//	}
+	//}()
 	switch *run {
 	case "linux":
 		golin()
@@ -117,6 +117,8 @@ func runserver() {
 		windows.Run()
 	case "oracle":
 		oracle.Run()
+	case "xml":
+		dbcp.Runxml()
 	case "false":
 	default:
 		log.Println("-run 参数目前只支持linux、mysql、postgresql、redis、windows")

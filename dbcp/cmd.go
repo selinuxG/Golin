@@ -113,14 +113,6 @@ echo "--------------------------------------------------------------------------
 echo "应关闭不需要的系统服务、默认共享和高危端口；"
 echo "export共享为:$(cat /etc/export 2>/dev/null)"
 echo "开放端口为:$(echo;netstat -anpt |grep LISTEN)"
-echo "检查服务------"
-echo "$(if [ $(ps aux |grep nginx |grep -v "color"|wc -l) -gt 0 ];then echo "存在nginx服务";fi)"
-echo "$(if [ $(ps aux |grep mysql |grep -v "color"|wc -l) -gt 0 ];then echo "存在mysql服务";fi)"
-echo "$(if [ $(ps aux |grep redis |grep -v "color"|wc -l) -gt 0 ];then echo "存在redis服务";fi)"
-echo "$(if [ $(netstat -anpt |grep java |grep -v "color"|wc -l) -gt 0 ];then echo "正在运行java服务存在tomcat服务";fi)"
-echo "$(if [ $(netstat -anpt |grep mongod |grep -v "color"|wc -l) -gt 0 ];then echo "存在mongod服务";fi)" 
-echo "$(if [ $(netstat -anpt |grep ora |grep -v "color"|wc -l) -gt 0 ];then echo "存在oracle服务";fi)"
-echo
 echo "------------------------------------------------------------------------------------------------------"
 echo "应通过设定终端接入方式或网络地址范围对通过网络进行管理的管理终端进行限制；"
 echo "hosts.allow限制为:";if [ -z $(cat /etc/hosts.allow|grep -v "^#"|grep -v "^$") ];then echo "未做限制";else echo "$(cat /etc/hosts.allow|grep -v "^#"|grep -v "^$")";fi
@@ -130,7 +122,8 @@ Firewalld=$(systemctl status firewalld 1>/dev/null 2>/dev/null);
 echo "Firewalld状态为:$(if [ $? -eq 0 ];then echo "yes";else echo "no";fi 2>/dev/null)"
 iptabing=$(systemctl status iptables.service 1>/dev/null 2>/dev/null);
 echo "iptables状态为:$(if [ $? -eq 0 ];then echo "yes";else echo "no";fi 2>/dev/null)"
-echo "防火墙策略为:\n$(iptables -L)"
+echo "防火墙策略为:"
+iptables -L
 echo
 echo "------------------------------------------------------------------------------------------------------"
 echo "应提供数据有效性检验功能，保证通过人机接口输入或通过通信接口输入的内容符合系统设定要求；"
