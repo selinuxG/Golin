@@ -6,11 +6,9 @@ import (
 	"database/sql"
 	"flag"
 	"fmt"
-	"golin/bing"
 	"golin/checkpass"
 	"golin/dbcp"
 	"golin/files_md5"
-	"golin/oracle"
 	"golin/osinfo"
 	"golin/redis"
 	"golin/windows"
@@ -53,7 +51,6 @@ var (
 	webserver  = flag.String("webserver", "false", "此参数是确认是否输出网页的的body信息,如需开启,-body true,只能是域名,不要加http、https")
 	img        = flag.String("img", "false", "此参数的输出是先指定-webserver,通过-img true开启,webserver截图")
 	ipinfo     = flag.String("ipinfo", "flase", "此参数的输出是获取IP地址得信息,所在地、经纬度,注意需要联网")
-	imgbing    = flag.String("imgbing", "flase", "下载今日bing官网壁纸,true开启")
 	fileshare  = flag.String("fileshare", "flase", "web文件共享当前目录,true开启,端口为11111")
 	systeminfo = flag.String("systeminfo", "flase", "获取当前系统信息,true开启")
 	ifconfig   = flag.String("ifconfig", "flase", "获取当前系统外网ip,true开启")
@@ -67,42 +64,41 @@ var (
 //主函数创建成功、失败目录，开启线程，调用ssh
 func main() {
 
-	motd := `
-
-    ┏┓　　　┏┓
-  ┏┛┻━━━┛┻┓
-  ┃　　　　　　　┃
-  ┃　　　━　　　┃
-  ┃　＞　　　＜　┃
-  ┃　　　　　　　┃
-  ┃...　⌒　...　┃
-  ┃　　　　　　　┃
-  ┗━┓　　　┏━┛
-      ┃　　　┃　
-      ┃　　　┃
-      ┃　　　┃
-      ┃　　　┃  神兽保佑
-      ┃　　　┃  正常运行无bug　
-      ┃　　　┃  author：高业尚
-      ┃　　　┗━━━┓
-      ┃　　　　　　　┣┓
-      ┃　　　　　　　┏┛
-      ┗┓┓┏━┳┓┏┛
-       ┃┫┫　┃┫┫
-       ┗┻┛　┗┻┛`
+	//motd := `
+	//
+	//  ┏┓　　　┏┓
+	//┏┛┻━━━┛┻┓
+	//┃　　　　　　　┃
+	//┃　　　━　　　┃
+	//┃　＞　　　＜　┃
+	//┃　　　　　　　┃
+	//┃...　⌒　...　┃
+	//┃　　　　　　　┃
+	//┗━┓　　　┏━┛
+	//    ┃　　　┃
+	//    ┃　　　┃
+	//    ┃　　　┃
+	//    ┃　　　┃  神兽保佑
+	//    ┃　　　┃  正常运行无bug
+	//    ┃　　　┃  author：高业尚
+	//    ┃　　　┗━━━┓
+	//    ┃　　　　　　　┣┓
+	//    ┃　　　　　　　┏┛
+	//    ┗┓┓┏━┳┓┏┛
+	//     ┃┫┫　┃┫┫
+	//     ┗┻┛　┗┻┛`
 	log.Println("------即将启动Golin")
-	log.Println(motd)
+	//log.Println(motd)
 	runserver()
-
 }
 
 func runserver() {
 	flag.Parse()
-	//defer func() {
-	//	if *run != "false" {
-	//		Breakgolin()
-	//	}
-	//}()
+	defer func() {
+		if *run != "false" && *run != "windows" && *run != "oracle" {
+			Breakgolin()
+		}
+	}()
 	switch *run {
 	case "linux":
 		golin()
@@ -115,13 +111,13 @@ func runserver() {
 		redis.Run()
 	case "windows":
 		windows.Run()
-	case "oracle":
-		oracle.Run()
+	//case "oracle":
+	//	oracle.Run()
 	case "xml":
 		dbcp.Runxml()
 	case "false":
 	default:
-		log.Println("-run 参数目前只支持linux、mysql、postgresql、redis、windows")
+		log.Println("-run 参数目前只支持linux、mysql、postgresql、redis、windows、oracle")
 	}
 
 	if *checkpsswd == "true" {
@@ -130,7 +126,6 @@ func runserver() {
 	if *filesmd5 == "true" {
 		files_md5.Run()
 	}
-
 	//文件共享
 	if *fileshare == "true" {
 		fileserver()
@@ -144,11 +139,6 @@ func runserver() {
 	if *systeminfo == "true" {
 		osinfo.Osinfo()
 	}
-	//下载bing壁纸
-	if *imgbing == "true" {
-		bing.Getbing()
-	}
-
 	//扫描IP信息
 	if *ipinfo == "true" {
 		ip_info(*ipinfo)
@@ -323,7 +313,9 @@ func cmd_ssh(sshname string, sshHost string, sshUser string, sshPasswrod string,
 	succcount++
 	//追加写出文件
 	succlog()
-	fire := "采集完成目录//" + sshname + "---linux.log"
+	timeUnix := time.Now().Unix() //已知的时间戳
+	formatTimeStr := time.Unix(timeUnix, 0).Format("15_04_05")
+	fire := "采集完成目录//" + sshname + formatTimeStr + "---linux.log"
 	datanew := []byte(string(combo))
 	ioutil.WriteFile(fire, datanew, 0666)
 	time.Sleep(time.Second * 1)

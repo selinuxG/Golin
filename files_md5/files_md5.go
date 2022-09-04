@@ -47,12 +47,32 @@ func Run() {
 	} else {
 		if len(newfiles) > len(oldfiles) {
 			log.Printf("需要注意了！文件数量多出%s个！", strconv.Itoa(len(newfiles)-len(oldfiles)))
+			for _, v := range newfilesmd5 {
+				if filecheck(v) == false {
+					for i, k := range newfiles {
+						if k == v {
+							log.Println("多出文件:", i)
+						}
+					}
+				}
+			}
 		}
-		if len(newfiles) < len(oldfiles) {
-			log.Printf("需要注意了！文件数量少了%s个！", strconv.Itoa(len(oldfiles)-len(newfiles)))
+		if len(oldfiles) > len(newfiles) {
+			log.Printf("需要注意了！文件数量少出%s个！", strconv.Itoa(len(oldfiles)-len(newfiles)))
 
 		}
 	}
+	//监测新文件与
+}
+
+//切片读取多出的文件对比
+func filecheck(data string) bool {
+	for _, v := range newfiles {
+		if v == data {
+			return true
+		}
+	}
+	return false
 }
 
 //递归读取目录下文件
