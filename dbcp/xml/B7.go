@@ -19,7 +19,6 @@ func B7(filestring string) (str, steer, issue, analyze, success string) {
 		success += "符合"
 		return str, steer, issue, analyze, success
 	} else {
-
 		str += `通过sestatus -v查看SELinux status为disabled状态，未开启安全增强型Linux子系统，未对重要主体和客体设置安全标记，未实现通过安全标记控制主体对客体的访问。`
 		issue += "未对重要主体和客体设置安全标记，未实现通过安全标记控制主体对信息资源的访问。"
 		analyze += "恶意用户可能通过修改用户权限等方法，非授权访问重要信息资源，存在潜在的安全隐患。"

@@ -53,8 +53,7 @@ func Runxml() {
 func ReplacepA1(file string) {
 	xmlfilename := strings.Replace(file, "采集完成目录\\", "xml\\07.安全计算环境-服务器和终端-", -1)
 	xmlfilename = strings.Replace(xmlfilename, "---linux.log", ".xml", -1)
-	log.Println(xmlfilename)
-	log.Println("-----")
+	log.Println("正在生成:", xmlfilename)
 	Passstr := "经核查，服务器在登录时采用用户名+口令的方式进行身份鉴别，"
 	//错误数量，0为符合。4为不符合。其他为部分符合。
 	errPASScoung := 0
@@ -183,7 +182,7 @@ func ReplacepA1(file string) {
 	var xmlserver []string
 	xmlserver = strings.Split(xmlfilename, "服务器和终端-")
 	xmlserver = strings.Split(xmlserver[1], ".xml")
-	log.Println(xmlserver[0])
+	//log.Println(xmlserver[0])
 	writedataD3 = strings.Replace(writedataD3, "高业尚服务器", xmlserver[0], -1)
 	writefile(xmlfilename, writedataD3)
 

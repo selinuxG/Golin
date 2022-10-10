@@ -9,6 +9,7 @@ import (
 	"golin/checkpass"
 	"golin/dbcp"
 	"golin/files_md5"
+	"golin/oracle"
 	"golin/osinfo"
 	"golin/redis"
 	"golin/windows"
@@ -94,11 +95,11 @@ func main() {
 
 func runserver() {
 	flag.Parse()
-	defer func() {
-		if *run != "false" && *run != "windows" && *run != "oracle" {
-			Breakgolin()
-		}
-	}()
+	//defer func() {
+	//	if *run != "false" && *run != "windows" && *run != "oracle" {
+	//		Breakgolin()
+	//	}
+	//}()
 	switch *run {
 	case "linux":
 		golin()
@@ -111,8 +112,8 @@ func runserver() {
 		redis.Run()
 	case "windows":
 		windows.Run()
-	//case "oracle":
-	//	oracle.Run()
+	case "oracle":
+		oracle.Run()
 	case "xml":
 		dbcp.Runxml()
 	case "false":
@@ -313,9 +314,9 @@ func cmd_ssh(sshname string, sshHost string, sshUser string, sshPasswrod string,
 	succcount++
 	//追加写出文件
 	succlog()
-	timeUnix := time.Now().Unix() //已知的时间戳
-	formatTimeStr := time.Unix(timeUnix, 0).Format("15_04_05")
-	fire := "采集完成目录//" + sshname + formatTimeStr + "---linux.log"
+	//timeUnix := time.Now().Unix() //已知的时间戳
+	//formatTimeStr := time.Unix(timeUnix, 0).Format("15_04_05")
+	fire := "采集完成目录//" + sshname + "---linux.log"
 	datanew := []byte(string(combo))
 	ioutil.WriteFile(fire, datanew, 0666)
 	time.Sleep(time.Second * 1)
