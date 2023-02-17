@@ -16,7 +16,7 @@ import (
 
 const (
 	succpath = "采集完成目录"        //保存采集目录
-	pem      = 755             //创建文件、目录时的权限
+	pem      = 766             //创建文件、目录时的权限
 	Split    = "~"             //默认分隔符
 	DeFfile  = "Golin运行记录.log" //程序运行记录文件
 )
