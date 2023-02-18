@@ -4,6 +4,7 @@ Copyright © 2022 NAME HERE <EMAIL ADDRESS>
 package cmd
 
 import (
+	"golin/global"
 	"golin/run"
 
 	"github.com/spf13/cobra"
@@ -19,8 +20,8 @@ var redisCmd = &cobra.Command{
 
 func init() {
 	rootCmd.AddCommand(redisCmd)
-	redisCmd.Flags().StringP("ip", "i", "redis.txt", "此参数是指定待远程采集的IP文件位置")
-	redisCmd.Flags().StringP("spript", "s", run.Split, "此参数是指定IP文件中的分隔字符")
+	redisCmd.Flags().StringP("ip", "i", global.CmdRedisPath, "此参数是指定待远程采集的IP文件位置")
+	redisCmd.Flags().StringP("spript", "s", global.Split, "此参数是指定IP文件中的分隔字符")
 	redisCmd.Flags().StringP("value", "v", "", "此参数是指定执行单个设备")
 
 }

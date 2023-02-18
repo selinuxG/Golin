@@ -7,6 +7,7 @@ import (
 	"github.com/go-redis/redis/v8"
 	"github.com/spf13/cobra"
 	"golin/config"
+	"golin/global"
 	"os"
 	"strings"
 	"time"
@@ -38,7 +39,7 @@ func Redis(cmd *cobra.Command, args []string) {
 		return
 	}
 	//判断redis.txt文件是否存在
-	Checkfile(ippath, fmt.Sprintf("名称%sip%s用户%s密码%s端口", Split, Split, Split, Split), pem, ippath)
+	Checkfile(ippath, fmt.Sprintf("名称%sip%s用户%s密码%s端口", Split, Split, Split, Split), global.FilePer, ippath)
 
 	// 运行share文件中的函数
 	Rangefile(ippath, spr, "Redis")
@@ -63,7 +64,6 @@ func Runredis(myname, myhost, mypasswd, myport1 string) {
 	})
 	_, err := client.Ping(ctx).Result()
 	if err != nil {
-		//wg.Done()
 		errhost = append(errhost, myhost)
 		return
 	}
@@ -79,10 +79,15 @@ func Runredis(myname, myhost, mypasswd, myport1 string) {
 
 	_, err = os.Stat(succpath)
 	if os.IsNotExist(err) {
-		os.Mkdir(succpath, pem)
+		os.Mkdir(succpath, os.FileMode(global.FilePer))
 	}
 	fire := "采集完成目录//" + myname + "_" + myhost + "(redis).log"
-	file, _ := os.OpenFile(fire, os.O_CREATE|os.O_APPEND, pem)
+	os.Remove(fire)
+	file, err := os.OpenFile(fire, os.O_CREATE|os.O_APPEND|os.O_RDWR, os.FileMode(global.FilePer))
+	if err != nil {
+		errhost = append(errhost, myhost)
+		return
+	}
 	defer file.Close()
 	write := bufio.NewWriter(file)
 	write.WriteString("-----基本信息------\n")

@@ -7,6 +7,7 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/spf13/cobra"
 	"golin/config"
+	"golin/global"
 	"os"
 )
 
@@ -35,7 +36,7 @@ func Mysql(cmd *cobra.Command, args []string) {
 		return
 	}
 	//判断Mysql.txt文件是否存在
-	Checkfile(ippath, fmt.Sprintf("名称%sip%s用户%s密码%s端口", Split, Split, Split, Split), pem, ippath)
+	Checkfile(ippath, fmt.Sprintf("名称%sip%s用户%s密码%s端口", Split, Split, Split, Split), global.FilePer, ippath)
 
 	// 运行share文件中的函数
 	Rangefile(ippath, spr, "Mysql")
@@ -60,12 +61,12 @@ func RunMysql(myname string, myuser string, mypasswd string, myhost string, mypo
 	}
 	_, err = os.Stat(succpath)
 	if os.IsNotExist(err) {
-		os.Mkdir(succpath, pem)
+		os.Mkdir(succpath, os.FileMode(global.FilePer))
 	}
 	fire := "采集完成目录//" + myname + "_" + myhost + "(mysql).log"
 	//先删除之前的同名记录文件
 	os.Remove(fire)
-	file, err := os.OpenFile(fire, os.O_CREATE|os.O_APPEND|os.O_RDWR, pem)
+	file, err := os.OpenFile(fire, os.O_CREATE|os.O_APPEND|os.O_RDWR, os.FileMode(global.FilePer))
 	if err != nil {
 		errhost = append(errhost, myhost)
 		return
@@ -88,7 +89,7 @@ func RunMysql(myname string, myuser string, mypasswd string, myhost string, mypo
 	users, _ := db.Query("SELECT  user,host,File_priv,Shutdown_priv,grant_priv,ssl_type from mysql.user")
 	for users.Next() {
 		users.Scan(&user, &host, &File_priv, &Shutdown_priv, &grant_priv, &ssl_type)
-		wriversion := "用户:" + user + "    远程登录权限:" + host + "\n" + "加密登录类型:" + ssl_type + "\n其他权限   File_priv:  " + File_priv + "   Shutdown_priv  " + Shutdown_priv + "  grant_priv  " + grant_priv + "\n"
+		wriversion := "用户:" + user + "    远程登录权限:" + host + "\n" + "加密登录类型:" + ssl_type + "\n其他权限:   File_priv:  " + File_priv + "   Shutdown_priv  " + Shutdown_priv + "  grant_priv  " + grant_priv + "\n"
 		write.WriteString(wriversion)
 
 		//yuanc
@@ -144,7 +145,7 @@ func RunMysql(myname string, myuser string, mypasswd string, myhost string, mypo
 	}
 
 	//查看开启审计功能
-	write.WriteString("\n\n------查看是否审计------\n")
+	write.WriteString("\n\n------查看是开启否审计------\n")
 	var audit_Variable_name, audit_Value string
 	auditd_conn, _ := db.Query("show global variables like '%general%'")
 	for auditd_conn.Next() {

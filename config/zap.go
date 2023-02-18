@@ -22,11 +22,11 @@ func init() {
 	}
 
 	encoderConfig := zapcore.EncoderConfig{
-		TimeKey:        "时间",
-		LevelKey:       "等级",
+		TimeKey:        "time",
+		LevelKey:       "level",
 		NameKey:        "logger",
-		CallerKey:      "输出来源",
-		MessageKey:     "提示信息",
+		CallerKey:      "信号",
+		MessageKey:     "提示",
 		StacktraceKey:  "stacktrace",
 		LineEnding:     zapcore.DefaultLineEnding,
 		EncodeLevel:    zapcore.LowercaseLevelEncoder,  // 小写编码器

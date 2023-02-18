@@ -5,6 +5,7 @@ package cmd
 
 import (
 	"github.com/spf13/cobra"
+	"golin/global"
 	"golin/run"
 )
 
@@ -18,8 +19,8 @@ var mysqlCmd = &cobra.Command{
 
 func init() {
 	rootCmd.AddCommand(mysqlCmd)
-	mysqlCmd.Flags().StringP("ip", "i", "mysql.txt", "此参数是指定待远程采集的IP文件位置")
-	mysqlCmd.Flags().StringP("spript", "s", run.Split, "此参数是指定IP文件中的分隔字符")
+	mysqlCmd.Flags().StringP("ip", "i", global.CmdMysqlPath, "此参数是指定待远程采集的IP文件位置")
+	mysqlCmd.Flags().StringP("spript", "s", global.Split, "此参数是指定IP文件中的分隔字符")
 	mysqlCmd.Flags().StringP("value", "v", "", "此参数是指定执行单个主机")
 
 }

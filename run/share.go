@@ -1,9 +1,9 @@
 package run
 
 import (
-	"fmt"
 	"go.uber.org/zap"
 	"golin/config"
+	"golin/global"
 	"io/fs"
 	"io/ioutil"
 	"net"
@@ -12,22 +12,16 @@ import (
 	"strconv"
 	"strings"
 	"sync"
-	"time"
-)
-
-const (
-	succpath = "采集完成目录"        //保存采集目录
-	pem      = 0744            //创建文件、目录时的权限,必须是0开头，否则在Linux下权限存在问题
-	Split    = "~"             //默认分隔符
-	DeFfile  = "Golin运行记录.log" //程序运行记录文件
 )
 
 var (
-	count        int                                                    //总数量,多少行文件就是多少
-	wg           sync.WaitGroup                                         //线程
-	errhost      []string                                               //失败主机列表
-	runcmd       = Linux_cmd()                                          //运行的linux默认cmd命令
-	denynametype = []string{"\\", "\\/", "*", "?", "\"", "<", ">", "|"} //windos下不允许创建名称的特殊符号。
+	succpath     = global.Succpath     //保存采集目录
+	Split        = global.Split        //默认分隔符
+	count        int                   //总数量,多少行文件就是多少
+	wg           sync.WaitGroup        //线程
+	errhost      []string              //失败主机列表
+	runcmd       = Linux_cmd()         //运行的linux默认cmd命令
+	denynametype = global.Denynametype //windos下不允许创建名称的特殊符号。
 )
 
 // Rangefile 遍历文件并创建线程 path=模式目录 spr=按照什么分割 runtype运行类型
@@ -61,11 +55,14 @@ func Rangefile(path string, spr string, runtype string) {
 		address := net.ParseIP(Host)
 		if address == nil {
 			wg.Done()
+			config.Log.Warn("IP地址格式不正确，跳过！")
 			continue
 		}
 		//判断端口范围是否是1-65535
 		if Port == 0 || Port > 65535 {
 			wg.Done()
+			config.Log.Warn("端口范围不正确，跳过！")
+
 			continue
 		}
 		//总数量+1
@@ -74,6 +71,7 @@ func Rangefile(path string, spr string, runtype string) {
 		if runtime.GOOS == "windows" {
 			if InSlice(denynametype, Name) {
 				wg.Done()
+				config.Log.Warn("名称存在特殊符号，跳过！")
 				errhost = append(errhost, Host)
 				continue
 			}
@@ -175,19 +173,6 @@ func Deffile(moude string, count int, success int, errhost []string) {
 			config.Log.Warn("失败记录:", zap.String("运行模式:", moude), zap.String("IP", v))
 		}
 	}
-}
-
-// Nowtime 获取当前时间
-func Nowtime() string {
-	timeObj := time.Now()
-	year := timeObj.Year()
-	month := timeObj.Month()
-	day := timeObj.Day()
-	hour := timeObj.Hour()
-	minute := timeObj.Minute()
-	second := timeObj.Second()
-	timenow := fmt.Sprintf("%d-%d-%d %d:%d:%d", year, month, day, hour, minute, second)
-	return timenow
 }
 
 // InSlice 判断字符串是否在 不允许命名的slice中。

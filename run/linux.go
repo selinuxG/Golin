@@ -6,6 +6,8 @@ import (
 	"go.uber.org/zap"
 	"golang.org/x/crypto/ssh"
 	"golin/config"
+	"golin/global"
+	"io/fs"
 	"io/ioutil"
 	"os"
 	"time"
@@ -72,7 +74,7 @@ func Linux(cmd *cobra.Command, args []string) {
 		return
 	}
 	//判断linux.txt文件是否存在
-	Checkfile(ippath, fmt.Sprintf("名称%sip%s用户%s密码%s端口", Split, Split, Split, Split), pem, ippath)
+	Checkfile(ippath, fmt.Sprintf("名称%sip%s用户%s密码%s端口", Split, Split, Split, Split), global.FilePer, ippath)
 	// 运行share文件中的函数
 	Rangefile(ippath, spr, "Linux")
 	wg.Wait()
@@ -85,20 +87,20 @@ func Runssh(sshname string, sshHost string, sshUser string, sshPasswrod string, 
 	defer wg.Done()
 	sshType := "password"
 	// 创建ssh登录配置
-	config := &ssh.ClientConfig{
-		Timeout:         time.Second, // ssh连接time out时间一秒钟,如果ssh验证错误会在一秒钟返回
+	configssh := &ssh.ClientConfig{
+		Timeout:         time.Second, // ssh连接timeout时间
 		User:            sshUser,
 		HostKeyCallback: ssh.InsecureIgnoreHostKey(),
 	}
 	if sshType == "password" {
-		config.Auth = []ssh.AuthMethod{ssh.Password(sshPasswrod)}
+		configssh.Auth = []ssh.AuthMethod{ssh.Password(sshPasswrod)}
 	} else {
 		errhost = append(errhost, sshHost)
 		return
 	}
 	// dial 获取ssh client
 	addr := fmt.Sprintf("%s:%d", sshHost, sshPort)
-	sshClient, err := ssh.Dial("tcp", addr, config)
+	sshClient, err := ssh.Dial("tcp", addr, configssh)
 	if err != nil {
 
 		errhost = append(errhost, sshHost)
@@ -128,11 +130,11 @@ func Runssh(sshname string, sshHost string, sshUser string, sshPasswrod string, 
 
 	_, err = os.Stat(succpath)
 	if os.IsNotExist(err) {
-		os.Mkdir(succpath, pem)
+		os.Mkdir(succpath, os.FileMode(global.FilePer))
 	}
 	fire := "采集完成目录//" + sshname + "_" + sshHost + "(linux).log"
 	datanew := []byte(string(combo))
-	err = ioutil.WriteFile(fire, datanew, pem)
+	err = ioutil.WriteFile(fire, datanew, fs.FileMode(global.FilePer))
 	if err != nil {
 		return
 	}
