@@ -6,6 +6,7 @@ import (
 	"fmt"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/spf13/cobra"
+	"golin/config"
 	"os"
 )
 
@@ -24,7 +25,7 @@ func Mysql(cmd *cobra.Command, args []string) {
 	if len(value) > 10 {
 		Onlyonerun(value, spr, "Mysql")
 		wg.Wait()
-		fmt.Printf("\x1b[%dm✔‍ 完成,结果在「采集完成目录」！ \x1b[0m\n", 34)
+		config.Log.Info("单次运行Mysql模式完成！")
 		return
 	}
 	//到这是运行批量采集的
@@ -41,7 +42,6 @@ func Mysql(cmd *cobra.Command, args []string) {
 	wg.Wait()
 	//完成前最后写入文件
 	Deffile("Mysql", count, count-len(errhost), errhost)
-	fmt.Printf("\x1b[%dm✔‍ 完成! 共采集%d个主机,成功采集%d个主机,失败采集%d个主机。 \x1b[0m\n", 34, count, count-len(errhost), len(errhost))
 }
 
 // RunMysql 执行sql语句

@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"github.com/go-redis/redis/v8"
 	"github.com/spf13/cobra"
+	"golin/config"
 	"os"
 	"strings"
 	"time"
@@ -27,7 +28,7 @@ func Redis(cmd *cobra.Command, args []string) {
 	if len(value) > 10 {
 		Onlyonerun(value, spr, "Redis")
 		wg.Wait()
-		fmt.Printf("\x1b[%dm✔‍ 完成,结果在「采集完成目录」！ \x1b[0m\n", 34)
+		config.Log.Info("单次运行Redis模式完成！")
 		return
 	}
 	//下面是多线程的模式
@@ -44,7 +45,6 @@ func Redis(cmd *cobra.Command, args []string) {
 	wg.Wait()
 	//完成前最后写入文件
 	Deffile("Redis", count, count-len(errhost), errhost)
-	fmt.Printf("\x1b[%dm✔‍ 完成! 共采集%d个主机,成功采集%d个主机,失败采集%d个主机。 \x1b[0m\n", 34, count, count-len(errhost), len(errhost))
 
 }
 

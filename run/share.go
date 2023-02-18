@@ -1,8 +1,9 @@
 package run
 
 import (
-	"bufio"
 	"fmt"
+	"go.uber.org/zap"
+	"golin/config"
 	"io/fs"
 	"io/ioutil"
 	"net"
@@ -34,11 +35,11 @@ func Rangefile(path string, spr string, runtype string) {
 	fire, _ := ioutil.ReadFile(path)
 	lines := strings.Split(string(fire), "\n")
 	wg.Add(len(lines))
-	//count += len(lines)
 	for i := 0; i < len(lines); i++ {
 		firecount := strings.Count(lines[i], spr)
 		if firecount != 4 {
 			wg.Done()
+			config.Log.Warn("主机格式不正确，跳过！")
 			continue
 		}
 
@@ -77,7 +78,8 @@ func Rangefile(path string, spr string, runtype string) {
 				continue
 			}
 		}
-		fmt.Printf("\u001B[%dm✔‍ 开启线程 %s_%s \x1b[0m\n", 34, Name, Host)
+		//fmt.Printf("\u001B[%dm✔‍ 开启线程 %s_%s \x1b[0m\n", 34, Name, Host)
+		config.Log.Info("开启线程:", zap.String("设备名称:", Name), zap.String("IP:", Host))
 		switch runtype {
 		case "Linux":
 			go Runssh(Name, Host, User, Passwrod, Port, runcmd)
@@ -93,7 +95,7 @@ func Rangefile(path string, spr string, runtype string) {
 func Onlyonerun(value string, spr string, runtype string) {
 	firecount := strings.Count(value, spr)
 	if firecount != 4 {
-		fmt.Printf("\x1b[%dm错误🤷‍ 格式不正确！ \x1b[0m\n", 31)
+		config.Log.Warn("错误！格式不正确，退出！（默认为：名称~IP~用户~密码~端口）")
 		return
 	}
 	Name := strings.Split(value, spr)[0]
@@ -104,38 +106,38 @@ func Onlyonerun(value string, spr string, runtype string) {
 	Porttmp := strings.Replace(Port1, "\r", "", -1)
 	Port, err := strconv.Atoi(Porttmp)
 	if err != nil {
-		fmt.Printf("\x1b[%dm错误‍ 端口格式转换失败,退出 \x1b[0m\n", 31)
+		config.Log.Warn("错误！端口格式转换失败,退出！")
 		os.Exit(3)
 	}
 	address := net.ParseIP(Host)
 	if address == nil {
-		fmt.Printf("\x1b[%dm不是正确的IP地址,退出 \x1b[0m\n", 31)
+		config.Log.Warn("错误！不是正确的IP地址,退出！")
 		os.Exit(3)
 	}
 	//判断端口范围是否是1-65535
 	if Port == 0 || Port > 65535 {
-		fmt.Printf("\x1b[%dm不是正确的端口范围,退出 \x1b[0m\n", 31)
+		config.Log.Warn("错误！不是正确的端口范围,退出！")
 		os.Exit(3)
 	}
 	//如果是Windows先判断保存文件是否存在特殊字符,是的话不执行直接记录为失败主机
 	if runtime.GOOS == "windows" {
 		if InSlice(denynametype, Name) {
-			fmt.Printf("\x1b[%dm错误:保存文件包含特殊字符,无法保存,请修改在执行。\x1b[0m\n", 31)
+			config.Log.Warn("错误！保存文件包含特殊字符,无法保存,请修改在执行！")
 			os.Exit(3)
 		}
 	}
 	switch runtype {
 	case "Linux":
 		wg.Add(1)
-		fmt.Printf("\x1b[%dm✔‍ 开启单主机执行:Linux模式,开始采集%s！ \x1b[0m\n", 34, Host)
+		config.Log.Info("开启运行Linux模式", zap.String("名称:", Name), zap.String("IP", Host))
 		go Runssh(Name, Host, User, Passwrod, Port, runcmd)
 	case "Mysql":
 		wg.Add(1)
-		fmt.Printf("\x1b[%dm✔‍ 开启单主机执行:Mysql模式,开始采集%s！ \x1b[0m\n", 34, Host)
+		config.Log.Info("开启运行Mysql模式", zap.String("名称:", Name), zap.String("IP", Host))
 		go RunMysql(Name, User, Passwrod, Host, strconv.Itoa(Port))
 	case "Redis":
 		wg.Add(1)
-		fmt.Printf("\x1b[%dm✔‍ 开启单主机执行:Redis模式,开始采集%s！ \x1b[0m\n", 34, Host)
+		config.Log.Info("开启运行Redis模式", zap.String("名称:", Name), zap.String("IP", Host))
 		go Runredis(Name, Host, Passwrod, strconv.Itoa(Port))
 	}
 }
@@ -146,31 +148,33 @@ func Checkfile(name string, data string, pems int, path string) {
 	if os.IsNotExist(err) {
 		datanew := []byte(string(data))
 		ioutil.WriteFile(path, datanew, fs.FileMode(pems))
-		fmt.Printf("\x1b[%dm错误🤷‍ %s文件不存在！ \x1b[0m\n", 31, name)
-		fmt.Printf("\x1b[%dm提示🤦‍ 已自动创建符合格式的%s,请补充后在执行吧！ \x1b[0m\n", 34, name)
+		config.Log.Warn("默认文件不存在", zap.String("默认文件", name))
+		config.Log.Info("已自动创建符合格式的默认文件，修改后再来吧！", zap.String("默认文件", name))
 		os.Exit(3)
 	}
 }
 
 // Deffile 程序退出前运行的函数，用于生成日志
 func Deffile(moude string, count int, success int, errhost []string) {
-	path := DeFfile
-	_, err := os.Stat(path)
-	if os.IsNotExist(err) {
-		os.Create(path)
+	if count == success {
+		config.Log.Info("结束成功记录:",
+			zap.String("执行模式为：", moude),
+			zap.Int("采集总数量为:", count),
+			zap.Int("采集成功数量:", success),
+		)
+		return
 	}
-	file, _ := os.OpenFile(DeFfile, os.O_WRONLY|os.O_APPEND, pem)
-	write := bufio.NewWriter(file)
-	write.WriteString("执行模式为:" + moude + "\n完成时间:" + Nowtime() + "\n采集总数量为:" + strconv.Itoa(count) + "\n成功数量为:" + strconv.Itoa(success) + "\n失败数量为:" + strconv.Itoa(count-success) + "\n")
+	config.Log.Warn("结束异常记录:",
+		zap.String("执行模式为：", moude),
+		zap.Int("采集总数量为:", count),
+		zap.Int("采集成功数量:", success),
+		zap.Int("采集失败数量:", count-success),
+	)
 	if count-success > 0 {
 		for _, v := range errhost {
-			write.WriteString("失败主机:" + v + "\n")
+			config.Log.Warn("失败记录:", zap.String("运行模式:", moude), zap.String("IP", v))
 		}
 	}
-	write.WriteString("<------------------------------------------>\n")
-	write.Flush()
-	defer file.Close()
-	return
 }
 
 // Nowtime 获取当前时间

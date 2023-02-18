@@ -3,7 +3,9 @@ package run
 import (
 	"fmt"
 	"github.com/spf13/cobra"
+	"go.uber.org/zap"
 	"golang.org/x/crypto/ssh"
+	"golin/config"
 	"io/ioutil"
 	"os"
 	"time"
@@ -35,7 +37,7 @@ func Linux(cmd *cobra.Command, args []string) {
 	if len(cmdpath) > 0 {
 		_, err := os.Stat(cmdpath)
 		if os.IsNotExist(err) {
-			fmt.Printf("\x1b[%dm错误🤷‍ %s自定义执行命令文件不存在！ \x1b[0m\n", 31, cmdpath)
+			config.Log.Warn("自定义执行命令文件不存在！", zap.String("文件", cmdpath))
 			os.Exit(3)
 		}
 		fire, _ := ioutil.ReadFile(cmdpath)
@@ -61,7 +63,6 @@ func Linux(cmd *cobra.Command, args []string) {
 	if len(value) > 10 {
 		Onlyonerun(value, spr, "Linux")
 		wg.Wait()
-		fmt.Printf("\x1b[%dm✔‍ 单次采集完成，请看「采集完成目录」！ \x1b[0m\n", 34)
 		return
 	}
 	// 下面开始执行批量的
@@ -77,8 +78,6 @@ func Linux(cmd *cobra.Command, args []string) {
 	wg.Wait()
 	//完成前最后写入文件
 	Deffile("Linux", count, count-len(errhost), errhost)
-	fmt.Printf("\x1b[%dm✔‍ 完成! 共采集%d个主机,成功采集%d个主机,失败采集%d个主机。 \x1b[0m\n", 34, count, count-len(errhost), len(errhost))
-
 }
 
 // Runssh 通过调用ssh协议执行命令，写入到文件,并减一个线程数
