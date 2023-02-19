@@ -23,7 +23,7 @@ func Linux(cmd *cobra.Command, args []string) {
 		fmt.Println(err)
 		return
 	}
-	//读取分隔符
+	//是否输出记录内容
 	echorun = echotype
 	spr, err := cmd.Flags().GetString("spript")
 	if err != nil {
@@ -54,6 +54,16 @@ func Linux(cmd *cobra.Command, args []string) {
 	}
 	if len(cmdvalue) > 0 {
 		runcmd = string(cmdvalue)
+	}
+	//判断是不是本机执行的模式，
+	localhosttype, err := cmd.Flags().GetBool("localhost")
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	if localhosttype {
+		LocalrunLinux(echorun, runcmd)
+		return
 	}
 
 	//如果value值不为空则是运行一次的模式

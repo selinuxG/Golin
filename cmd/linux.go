@@ -25,4 +25,5 @@ func init() {
 	linuxCmd.Flags().StringP("value", "v", "", "此参数是指定执行单个主机")
 	linuxCmd.Flags().StringP("cmdvalue", "C", "", "此参数是自定义执行命令（比-c优先级高）")
 	linuxCmd.Flags().BoolP("echo", "e", false, "此参数是控制控制台是否输出结果,默认不进行输出")
+	linuxCmd.Flags().BoolP("localhost", "l", false, "此参数是控制本机采集的模式")
 }
