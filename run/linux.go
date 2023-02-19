@@ -102,7 +102,6 @@ func Runssh(sshname string, sshHost string, sshUser string, sshPasswrod string, 
 	addr := fmt.Sprintf("%s:%d", sshHost, sshPort)
 	sshClient, err := ssh.Dial("tcp", addr, configssh)
 	if err != nil {
-
 		errhost = append(errhost, sshHost)
 		return
 	}
@@ -120,6 +119,7 @@ func Runssh(sshname string, sshHost string, sshUser string, sshPasswrod string, 
 	combo, err := session.CombinedOutput(cmd)
 	if err != nil {
 		errhost = append(errhost, sshHost)
+		fmt.Println("err,", err)
 		return
 	}
 

@@ -30,9 +30,16 @@ func Rangefile(path string, spr string, runtype string) {
 	lines := strings.Split(string(fire), "\n")
 	wg.Add(len(lines))
 	for i := 0; i < len(lines); i++ {
+		//如果是空行则跳过线程减1
+		if len(lines[i]) == 0 {
+			wg.Done()
+			continue
+		}
+
 		firecount := strings.Count(lines[i], spr)
 		if firecount != 4 {
 			wg.Done()
+			//fmt.Println(spr, firecount, lines[i])
 			config.Log.Warn("主机格式不正确，跳过！")
 			continue
 		}
@@ -77,7 +84,7 @@ func Rangefile(path string, spr string, runtype string) {
 			}
 		}
 		//fmt.Printf("\u001B[%dm✔‍ 开启线程 %s_%s \x1b[0m\n", 34, Name, Host)
-		config.Log.Info("开启线程:", zap.String("设备名称:", Name), zap.String("IP:", Host))
+		//config.Log.Info("开启线程:", zap.String("设备名称:", Name), zap.String("IP:", Host))
 		switch runtype {
 		case "Linux":
 			go Runssh(Name, Host, User, Passwrod, Port, runcmd)
