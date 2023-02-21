@@ -85,11 +85,15 @@ func RunMysql(myname string, myuser string, mypasswd string, myhost string, mypo
 
 	//所有用户，登录权限
 	write.WriteString("\n\n------查看所有用户------\n")
-	var user, host, File_priv, Shutdown_priv, grant_priv, ssl_type string
-	users, _ := db.Query("SELECT  user,host,File_priv,Shutdown_priv,grant_priv,ssl_type from mysql.user")
+	var user, host, File_priv, Shutdown_priv, grant_priv, ssl_type, password_expired, account_locked, authentication_string string
+	users, _ := db.Query("SELECT  user,host,File_priv,Shutdown_priv,grant_priv,ssl_type,password_expired,account_locked,authentication_string from mysql.user")
 	for users.Next() {
-		users.Scan(&user, &host, &File_priv, &Shutdown_priv, &grant_priv, &ssl_type)
-		wriversion := "用户:" + user + "    远程登录权限:" + host + "\n" + "加密登录类型:" + ssl_type + "\n其他权限:   File_priv:  " + File_priv + "   Shutdown_priv  " + Shutdown_priv + "  grant_priv  " + grant_priv + "\n"
+		users.Scan(&user, &host, &File_priv, &Shutdown_priv, &grant_priv, &ssl_type, &password_expired, &account_locked, &authentication_string)
+		wriversion := "用户:" + user + "    远程登录权限:" + host + "\n" +
+			"密码过期时间设置:" + password_expired + "  密码信息:" + authentication_string + "\n" +
+			"是否锁定:" + account_locked +
+			"	加密登录类型:" + ssl_type +
+			"\n其他权限:   File_priv:  " + File_priv + "   Shutdown_priv  " + Shutdown_priv + "  grant_priv  " + grant_priv + "\n"
 		write.WriteString(wriversion)
 
 		//yuanc

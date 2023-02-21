@@ -43,7 +43,8 @@ func Rangefile(path string, spr string, runtype string) {
 			config.Log.Warn("主机格式不正确，跳过！")
 			continue
 		}
-
+		//总数量+1
+		count += 1
 		linedata := lines[i]
 		Name := strings.Split(string(linedata), spr)[0]
 		Host := strings.Split(string(linedata), spr)[1]
@@ -55,6 +56,7 @@ func Rangefile(path string, spr string, runtype string) {
 		Port, err := strconv.Atoi(Porttmp)
 		if err != nil {
 			wg.Done()
+			config.Log.Warn("端口转换失败", zap.String("IP", Host))
 			errhost = append(errhost, Host)
 			continue
 		}
@@ -69,11 +71,8 @@ func Rangefile(path string, spr string, runtype string) {
 		if Port == 0 || Port > 65535 {
 			wg.Done()
 			config.Log.Warn("端口范围不正确，跳过！")
-
 			continue
 		}
-		//总数量+1
-		count += 1
 		//如果是Windows先判断保存文件是否存在特殊字符,是的话不执行直接记录为失败主机
 		if runtime.GOOS == "windows" {
 			if InSlice(denynametype, Name) {
