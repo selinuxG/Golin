@@ -5,7 +5,6 @@ import (
 	"github.com/spf13/cobra"
 	"go.uber.org/zap"
 	"golang.org/x/crypto/ssh"
-	"golin/config"
 	"golin/global"
 	"io/fs"
 	"io/ioutil"
@@ -39,7 +38,7 @@ func Linux(cmd *cobra.Command, args []string) {
 	if len(cmdpath) > 0 {
 		_, err := os.Stat(cmdpath)
 		if os.IsNotExist(err) {
-			config.Log.Warn("自定义执行命令文件不存在！", zap.String("文件", cmdpath))
+			zlog.Warn("自定义执行命令文件不存在！", zap.String("文件", cmdpath))
 			os.Exit(3)
 		}
 		fire, _ := ioutil.ReadFile(cmdpath)

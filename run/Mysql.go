@@ -6,7 +6,6 @@ import (
 	"fmt"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/spf13/cobra"
-	"golin/config"
 	"golin/global"
 	"os"
 )
@@ -26,7 +25,7 @@ func Mysql(cmd *cobra.Command, args []string) {
 	if len(value) > 10 {
 		Onlyonerun(value, spr, "Mysql")
 		wg.Wait()
-		config.Log.Info("单次运行Mysql模式完成！")
+		zlog.Info("单次运行Mysql模式完成！")
 		return
 	}
 	//到这是运行批量采集的

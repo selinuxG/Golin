@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"github.com/go-redis/redis/v8"
 	"github.com/spf13/cobra"
-	"golin/config"
 	"golin/global"
 	"os"
 	"strings"
@@ -29,7 +28,7 @@ func Redis(cmd *cobra.Command, args []string) {
 	if len(value) > 10 {
 		Onlyonerun(value, spr, "Redis")
 		wg.Wait()
-		config.Log.Info("单次运行Redis模式完成！")
+		zlog.Info("单次运行Redis模式完成！")
 		return
 	}
 	//下面是多线程的模式

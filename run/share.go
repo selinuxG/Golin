@@ -24,6 +24,10 @@ var (
 	denynametype = global.Denynametype //windos下不允许创建名称的特殊符号。
 )
 
+var (
+	zlog = config.Log //自定义日志
+)
+
 // Rangefile 遍历文件并创建线程 path=模式目录 spr=按照什么分割 runtype运行类型
 func Rangefile(path string, spr string, runtype string) {
 	fire, _ := ioutil.ReadFile(path)
@@ -40,7 +44,7 @@ func Rangefile(path string, spr string, runtype string) {
 		if firecount != 4 {
 			wg.Done()
 			//fmt.Println(spr, firecount, lines[i])
-			config.Log.Warn("主机格式不正确，跳过！")
+			zlog.Warn("主机格式不正确，跳过！")
 			continue
 		}
 		//总数量+1
@@ -56,7 +60,7 @@ func Rangefile(path string, spr string, runtype string) {
 		Port, err := strconv.Atoi(Porttmp)
 		if err != nil {
 			wg.Done()
-			config.Log.Warn("端口转换失败", zap.String("IP", Host))
+			zlog.Warn("	端口转换失败: ", zap.String("IP", Host))
 			errhost = append(errhost, Host)
 			continue
 		}
@@ -64,26 +68,26 @@ func Rangefile(path string, spr string, runtype string) {
 		address := net.ParseIP(Host)
 		if address == nil {
 			wg.Done()
-			config.Log.Warn("IP地址格式不正确，跳过！")
+			zlog.Warn("IP地址格式不正确，跳过！")
 			continue
 		}
 		//判断端口范围是否是1-65535
 		if Port == 0 || Port > 65535 {
 			wg.Done()
-			config.Log.Warn("端口范围不正确，跳过！")
+			zlog.Warn("端口范围不正确，跳过！")
 			continue
 		}
 		//如果是Windows先判断保存文件是否存在特殊字符,是的话不执行直接记录为失败主机
 		if runtime.GOOS == "windows" {
 			if InSlice(denynametype, Name) {
 				wg.Done()
-				config.Log.Warn("名称存在特殊符号，跳过！")
+				zlog.Warn("名称存在特殊符号，跳过！")
 				errhost = append(errhost, Host)
 				continue
 			}
 		}
 		//fmt.Printf("\u001B[%dm✔‍ 开启线程 %s_%s \x1b[0m\n", 34, Name, Host)
-		//config.Log.Info("开启线程:", zap.String("设备名称:", Name), zap.String("IP:", Host))
+		//zlog.Info("开启线程:", zap.String("设备名称:", Name), zap.String("IP:", Host))
 		switch runtype {
 		case "Linux":
 			go Runssh(Name, Host, User, Passwrod, Port, runcmd)
@@ -99,7 +103,7 @@ func Rangefile(path string, spr string, runtype string) {
 func Onlyonerun(value string, spr string, runtype string) {
 	firecount := strings.Count(value, spr)
 	if firecount != 4 {
-		config.Log.Warn("错误！格式不正确，退出！（默认为：名称~IP~用户~密码~端口）")
+		zlog.Warn("错误！格式不正确，退出！（默认为：名称~IP~用户~密码~端口）")
 		return
 	}
 	Name := strings.Split(value, spr)[0]
@@ -110,30 +114,30 @@ func Onlyonerun(value string, spr string, runtype string) {
 	Porttmp := strings.Replace(Port1, "\r", "", -1)
 	Port, err := strconv.Atoi(Porttmp)
 	if err != nil {
-		config.Log.Warn("错误！端口格式转换失败,退出！")
+		zlog.Warn("错误！端口格式转换失败,退出！")
 		os.Exit(3)
 	}
 	address := net.ParseIP(Host)
 	if address == nil {
-		config.Log.Warn("错误！不是正确的IP地址,退出！")
+		zlog.Warn("错误！不是正确的IP地址,退出！")
 		os.Exit(3)
 	}
 	//判断端口范围是否是1-65535
 	if Port == 0 || Port > 65535 {
-		config.Log.Warn("错误！不是正确的端口范围,退出！")
+		zlog.Warn("错误！不是正确的端口范围,退出！")
 		os.Exit(3)
 	}
 	//如果是Windows先判断保存文件是否存在特殊字符,是的话不执行直接记录为失败主机
 	if runtime.GOOS == "windows" {
 		if InSlice(denynametype, Name) {
-			config.Log.Warn("错误！保存文件包含特殊字符,无法保存,请修改在执行！")
+			zlog.Warn("错误！保存文件包含特殊字符,无法保存,请修改在执行！")
 			os.Exit(3)
 		}
 	}
 	switch runtype {
 	case "Linux":
 		wg.Add(1)
-		config.Log.Info("开启运行Linux模式", zap.String("名称:", Name), zap.String("IP", Host))
+		zlog.Info("开启运行Linux模式", zap.String("名称:", Name), zap.String("IP", Host))
 		go Runssh(Name, Host, User, Passwrod, Port, runcmd)
 	case "Mysql":
 		wg.Add(1)
