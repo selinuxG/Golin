@@ -36,7 +36,7 @@ Usage:
 Flags:
   -h, --help            help for mysql
   -i, --ip string       此参数是指定待远程采集的IP文件位置 (default "mysql.txt")
-  -s, --spript string   此参数是指定IP文件中的分隔字符 (default "==")
+  -s, --spript string   此参数是指定IP文件中的分隔字符 (default "~")
   -v, --value string    此参数是指定执行单个主机
 ```
 ### redis
@@ -51,7 +51,7 @@ Usage:
 Flags:
   -h, --help            help for redis
   -i, --ip string       此参数是指定待远程采集的IP文件位置 (default "redis.txt")
-  -s, --spript string   此参数是指定IP文件中的分隔字符 (default "==")
+  -s, --spript string   此参数是指定IP文件中的分隔字符 (default "~")
   -v, --value string    此参数是指定执行单个设备
 
 ```
