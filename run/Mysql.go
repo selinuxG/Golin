@@ -108,7 +108,6 @@ func RunMysql(myname string, myuser string, mypasswd string, myhost string, mypo
 				write.WriteString(k + ":	" + vv + "\n")
 			}
 			write.WriteString("--------------------------------\n")
-
 		}
 		write.Flush()
 		return
@@ -203,12 +202,6 @@ func RunMysql(myname string, myuser string, mypasswd string, myhost string, mypo
 	}
 }
 
-// rows, _ := db.Raw(`show tables`).Rows()
-// for _, v := range scanRows2map(rows) {
-// for k, vv := range v {
-// fmt.Println(k, ":", vv)
-// }
-// }
 func scanRows2map(rows *sql.Rows) []map[string]string {
 	res := make([]map[string]string, 0)               //  定义结果 map
 	colTypes, _ := rows.ColumnTypes()                 // 列信息
