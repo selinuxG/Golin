@@ -23,5 +23,4 @@ func init() {
 	mysqlCmd.Flags().StringP("spript", "s", global.Split, "此参数是指定IP文件中的分隔字符")
 	mysqlCmd.Flags().StringP("value", "v", "", "此参数是指定执行单个主机")
 	mysqlCmd.Flags().StringP("cmd", "c", "", "此参数是自定义执行sql语句")
-
 }

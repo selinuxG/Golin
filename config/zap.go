@@ -19,7 +19,7 @@ func init() {
 		NameKey:        "logger",
 		MessageKey:     "msg",
 		CallerKey:      "caller",
-		EncodeLevel:    zapcore.CapitalColorLevelEncoder,
+		EncodeLevel:    zapcore.CapitalLevelEncoder, //CapitalColorLevelEncoder  彩色输出
 		EncodeTime:     zapcore.TimeEncoderOfLayout("2006-01-02 15:04:05"),
 		LineEnding:     zapcore.DefaultLineEnding,
 		EncodeDuration: zapcore.SecondsDurationEncoder,

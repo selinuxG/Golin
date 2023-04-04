@@ -164,6 +164,26 @@ func Checkfile(name string, data string, pems int, path string) {
 
 // Deffile 程序退出前运行的函数，用于生成日志
 func Deffile(moude string, count int, success int, errhost []string) {
+	//如果是Windows操作系统则自动弹出采集完成文件夹
+	//defer func() {
+	//	switch localos := runtime.GOOS; localos {
+	//	case "windows":
+	//		_, err := os.Stat(succpath)
+	//		if err == nil {
+	//			if success > 0 {
+	//				cmd := exec.Command("powershell", "Get-Process | Where-Object {$_.MainWindowTitle -like '*"+succpath+"*'}") // 检查该目录是否已经打开
+	//				output, _ := cmd.Output()
+	//				if len(output) == 0 { // 未打开目录
+	//					cmd = exec.Command("explorer.exe", succpath)
+	//					err := cmd.Start()
+	//					if err != nil {
+	//						panic(err)
+	//					}
+	//				}
+	//			}
+	//		}
+	//	}
+	//}()
 	if count == success {
 		config.Log.Info("结束成功记录:",
 			zap.String("执行模式为：", moude),

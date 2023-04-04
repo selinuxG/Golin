@@ -135,9 +135,9 @@ func RunMysql(myname string, myuser string, mypasswd string, myhost string, mypo
 		}
 		write.WriteString("权限相关：" + grantdata + "\n")
 		if strings.Contains(grantdata, "GRANT ALL PRIVILEGES ON *.*") || strings.Contains(grantdata, "GRANT SUPER") {
-			write.WriteString("是否为超级管理员：" + "	是\n")
+			write.WriteString("是否为超级管理员(最好自己基于上述权限自己判断,仅供参考)：" + "	是\n")
 		} else {
-			write.WriteString("是否为超级管理员：" + "	否\n")
+			write.WriteString("是否为超级管理员(最好自己基于上述权限自己判断,仅供参考)：" + "	否\n")
 		}
 		write.WriteString("\n\n")
 	}
@@ -174,10 +174,6 @@ func RunMysql(myname string, myuser string, mypasswd string, myhost string, mypo
 	if len(variables) == 2 {
 		write.WriteString(variables[0].Key + ": " + variables[0].Value + "	(查询日志开启状态)\n")
 		write.WriteString(variables[1].Key + ": " + variables[1].Value + "	(查询日志存储路径)\n")
-	}
-	db.Raw(`show variables like 'log_output'`).Scan(&variables)
-	if len(variables) == 1 {
-		write.WriteString(variables[0].Key + ": " + variables[0].Value + "	(查询日志存放方式：FILE为文件（默认）TABLE为数据表)\n")
 	}
 	db.Raw(`show variables like 'log_output'`).Scan(&variables)
 	if len(variables) == 1 {
