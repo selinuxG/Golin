@@ -1,7 +1,7 @@
 package global
 
 var (
-	SuccessLog   = "Golin_log.log"                                      //运行记录
+	SuccessLog   = "golin_log.log"                                      //运行记录
 	Split        = "~"                                                  //默认分割符号
 	CmdLinuxPath = "linux.txt"                                          //默认Linux模式多主机模式下读取的文件
 	CmdMysqlPath = "mysql.txt"                                          //默认Mysql模式多主机模式下读取的文件
