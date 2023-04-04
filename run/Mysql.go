@@ -81,7 +81,7 @@ func RunMysql(myname string, myuser string, mypasswd string, myhost string, mypo
 		errhost = append(errhost, myhost)
 		return
 	}
-
+	//确认采集完成目录是否存在
 	_, err = os.Stat(succpath)
 	if os.IsNotExist(err) {
 		os.Mkdir(succpath, os.FileMode(global.FilePer))
