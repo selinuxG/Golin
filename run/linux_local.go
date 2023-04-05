@@ -8,6 +8,7 @@ import (
 	"io/ioutil"
 	"os"
 	"os/exec"
+	"path/filepath"
 	"runtime"
 )
 
@@ -42,11 +43,13 @@ func LocalrunLinux(echo bool, cmd string) {
 			return
 		}
 
-		_, err = os.Stat(succpath)
+		pullfire := filepath.Join(succpath, "Linux")
+		_, err = os.Stat(pullfire)
 		if os.IsNotExist(err) {
-			os.Mkdir(succpath, os.FileMode(global.FilePer))
+			os.MkdirAll(pullfire, os.FileMode(global.FilePer))
 		}
-		fire := "采集完成目录//" + "localhost" + "(linux).log"
+
+		fire := filepath.Join(pullfire, "local本机采集")
 		err = ioutil.WriteFile(fire, bytes, fs.FileMode(global.FilePer))
 		if err != nil {
 			zlog.Warn("错误", zap.String("本机执行状态", "失败"))

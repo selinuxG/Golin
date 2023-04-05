@@ -9,6 +9,7 @@ import (
 	"io/fs"
 	"io/ioutil"
 	"os"
+	"path/filepath"
 	"time"
 )
 
@@ -94,19 +95,14 @@ func Linux(cmd *cobra.Command, args []string) {
 // Runssh 通过调用ssh协议执行命令，写入到文件,并减一个线程数
 func Runssh(sshname string, sshHost string, sshUser string, sshPasswrod string, sshPort int, cmd string) {
 	defer wg.Done()
-	sshType := "password"
 	// 创建ssh登录配置
 	configssh := &ssh.ClientConfig{
 		Timeout:         time.Second, // ssh连接timeout时间
 		User:            sshUser,
 		HostKeyCallback: ssh.InsecureIgnoreHostKey(),
 	}
-	if sshType == "password" {
-		configssh.Auth = []ssh.AuthMethod{ssh.Password(sshPasswrod)}
-	} else {
-		errhost = append(errhost, sshHost)
-		return
-	}
+	configssh.Auth = []ssh.AuthMethod{ssh.Password(sshPasswrod)}
+
 	// dial 获取ssh client
 	addr := fmt.Sprintf("%s:%d", sshHost, sshPort)
 	sshClient, err := ssh.Dial("tcp", addr, configssh)
@@ -136,16 +132,16 @@ func Runssh(sshname string, sshHost string, sshUser string, sshPasswrod string, 
 	if echorun {
 		fmt.Printf("%s\n%s\n", "<输出结果>", string(combo))
 	}
-
-	_, err = os.Stat(succpath)
-	if os.IsNotExist(err) {
-		os.Mkdir(succpath, os.FileMode(global.FilePer))
-	}
-	fire := "采集完成目录//" + sshname + "_" + sshHost + "(linux).log"
-	datanew := []byte(string(combo))
-	err = ioutil.WriteFile(fire, datanew, fs.FileMode(global.FilePer))
+	firepath := filepath.Join(succpath, "Linux")
+	_, err = os.Stat(firepath)
 	if err != nil {
+		os.MkdirAll(firepath, os.FileMode(global.FilePer))
+	}
+	//fmt.Println(fire)
+	datanew := []byte(string(combo))
+	err = ioutil.WriteFile(filepath.Join(firepath, fmt.Sprintf("%s_%s.log", sshname, sshHost)), datanew, fs.FileMode(global.FilePer))
+	if err != nil {
+		fmt.Println(err)
 		return
 	}
-
 }

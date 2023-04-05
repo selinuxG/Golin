@@ -8,6 +8,7 @@ import (
 	"github.com/spf13/cobra"
 	"golin/global"
 	"os"
+	"path/filepath"
 	"strings"
 	"time"
 )
@@ -76,11 +77,13 @@ func Runredis(myname, myhost, mypasswd, myport1 string) {
 	redisdir := client.ConfigGet(ctx, "dir").Val()
 	//confinfo := client.Info(ctx).Val()
 
-	_, err = os.Stat(succpath)
+	pullpath := filepath.Join(succpath, "Redis")
+	_, err = os.Stat(pullpath)
 	if os.IsNotExist(err) {
-		os.Mkdir(succpath, os.FileMode(global.FilePer))
+		os.MkdirAll(pullpath, os.FileMode(global.FilePer))
 	}
-	fire := "采集完成目录//" + myname + "_" + myhost + "(redis).log"
+
+	fire := filepath.Join(pullpath, fmt.Sprintf("%s_%s.log", myname, myhost))
 	os.Remove(fire)
 	file, err := os.OpenFile(fire, os.O_CREATE|os.O_APPEND|os.O_RDWR, os.FileMode(global.FilePer))
 	if err != nil {

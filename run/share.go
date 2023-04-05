@@ -1,6 +1,7 @@
 package run
 
 import (
+	"fmt"
 	"go.uber.org/zap"
 	"golin/config"
 	"golin/global"
@@ -39,11 +40,9 @@ func Rangefile(path string, spr string, runtype string) {
 			wg.Done()
 			continue
 		}
-
 		firecount := strings.Count(lines[i], spr)
 		if firecount != 4 {
 			wg.Done()
-			//fmt.Println(spr, firecount, lines[i])
 			zlog.Warn("主机格式不正确，跳过！")
 			continue
 		}
@@ -60,7 +59,7 @@ func Rangefile(path string, spr string, runtype string) {
 		Port, err := strconv.Atoi(Porttmp)
 		if err != nil {
 			wg.Done()
-			zlog.Warn("	端口转换失败: ", zap.String("IP", Host))
+			zlog.Warn("端口转换失败: ", zap.String("IP", Host))
 			errhost = append(errhost, Host)
 			continue
 		}
@@ -68,13 +67,15 @@ func Rangefile(path string, spr string, runtype string) {
 		address := net.ParseIP(Host)
 		if address == nil {
 			wg.Done()
-			zlog.Warn("IP地址格式不正确，跳过！")
+			zlog.Warn("IP地址格式不正确，跳过！", zap.String("IP", Host))
+			count = count - 1
 			continue
 		}
 		//判断端口范围是否是1-65535
 		if Port == 0 || Port > 65535 {
 			wg.Done()
-			zlog.Warn("端口范围不正确，跳过！")
+			zlog.Warn("端口范围不正确，跳过！", zap.String("IP", Host), zap.Int("Port:", Port))
+			count = count - 1
 			continue
 		}
 		//如果是Windows先判断保存文件是否存在特殊字符,是的话不执行直接记录为失败主机
@@ -86,8 +87,7 @@ func Rangefile(path string, spr string, runtype string) {
 				continue
 			}
 		}
-		//fmt.Printf("\u001B[%dm✔‍ 开启线程 %s_%s \x1b[0m\n", 34, Name, Host)
-		//zlog.Info("开启线程:", zap.String("设备名称:", Name), zap.String("IP:", Host))
+		fmt.Println("----------------------------------------------------------------start")
 		switch runtype {
 		case "Linux":
 			go Runssh(Name, Host, User, Passwrod, Port, runcmd)
@@ -185,22 +185,22 @@ func Deffile(moude string, count int, success int, errhost []string) {
 	//	}
 	//}()
 	if count == success {
-		config.Log.Info("结束成功记录:",
-			zap.String("执行模式为：", moude),
-			zap.Int("采集总数量为:", count),
-			zap.Int("采集成功数量:", success),
+		zlog.Info("运行记录",
+			zap.String("执行模式", moude),
+			zap.Int("采集总数量", count),
+			zap.Int("采集成功数量", success),
 		)
 		return
 	}
-	config.Log.Warn("结束异常记录:",
-		zap.String("执行模式为：", moude),
-		zap.Int("采集总数量为:", count),
+	zlog.Warn("运行记录",
+		zap.String("执行模式", moude),
+		zap.Int("采集总数量:", count),
 		zap.Int("采集成功数量:", success),
 		zap.Int("采集失败数量:", count-success),
 	)
 	if count-success > 0 {
 		for _, v := range errhost {
-			config.Log.Warn("失败记录:", zap.String("运行模式:", moude), zap.String("IP", v))
+			config.Log.Warn("失败记录", zap.String("运行模式", moude), zap.String("IP", v))
 		}
 	}
 }

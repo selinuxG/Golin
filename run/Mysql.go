@@ -9,7 +9,9 @@ import (
 	"github.com/spf13/cobra"
 	"go.uber.org/zap"
 	"golin/global"
+	"io/ioutil"
 	"os"
+	"path/filepath"
 	"reflect"
 	"strings"
 	"unsafe"
@@ -33,6 +35,7 @@ type Userslist struct {
 }
 
 var sqlcmd string //自定义sqlcmd命令
+var echo bool
 
 func Mysql(cmd *cobra.Command, args []string) {
 	//分隔符
@@ -43,6 +46,8 @@ func Mysql(cmd *cobra.Command, args []string) {
 	}
 	//是否是执行自定义sql命令
 	sqlcmd, _ = cmd.Flags().GetString("cmd")
+	//是否输出结果
+	echo, _ = cmd.Flags().GetBool("echo")
 
 	//如果value值不为空则是运行一次的模式
 	value, err := cmd.Flags().GetString("value")
@@ -82,16 +87,24 @@ func RunMysql(myname string, myuser string, mypasswd string, myhost string, mypo
 		return
 	}
 	//确认采集完成目录是否存在
-	_, err = os.Stat(succpath)
+	fullPath := filepath.Join(succpath, "MySQL")
+	_, err = os.Stat(fullPath)
 	if os.IsNotExist(err) {
-		os.Mkdir(succpath, os.FileMode(global.FilePer))
+		os.MkdirAll(fullPath, os.FileMode(global.FilePer))
 	}
-	fire := global.Succpath + "//" + myname + "_" + myhost + "(mysql).log"
+	var fire string
+	if sqlcmd != "" {
+		fire = filepath.Join(fullPath, fmt.Sprintf("%s_%s(%s).log", myname, myhost, sqlcmd))
+	} else {
+		fire = filepath.Join(fullPath, fmt.Sprintf("%s_%s.log", myname, myhost))
+	}
+	defer echosqlfie(echo, fire)
 	//先删除之前的同名记录文件
 	os.Remove(fire)
 	file, err := os.OpenFile(fire, os.O_CREATE|os.O_APPEND|os.O_RDWR, os.FileMode(global.FilePer))
 	defer file.Close()
 	if err != nil {
+		fmt.Println(err)
 		errhost = append(errhost, myhost)
 		return
 	}
@@ -100,7 +113,7 @@ func RunMysql(myname string, myuser string, mypasswd string, myhost string, mypo
 	//判读是否是自定义sql命令
 	if sqlcmd != "" {
 		rows, _ := db.Raw(sqlcmd).Rows()
-		write.WriteString("----------------执行sql命令：" + sqlcmd + "\n\n")
+		write.WriteString("----------------" + myhost + "执行sql命令：" + sqlcmd + "\n\n")
 		//fmt.Println()
 
 		for _, v := range scanRows2map(rows) {
@@ -198,6 +211,7 @@ func RunMysql(myname string, myuser string, mypasswd string, myhost string, mypo
 	}
 }
 
+// scanRows2map 执行自定义命令
 func scanRows2map(rows *sql.Rows) []map[string]string {
 	res := make([]map[string]string, 0)               //  定义结果 map
 	colTypes, _ := rows.ColumnTypes()                 // 列信息
@@ -229,4 +243,15 @@ func scanRows2map(rows *sql.Rows) []map[string]string {
 // []byte to string
 func Byte2Str(b []byte) string {
 	return *(*string)(unsafe.Pointer(&b))
+}
+
+func echosqlfie(stratic bool, path string) {
+	if stratic {
+		content, err := ioutil.ReadFile(path)
+		if err != nil {
+			panic(err)
+		}
+		fmt.Println(string(content))
+	}
+
 }

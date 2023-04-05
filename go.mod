@@ -4,6 +4,7 @@ go 1.20
 
 require (
 	github.com/go-redis/redis/v8 v8.11.5
+	github.com/google/gopacket v1.1.19
 	github.com/jinzhu/gorm v1.9.16
 	github.com/spf13/cobra v1.6.1
 	go.uber.org/zap v1.24.0

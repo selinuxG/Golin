@@ -24,6 +24,8 @@ func init() {
 		LineEnding:     zapcore.DefaultLineEnding,
 		EncodeDuration: zapcore.SecondsDurationEncoder,
 		EncodeCaller:   zapcore.ShortCallerEncoder,
+		// 添加字段分隔符和缩进
+		ConsoleSeparator: "    ",
 	})
 	// 创建控制台输出的核心对象，设置级别为 info
 	consoleDebugging := zapcore.Lock(os.Stdout)
