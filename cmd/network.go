@@ -26,5 +26,6 @@ func init() {
 	networkCmd.Flags().StringP("interface", "i", "\\Device\\NPF_{B3C9B1B3-FFC0-4D59-8667-4B0BF6D354CE}", "指定监听网卡")
 	networkCmd.Flags().StringP("bfp", "b", "tcp", "指定监听网卡")
 	networkCmd.Flags().BoolP("interfaceall", "a", false, "显示本地所有网卡及IP地址")
+	networkCmd.Flags().BoolP("syslog", "s", false, "模拟syslog接收端服务器")
 
 }

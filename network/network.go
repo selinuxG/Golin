@@ -25,6 +25,16 @@ var (
 )
 
 func Networkrun(cmd *cobra.Command, args []string) {
+	syslog, err := cmd.Flags().GetBool("syslog")
+	if syslog {
+		if len(args) == 2 {
+			Rsyslog(args[0], args[1])
+			return
+		}
+		zlog.Warn("参数错误,接受2个参数,第一个是协议（tcp/udp）,第二个是端口")
+		return
+	}
+
 	interfaceall, err = cmd.Flags().GetBool("interfaceall")
 	if err != nil {
 		zlog.Warn("解析interfaceall参数失败,退出！")
