@@ -201,6 +201,15 @@ func RunMysql(myname string, myuser string, mypasswd string, myhost string, mypo
 		rows.Scan(&version)
 	}
 	write.WriteString(version + "\n")
+	//此次连接ID可与查询日志关联
+	write.WriteString("\n连接ID:	")
+	rows, _ = db.Raw("select connection_id()").Rows()
+	var CONNECTION_ID string
+	for rows.Next() {
+		rows.Scan(&CONNECTION_ID)
+	}
+	write.WriteString(CONNECTION_ID + "  (MySQL服务器会为每个客户端连接分配一个唯一的连接ID，在执行SQL查询、更新、删除等操作时，可以使用该连接ID来标识当前的连接。)\n")
+	//SELECT CONNECTION_ID();
 
 	//最后写入文件
 	err = write.Flush()

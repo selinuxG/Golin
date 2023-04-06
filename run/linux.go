@@ -10,6 +10,7 @@ import (
 	"io/ioutil"
 	"os"
 	"path/filepath"
+	"strings"
 	"time"
 )
 
@@ -44,6 +45,24 @@ func Linux(cmd *cobra.Command, args []string) {
 		}
 		fire, _ := ioutil.ReadFile(cmdpath)
 		runcmd = string(fire)
+		//新增： 去掉文件中的换行符，最后一个不是；自动增加然后保存成一条命令
+		newcmd := ""
+		checkcmd := strings.Split(runcmd, "\n")
+		for i := 0; i < len(checkcmd); i++ {
+			checkend := checkcmd[i]
+			checkend = strings.Replace(checkend, "\r", "", -1)
+			if len(checkend) == 0 {
+				continue
+			}
+			if checkend[len(checkend)-1:] == ";" {
+				newcmd += checkend
+			} else {
+				newcmd += checkend + ";"
+			}
+		}
+		if newcmd != "" {
+			runcmd = newcmd
+		}
 	}
 
 	//判断是否有自定义执行的命令，如果有则处理他，不执行cmd文件中的命令。
@@ -108,6 +127,7 @@ func Runssh(sshname string, sshHost string, sshUser string, sshPasswrod string, 
 	sshClient, err := ssh.Dial("tcp", addr, configssh)
 	if err != nil {
 		errhost = append(errhost, sshHost)
+		fmt.Println(err)
 		return
 	}
 	defer sshClient.Close()
@@ -115,6 +135,7 @@ func Runssh(sshname string, sshHost string, sshUser string, sshPasswrod string, 
 	// 创建ssh-session
 	session, err := sshClient.NewSession()
 	if err != nil {
+		fmt.Println(err)
 		errhost = append(errhost, sshHost)
 		return
 	}
