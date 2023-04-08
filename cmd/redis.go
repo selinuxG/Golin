@@ -14,7 +14,7 @@ import (
 var redisCmd = &cobra.Command{
 	Use:   "redis",
 	Short: "运行采集Redis功能",
-	Long:  `基于Redis的远程登陆功能,通过多线程进行采集,基于info字段中的值判断,写入待采集文件主机时用户名为空即可。`,
+	Long:  `基于Redis的远程登录功能,通过多线程进行采集,基于info字段中的值判断,写入待采集文件主机时用户名为空即可。`,
 	Run:   run.Redis,
 }
 

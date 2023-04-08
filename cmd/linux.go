@@ -13,7 +13,7 @@ import (
 var linuxCmd = &cobra.Command{
 	Use:   "linux",
 	Short: "运行采集Linux采集模式",
-	Long:  `基于SSH协议远程登陆,通过多线程的方法批量进行采集`,
+	Long:  `基于SSH协议远程登录功能,通过多线程的方法批量进行采集`,
 	Run:   run.Linux,
 }
 
