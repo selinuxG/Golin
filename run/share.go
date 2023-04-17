@@ -1,7 +1,6 @@
 package run
 
 import (
-	"fmt"
 	"go.uber.org/zap"
 	"golin/config"
 	"golin/global"
@@ -87,14 +86,13 @@ func Rangefile(path string, spr string, runtype string) {
 				continue
 			}
 		}
-		fmt.Println("----------------------------------------------------------------start")
 		switch runtype {
 		case "Linux":
 			go Runssh(Name, Host, User, Passwrod, Port, runcmd)
 		case "Mysql":
 			go RunMysql(Name, User, Passwrod, Host, strconv.Itoa(Port))
 		case "Redis":
-			go Runredis(Name, Host, Passwrod, strconv.Itoa(Port))
+			go Runredis(Name, User, Host, Passwrod, strconv.Itoa(Port))
 		}
 	}
 }
@@ -146,7 +144,7 @@ func Onlyonerun(value string, spr string, runtype string) {
 	case "Redis":
 		wg.Add(1)
 		config.Log.Info("开启运行Redis模式", zap.String("名称:", Name), zap.String("IP", Host))
-		go Runredis(Name, Host, Passwrod, strconv.Itoa(Port))
+		go Runredis(Name, User, Host, Passwrod, strconv.Itoa(Port))
 	}
 }
 

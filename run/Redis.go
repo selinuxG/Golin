@@ -29,7 +29,7 @@ func Redis(cmd *cobra.Command, args []string) {
 	if len(value) > 10 {
 		Onlyonerun(value, spr, "Redis")
 		wg.Wait()
-		zlog.Info("单次运行Redis模式完成！")
+		zlog.Info("单次运行Redis模式结束！")
 		return
 	}
 	//下面是多线程的模式
@@ -49,13 +49,14 @@ func Redis(cmd *cobra.Command, args []string) {
 
 }
 
-func Runredis(myname, myhost, mypasswd, myport1 string) {
+func Runredis(myname, myuser, myhost, mypasswd, myport1 string) {
 	defer wg.Done()
 	Port := strings.Replace(myport1, "\r", "", -1)
 	ctx := context.Background()
 	adr := myhost + ":" + Port
 	client := redis.NewClient(&redis.Options{
 		Addr:            adr,
+		Username:        myuser,
 		Password:        mypasswd,
 		DB:              0,
 		DialTimeout:     1 * time.Second,
@@ -76,6 +77,10 @@ func Runredis(myname, myhost, mypasswd, myport1 string) {
 	redisport := client.ConfigGet(ctx, "port").Val()
 	redisdir := client.ConfigGet(ctx, "dir").Val()
 	//confinfo := client.Info(ctx).Val()
+	//执行自定义命令
+	//test, err := client.Do(ctx, "ACL", "USERS").StringSlice()
+	//if err != nil {}
+	//fmt.Println("用户信息为:", test)
 
 	pullpath := filepath.Join(succpath, "Redis")
 	_, err = os.Stat(pullpath)
