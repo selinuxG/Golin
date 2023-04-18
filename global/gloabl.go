@@ -22,7 +22,7 @@ var (
 	Py_hw       = "python/hw.py" //python ssh hw
 )
 
-// 创建追加写入函数
+// AppendToFile 创建追加写入函数
 func AppendToFile(filename string, content string) error {
 	// 检测文件是否存在
 	var file *os.File

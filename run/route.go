@@ -207,13 +207,13 @@ func rourange(path string, spr string) {
 			if len(v) == 0 {
 				continue
 			}
-			Routessh(filename, Name, Host, User, Passwrod, strconv.Itoa(Port), v)
+			Routessh(filename, Host, User, Passwrod, strconv.Itoa(Port), v)
 		}
 	}
 }
 
 // Routessh 连接一次执行一次命令。不确认是库本身的问题还是路由设备的问题，缓冲器有问题只能如此。
-func Routessh(filename, Name, Host, User, Passwrod, Port, Cmd string) {
+func Routessh(filename, Host, User, Passwrod, Port, Cmd string) {
 	configssh := &ssh.ClientConfig{
 		Timeout:         time.Second * 5, // ssh连接timeout时间
 		User:            User,
