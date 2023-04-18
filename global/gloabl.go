@@ -16,6 +16,12 @@ var (
 	Denynametype = []string{"\\", "\\/", "*", "?", "\"", "<", ">", "|"} //windos下不允许创建名称的特殊符号。
 )
 
+// 各类python程序路径
+var (
+	Python_path = "python"       //默认运行python路径
+	Py_hw       = "python/hw.py" //python ssh hw
+)
+
 // 创建追加写入函数
 func AppendToFile(filename string, content string) error {
 	// 检测文件是否存在
@@ -40,4 +46,16 @@ func AppendToFile(filename string, content string) error {
 		return err
 	}
 	return nil
+}
+
+// PathExists 文件是否存在
+func PathExists(path string) bool {
+	_, err := os.Stat(path)
+	if err == nil {
+		return true
+	}
+	if os.IsNotExist(err) {
+		return false
+	}
+	return false
 }

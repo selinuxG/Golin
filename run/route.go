@@ -10,6 +10,7 @@ import (
 	"io/ioutil"
 	"net"
 	"os"
+	"os/exec"
 	"path/filepath"
 	"runtime"
 	"strconv"
@@ -18,7 +19,9 @@ import (
 )
 
 var (
-	routecmd []string
+	routecmd    []string             //执行的命令列表
+	python      bool                 //python执行
+	Python_path = global.Python_path //默认运行python路径
 )
 
 func Route(cmd *cobra.Command, args []string) {
@@ -83,10 +86,29 @@ func Route(cmd *cobra.Command, args []string) {
 			routecmd = append(routecmd, cmdvalue)
 		}
 	}
+	//python调用
+	python, err = cmd.Flags().GetBool("python")
+	if err != nil {
+		return
+	}
+	//设置python的位置，第一个传参为路径
+	if python {
+		//传参>=1,第一个实参为python路径
+		if len(args) >= 1 {
+			if !global.PathExists(args[0]) {
+				zlog.Warn("python程序不存在!", zap.String("python-path", args[0]))
+				return
+			}
+			Python_path = args[0]
+		}
+	}
 	// 下面开始执行函数
 	fmt.Println("-------------------------------------> run type:route")
 	rourange(ippath, spr)
-	//完成前最后写入文件
+	//完成前最后写入文件 python模式下不输出
+	if python {
+		return
+	}
 	Deffile("Route", count, count-len(errhost), errhost)
 }
 
@@ -140,11 +162,41 @@ func rourange(path string, spr string) {
 				continue
 			}
 		}
-		//目录是否存在
+		//保存路径是否存在
 		firepath := filepath.Join(succpath, "Route")
 		_, err = os.Stat(firepath)
 		if err != nil {
 			os.MkdirAll(firepath, os.FileMode(global.FilePer))
+		}
+		//是否为python运行，优先级最高
+		if python {
+			if !global.PathExists(global.Py_hw) {
+				zlog.Warn("python脚本不存在,跳过！", zap.String("path", global.Py_hw))
+				return
+			}
+			//拼接当前绝对路径
+			pwdpath, _ := os.Getwd()
+			pwdpath = filepath.Join(pwdpath, firepath)
+			//拼接命令，用“;”分隔
+			cmd := strings.Join(routecmd, ";")
+			if strings.Count(cmd, ";") > 1 {
+				cmd = strings.Replace(cmd, ";", "", 1) //去除第一个“;”
+				cmd = strings.TrimRight(cmd, ";")      //删除最后一个“;”
+			}
+			runcmd := exec.Command(Python_path, global.Py_hw, pwdpath, Name, Host, User, Passwrod, strconv.Itoa(Port), strconv.FormatBool(echorun), cmd)
+			output, err := runcmd.Output()
+			if err != nil {
+				fmt.Println(err)
+				return
+			}
+			fmt.Println(string(output))
+			//联调完毕后使用下面不输出不获取结果的方式
+			//err := runcmd.Run()
+			//if err != nil {
+			//	fmt.Println(err)
+			//	//return
+			//}
+			continue
 		}
 		//拼接后的文件然后删除文件
 		filename := fmt.Sprintf("%s_%s.log", Name, Host)
@@ -167,9 +219,11 @@ func Routessh(filename, Name, Host, User, Passwrod, Port, Cmd string) {
 		User:            User,
 		HostKeyCallback: ssh.InsecureIgnoreHostKey(),
 	}
+	//增加旧版本算法支持
+	configssh.KeyExchanges = []string{"diffie-hellman-group-exchange-sha1"}
 	configssh.Auth = []ssh.AuthMethod{ssh.Password(Passwrod)}
 	//增加旧版本算法支持
-	configssh.Ciphers = []string{"aes128-cbc", "aes256-cbc", "3des-cbc", "aes128-ctr", "aes192-ctr", "aes256-ctr", "aes128-gcm@openssh.com", "chacha20-poly1305@openssh.com"}
+	configssh.Ciphers = []string{"aes128-cbc", "aes256-cbc", "3des-cbc", "aes128-ctr", "aes192-ctr", "aes256-ctr", "aes128-gcm@openssh.com", "chacha20-poly1305@openssh.com", "diffie-hellman-group-exchange-sha256", "curve25519-sha256"}
 	// dial 获取ssh client
 	addr := fmt.Sprintf("%s:%s", Host, Port)
 	sshClient, err := ssh.Dial("tcp", addr, configssh)
