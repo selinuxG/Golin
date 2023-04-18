@@ -77,5 +77,21 @@ Flags:
   -i, --interface string   指定监听网卡 (default "\\Device\\NPF_{B3C9B1B3-FFC0-4D59-8667-4B0BF6D354CE}")
   -a, --interfaceall       显示本地所有网卡及IP地址
 ```
+### route
+```shell
+基于SSH的功能进行采集
+
+Usage:
+  golin route [flags]
+
+Flags:
+  -c, --cmd string        此参数是指定待自定义执行的命令文件
+  -C, --cmdvalue string   此参数是自定义执行命令（比-c优先级高）
+  -e, --echo              此参数是控制控制台是否输出结果,默认不进行输出
+  -h, --help              help for route
+  -i, --ip string         此参数是指定待远程采集的IP文件位置 (default "route.txt")
+  -p, --python            此参数是指定python位置，绝对路径，如'D:\python3\python.exe'
+  -s, --spript string     此参数是指定IP文件中的分隔字符 (default "~")
+```  
 ### 
 
