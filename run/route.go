@@ -89,6 +89,7 @@ func Route(cmd *cobra.Command, args []string) {
 	//python调用
 	python, err = cmd.Flags().GetBool("python")
 	if err != nil {
+		fmt.Println("解析python失败", err)
 		return
 	}
 	//设置python的位置，第一个传参为路径
@@ -179,17 +180,28 @@ func rourange(path string, spr string) {
 			pwdpath = filepath.Join(pwdpath, firepath)
 			//拼接命令，用“;”分隔
 			cmd := strings.Join(routecmd, ";")
-			if strings.Count(cmd, ";") > 1 {
+			if cmd[0:1] == ";" {
 				cmd = strings.Replace(cmd, ";", "", 1) //去除第一个“;”
-				cmd = strings.TrimRight(cmd, ";")      //删除最后一个“;”
 			}
-			runcmd := exec.Command(Python_path, global.Py_hw, pwdpath, Name, Host, User, Passwrod, strconv.Itoa(Port), strconv.FormatBool(echorun), cmd)
-			output, err := runcmd.Output()
+			if cmd[len(cmd)-1:] == ";" {
+				cmd = strings.TrimRight(cmd, ";") //删除最后一个“;”
+			}
+			runcmd := exec.Command(Python_path, global.Py_hw, pwdpath, Name, Host, User, Passwrod, strconv.Itoa(Port), cmd)
+			_, err := runcmd.Output()
 			if err != nil {
-				fmt.Println(err)
+				fmt.Println("执行命令", err)
 				return
 			}
-			fmt.Println(string(output))
+			if echorun {
+				echofile := filepath.Join(pwdpath, Name+"_"+Host+".log")
+				if global.PathExists(echofile) {
+					fmt.Println(echofile, "存在")
+					data, _ := ioutil.ReadFile(echofile)
+					fmt.Println(string(data))
+				} else {
+					zlog.Warn("未正常执行！", zap.String("IP:", Host))
+				}
+			}
 			//联调完毕后使用下面不输出不获取结果的方式
 			//err := runcmd.Run()
 			//if err != nil {
