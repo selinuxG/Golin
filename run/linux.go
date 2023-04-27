@@ -121,9 +121,8 @@ func Runssh(sshname string, sshHost string, sshUser string, sshPasswrod string, 
 		HostKeyCallback: ssh.InsecureIgnoreHostKey(),
 	}
 	configssh.Auth = []ssh.AuthMethod{ssh.Password(sshPasswrod)}
-	//增加旧版本算法支持
-	configssh.Ciphers = []string{"aes128-cbc", "aes256-cbc", "3des-cbc", "aes128-ctr", "aes192-ctr", "aes256-ctr", "aes128-gcm@openssh.com", "chacha20-poly1305@openssh.com"}
-	//configssh.KeyExchanges = []string{"diffie-hellman-group1-sha1", "diffie-hellman-group-exchange-sha256"},
+	//增加旧版本算法支持,部分机器会出现 ssh: handshake failed: ssh: packet too large 报错
+	//configssh.Ciphers = []string{"aes128-cbc", "aes256-cbc", "3des-cbc", "aes128-ctr", "aes192-ctr", "aes256-ctr", "aes128-gcm@openssh.com", "chacha20-poly1305@openssh.com"}
 
 	// dial 获取ssh client
 	addr := fmt.Sprintf("%s:%d", sshHost, sshPort)
