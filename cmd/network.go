@@ -12,7 +12,7 @@ import (
 
 var networkCmd = &cobra.Command{
 	Use:   "network",
-	Short: "运行抓包功能",
+	Short: "运行网络相关功能,目前仅有syslog模拟器",
 	Long:  "",
 	Run:   network.Networkrun,
 }

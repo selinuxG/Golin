@@ -195,8 +195,12 @@ func rourange(path string, spr string) {
 			if echorun {
 				echofile := filepath.Join(pwdpath, Name+"_"+Host+".log")
 				if global.PathExists(echofile) {
-					fmt.Println(echofile, "存在")
-					data, _ := ioutil.ReadFile(echofile)
+					//fmt.Println(echofile, "存在")
+					data, err := os.ReadFile(echofile)
+					if err != nil {
+						zlog.Warn("打开文件失败", zap.String("file:", echofile))
+						return
+					}
 					fmt.Println(string(data))
 				} else {
 					zlog.Warn("未正常执行！", zap.String("IP:", Host))

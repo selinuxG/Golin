@@ -1,3 +1,5 @@
+# 使用场景
+> 自动化运维、批量执行命令、等保（网络安全等级保护）自动化采集器
 # CLI版
 
 > 目前在从写阶段，V1版本主函数将近2000行代码，很难维护，并且存在诸多不足以及存在重复代码，此版本目的就是为了解决这个问题，并优化使用逻辑，做成一个正儿八经的命令行工具，并删除无用功能。
@@ -63,19 +65,15 @@ Flags:
 ```
 ### network
 ```shell
-基于google发布的库进行抓取流量
-过滤源 IP 地址为 192.168.1.1 的数据包：src host 192.168.1.1  过滤目标 IP 地址为 192.168.1.1 的数据包：dst host 192.168.1.1
-过滤源或目标 IP 地址为 192.168.1.1 的数据包：host 192.168.1.1  过滤源端口为 80 的数据包：src port 80
-过滤目标端口为 80 的数据包：dst port 80  过滤 TCP 数据包：tcp  过滤 UDP 数据包：udp  组合 多个条件进行过滤：tcp and dst port 80 and src host 192.168.1.1
+运行网络相关功能,目前仅有syslog模拟器
 
 Usage:
   golin network [flags]
 
 Flags:
-  -b, --bfp string         指定监听网卡 (default "tcp")
-  -h, --help               help for network
-  -i, --interface string   指定监听网卡 (default "\\Device\\NPF_{B3C9B1B3-FFC0-4D59-8667-4B0BF6D354CE}")
-  -a, --interfaceall       显示本地所有网卡及IP地址
+  -h, --help     help for network
+  -s, --syslog   模拟syslog接收端服务器
+
 ```
 ### route
 ```shell
@@ -95,3 +93,22 @@ Flags:
 ```  
 ### 
 
+### execl
+```shell
+通过读取xlsx文件生成golin可读取允许的格式文件
+
+Usage:
+  golin execl [flags]
+
+Flags:
+  -f, --file string     此参数是指定读取的文件
+  -h, --help            help for execl
+  -i, --ip string       此参数是指定ip代表的列
+  -n, --name string     此参数是指定名称代表的列
+  -p, --passwd string   此参数是指定密码所代表的列
+  -P, --port string     此参数是指定端口代表的列
+  -o, --sava string     此参数是指定保存的文件 (default "linux_xlsx.txt")
+  -s, --sheet string    此参数是指定sheet名称 (default "Sheet1")
+  -u, --user string     此参数是指定用户所代表的列
+
+```

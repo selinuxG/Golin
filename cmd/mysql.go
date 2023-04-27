@@ -12,7 +12,7 @@ import (
 // mysqlCmd represents the mysql command
 var mysqlCmd = &cobra.Command{
 	Use:   "mysql",
-	Short: "运行采集Myql功能",
+	Short: "运行采集MySql采集功能",
 	Long:  `基于Mysql远程通过多线程连接执行指定sql语句并记录,连接等待为10秒左右,连不上则断开。`,
 	Run:   run.Mysql,
 }
