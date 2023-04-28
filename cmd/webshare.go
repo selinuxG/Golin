@@ -1,6 +1,5 @@
 /*
-Copyright © 2022 NAME HERE <EMAIL ADDRESS>
-
+Copyright © 2022 NAME HERE <selinuxg@163.com>
 */
 package cmd
 
