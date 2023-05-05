@@ -19,9 +19,9 @@ import (
 )
 
 var (
-	routecmd    []string             //执行的命令列表
-	python      bool                 //python执行
-	Python_path = global.Python_path //默认运行python路径
+	routecmd    []string            //执行的命令列表
+	python      bool                //python执行
+	Python_path = global.PythonPath //默认运行python路径
 )
 
 func Route(cmd *cobra.Command, args []string) {
@@ -171,8 +171,8 @@ func rourange(path string, spr string) {
 		}
 		//是否为python运行，优先级最高
 		if python {
-			if !global.PathExists(global.Py_hw) {
-				zlog.Warn("python脚本不存在,跳过！", zap.String("path", global.Py_hw))
+			if !global.PathExists(filepath.Join(global.PythonDir, global.PyHw)) {
+				zlog.Warn("python脚本不存在,跳过！", zap.String("path", filepath.Join(global.PythonDir, global.PyHw)))
 				return
 			}
 			//拼接当前绝对路径
@@ -186,7 +186,7 @@ func rourange(path string, spr string) {
 			if cmd[len(cmd)-1:] == ";" {
 				cmd = strings.TrimRight(cmd, ";") //删除最后一个“;”
 			}
-			runcmd := exec.Command(Python_path, global.Py_hw, pwdpath, Name, Host, User, Passwrod, strconv.Itoa(Port), cmd)
+			runcmd := exec.Command(Python_path, filepath.Join(global.PythonDir, global.PyHw), pwdpath, Name, Host, User, Passwrod, strconv.Itoa(Port), cmd)
 			_, err := runcmd.Output()
 			if err != nil {
 				fmt.Println("执行命令", err)

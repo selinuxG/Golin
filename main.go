@@ -1,7 +1,6 @@
-/*
-Copyright © 2022 高业尚
-*/
 package main
+
+// Copyright © 2023 NAME HERE <selinuxg@163.com>
 
 import (
 	"fmt"

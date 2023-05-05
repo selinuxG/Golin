@@ -18,8 +18,10 @@ var (
 
 // 各类python程序路径
 var (
-	Python_path = "python"       //默认运行python路径
-	Py_hw       = "python/hw.py" //python ssh hw
+	PythonPath = "python" //默认运行python的环境变量
+	PythonDir  = "python" //承载各类python脚本的目录位置
+	PyHw       = "hw.py"  //python ssh hw
+	PyGui      = "Gui.py" //python gui 程序
 )
 
 // AppendToFile 创建追加写入函数

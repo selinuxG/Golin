@@ -1,6 +1,3 @@
-/*
-Copyright © 2023 NAME HERE <selinuxg@163.com>
-*/
 package cmd
 
 import (
@@ -11,7 +8,7 @@ import (
 // execlCmd represents the execl command
 var execlCmd = &cobra.Command{
 	Use:   "execl",
-	Short: "golin的辅助工具",
+	Short: "golin读取xlsx文件",
 	Long:  `通过读取xlsx文件生成golin可读取允许的格式文件`,
 	Run:   run.Execl,
 }

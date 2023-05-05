@@ -1,16 +1,12 @@
-/*
-Copyright © 2022 NAME HERE <selinuxg@163.com>
-*/
 package cmd
 
 import (
 	"fmt"
+	"github.com/spf13/cobra"
 	"net/http"
 	"os"
 	"os/exec"
 	"runtime"
-
-	"github.com/spf13/cobra"
 )
 
 // webshareCmd represents the webshare command
