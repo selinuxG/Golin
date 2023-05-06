@@ -6,6 +6,9 @@ from tkinter import ttk, filedialog
 import requests
 import webbrowser as web
 from subprocess import run
+import subprocess
+import io
+
 
 cmdpath = ""  # 运行linux模式下指定的cmd位置
 root = tk.Tk()
@@ -43,17 +46,55 @@ def delval():
     cmdpath = ""
     entry7.current(0)
 
+# cli模式
+def cli():
+    # 接收执行的命令并执行
+    def cli_input():
+        command = cmdrun.get()
+        #先删除
+        output_box.delete(1.0, tk.END)
+        process = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True, text=True,
+                                   encoding="utf-8", errors='replace')
+        output, error = process.communicate()
+        process.wait()
+        if process.returncode != 0:
+            print(error)
+            output_box.insert(tk.END, "Error: " + error + "\n")
+        else:
+            output_box.insert(tk.END, output.strip() + "\n")
+
+    root = tk.Toplevel()
+    root.title("Cli模式")
+    window_width,window_height = 855,180    # 设置新窗口的尺寸
+    screen_width,screen_height = root.winfo_screenwidth(),root.winfo_screenheight()    # 获取屏幕的宽度和高度
+    x_position,y_position = (screen_width // 2) - (window_width // 2),(screen_height // 2) - (window_height // 2)    # 计算新窗口的 x 和 y 坐标以使其居中
+    root.geometry(f"{window_width}x{window_height}+{x_position}+{y_position}")
+    # 输入命令提示
+    tk.Label(root, text="输入命令", background="#40E0D0").grid(row=0, column=0, padx=10, pady=5)
+    # 输入命令框
+    cmdrun = tk.Entry(root,width=105,textvariable=tk.StringVar(value='golin '))
+    cmdrun.grid(row=0, column=1)
+    # 输入框提交
+    tk.Button(root, text='run', background="#7FFFD4", command=cli_input).grid(row=0, column=2,padx=10,pady=5)
+    # 输入命令提示
+    tk.Label(root, text="结果展示", background="#40E0D0").grid(row=1, column=0, padx=10, pady=5)
+    # 结果展示
+    output_box = tk.Text(root, wrap=tk.WORD, height=10, width=105)
+    output_box.grid(row=1, column=1)
+
 
 menu1 = tk.Menu(root)
 menu1.add_command(label="下载Golin", command=wget)
 menu1.add_command(label="自定义命令", command=cmd)
 menu1.add_command(label="重置", command=delval)
-menu1.add_command(label="使用手册", command=help)
+menu1.add_command(label="cli", command=cli)
+menu1.add_command(label="help", command=help)
+
 root.config(menu=menu1)
 # 设置尺寸
 sw = root.winfo_screenwidth()
 sh = root.winfo_screenheight()
-ww = 280
+ww = 300
 wh = 280
 x = (sw - ww) / 2
 y = (sh - wh) / 2
