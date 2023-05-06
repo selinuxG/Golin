@@ -1,14 +1,12 @@
 # -*- coding: utf-8 -*-
+import os
+import subprocess
 import tkinter as tk
 import tkinter.messagebox
-import os
-from tkinter import ttk, filedialog
-import requests
 import webbrowser as web
 from subprocess import run
-import subprocess
-import io
-
+from tkinter import ttk, filedialog
+import requests
 
 cmdpath = ""  # 运行linux模式下指定的cmd位置
 root = tk.Tk()
