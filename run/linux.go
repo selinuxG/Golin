@@ -129,7 +129,7 @@ func Runssh(sshname string, sshHost string, sshUser string, sshPasswrod string, 
 	sshClient, err := ssh.Dial("tcp", addr, configssh)
 	if err != nil {
 		errhost = append(errhost, sshHost)
-		fmt.Println(err)
+		//fmt.Println(err)
 		return
 	}
 	defer sshClient.Close()

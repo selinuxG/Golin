@@ -1,6 +1,7 @@
 package run
 
 import (
+	"fmt"
 	"go.uber.org/zap"
 	"golin/config"
 	"golin/global"
@@ -187,6 +188,7 @@ func Deffile(moude string, count int, success int, errhost []string) {
 			zap.String("执行模式", moude),
 			zap.Int("采集总数量", count),
 			zap.Int("采集成功数量", success),
+			zap.String("成功率", "100%"),
 		)
 		return
 	}
@@ -195,8 +197,9 @@ func Deffile(moude string, count int, success int, errhost []string) {
 		zap.Int("采集总数量:", count),
 		zap.Int("采集成功数量:", success),
 		zap.Int("采集失败数量:", count-success),
+		zap.String("成功率", fmt.Sprintf("%.2f%%", calculateSuccessRate(success, count))),
 	)
-	if count-success > 0 {
+	if len(errhost) > 0 {
 		for _, v := range errhost {
 			config.Log.Warn("失败记录", zap.String("运行模式", moude), zap.String("IP", v))
 		}
@@ -211,4 +214,12 @@ func InSlice(items []string, item string) bool {
 		}
 	}
 	return false
+}
+
+// calculateSuccessRate 计算成功率
+func calculateSuccessRate(success, count int) float64 {
+	successFloat := float64(success)
+	countFloat := float64(count)
+	successRate := (successFloat / countFloat) * 100.0
+	return successRate
 }
