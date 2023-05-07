@@ -14,7 +14,7 @@ import (
 var guiCmd = &cobra.Command{
 	Use:   "gui",
 	Short: "运行简易版GUI辅助程序",
-	Long:  `通过python的tk开发,实现基本的增加资产并允许功能`,
+	Long:  `通过python的tk开发,实现基本的增加资产、运行、cli功能`,
 	Run: func(cmd *cobra.Command, args []string) {
 		guipath := filepath.Join(global.PythonDir, global.PyGui)
 		if !global.PathExists(guipath) {

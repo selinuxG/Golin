@@ -9,7 +9,7 @@ import (
 var execlCmd = &cobra.Command{
 	Use:   "execl",
 	Short: "golin读取xlsx文件",
-	Long:  `通过读取xlsx文件生成golin可读取允许的格式文件`,
+	Long:  `通过读取xlsx文件生成golin可读取的格式文件`,
 	Run:   run.Execl,
 }
 
