@@ -5,6 +5,17 @@
 > 此版本主做cli，目的是为了跨平台可用，并附带简易版Gui程序供选择。
 
 ## 子命令
+### update
+```shell
+通过api.github.com进行检查更新程序
+
+Usage:
+  golin update [flags]
+
+Flags:
+  -h, --help           help for update
+  -p, --proxy string   此参数是指定代理ip(仅允许http/https代理哦)
+```
 ### gui
 ```shell
 通过python的tk开发,实现基本的增加资产以及运行,cli功能

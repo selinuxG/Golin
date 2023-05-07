@@ -15,7 +15,7 @@ root.title("Golin辅助-高业尚v2")
 # 下载golin
 def wget():
     try:
-        r = requests.get("https://github.com/selinuxG/Golin-cli/releases/download/v1.2/golin.exe")
+        r = requests.get("https://github.com/selinuxG/Golin-cli/releases/download/v1.3/golin.exe")
         f = open("golin.exe", "wb")
         f.write(r.content)
         f.close()

@@ -4,6 +4,11 @@ import (
 	"os"
 )
 
+const (
+	Version = "v1.3"                                                            //当前版本
+	RepoUrl = "https://api.github.com/repos/selinuxg/Golin-cli/releases/latest" //仓库最新版本
+)
+
 var (
 	SuccessLog   = "log.log"                                            //运行记录
 	Split        = "~"                                                  //默认分割符号
