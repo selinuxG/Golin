@@ -9,6 +9,7 @@ import (
 	"net/http"
 	"net/url"
 	"os"
+	"strconv"
 	"strings"
 )
 
@@ -42,10 +43,9 @@ var updateCmd = &cobra.Command{
 				proxy, _ := cmd.Flags().GetString("proxy")
 				err := downloadFile(newrelease.Assets[0].BrowserDownloadUrl, "golin.exe", proxy)
 				if err != nil {
-					fmt.Printf("更新失败%s\n", err)
+					fmt.Println("Failed!")
 					return
 				}
-				fmt.Println("更新完成")
 				os.Exit(0)
 			case "n", "no":
 				fmt.Println("已取消更新...")
@@ -104,7 +104,6 @@ func checkForUpdate() (releaseInfo, error) {
 
 // downloadFile 下载更新
 func downloadFile(downurl, localPath, proxy string) error {
-	fmt.Println("开始更新....")
 	client := http.Client{}
 	if proxy != "" {
 		urli := url.URL{}
@@ -128,26 +127,65 @@ func downloadFile(downurl, localPath, proxy string) error {
 	if resp.StatusCode != http.StatusOK {
 		return fmt.Errorf("下载失败，状态码：%d", resp.StatusCode)
 	}
-	body, err := io.ReadAll(resp.Body)
-	if err != nil {
-		fmt.Println(err)
-		return nil
-	}
 
-	// 获取当前程序路径
+	// 获取文件大小
+	fileSize, _ := strconv.Atoi(resp.Header.Get("Content-Length"))
+	progressChan := make(chan int64)
+	go func() {
+		var lastProgress float64 // 更改为 float64
+		for progress := range progressChan {
+			percentage := float64(progress) / float64(fileSize) * 100
+			if percentage-lastProgress >= 1 {
+				fmt.Printf("\r更新进度: %.2f%%", percentage)
+				lastProgress = percentage
+			}
+		}
+		fmt.Printf("\r更新进度: %.2f%%\n", float64(100)) //手动增加此行防止不显示100%
+	}()
+	// 获取当前程序完整位置
 	exe, err := os.Executable()
 	if err != nil {
+		close(progressChan)
 		return nil
 	}
-	//备份当前程序：重命名
+	// 当前旧版程序重命名实现备份效果
 	err = os.Rename(exe, exe+".bak")
 	if err != nil {
+		close(progressChan)
 		return err
 	}
-	//更新写入
-	err = os.WriteFile(localPath, body, os.FileMode(global.FilePer))
+	// 写入最新版
+	out, err := os.Create(localPath)
 	if err != nil {
+		close(progressChan)
 		return err
 	}
+	defer out.Close()
+
+	// 写入文件并报告进度
+	writer := &progressWriter{
+		out:          out,
+		progressChan: progressChan,
+	}
+	_, err = io.Copy(writer, resp.Body)
+	if err != nil {
+		close(progressChan)
+		return err
+	}
+
+	close(progressChan)
 	return nil
+}
+
+type progressWriter struct {
+	out          io.Writer
+	written      int64
+	progressChan chan int64
+}
+
+func (pw *progressWriter) Write(p []byte) (int, error) {
+	n, err := pw.out.Write(p)
+	pw.written += int64(n)
+	pw.progressChan <- pw.written
+	return n, err
 }
