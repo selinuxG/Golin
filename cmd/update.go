@@ -9,6 +9,7 @@ import (
 	"net/http"
 	"net/url"
 	"os"
+	"strings"
 )
 
 // updateCmd represents the update command
@@ -35,24 +36,26 @@ var updateCmd = &cobra.Command{
 				fmt.Println("发生错误:", err)
 				continue
 			}
-
-			if input == "y" || input == "n" || input == "yes" || input == "no" {
-				break
-			} else {
-				fmt.Print("输入无效，请输入 y 或 n: ")
+			input = strings.ToLower(input) //所有大写转换为小写
+			switch input {
+			case "y", "yes":
+				proxy, _ := cmd.Flags().GetString("proxy")
+				err := downloadFile(newrelease.Assets[0].BrowserDownloadUrl, "golin.exe", proxy)
+				if err != nil {
+					fmt.Printf("更新失败%s\n", err)
+					return
+				}
+				fmt.Println("更新完成")
+				os.Exit(0)
+			case "n", "no":
+				fmt.Println("已取消更新...")
+				os.Exit(0)
+			default:
+				fmt.Printf("输入无效,请输入y/n:")
+				continue
 			}
 		}
-		if input == "y" || input == "yes" {
-			proxy, _ := cmd.Flags().GetString("proxy")
-			err := downloadFile(newrelease.Assets[0].BrowserDownloadUrl, "golin.exe", proxy)
-			if err != nil {
-				fmt.Printf("更新失败%s\n", err)
-				return
-			}
-			fmt.Println("更新完成!")
-		}
-	},
-}
+	}}
 
 func init() {
 	rootCmd.AddCommand(updateCmd)
