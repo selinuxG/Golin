@@ -1,9 +1,9 @@
 package cmd
 
 import (
+	"bufio"
 	"encoding/json"
 	"fmt"
-	"github.com/spf13/cobra"
 	"golin/global"
 	"io"
 	"net/http"
@@ -11,6 +11,8 @@ import (
 	"os"
 	"strconv"
 	"strings"
+
+	"github.com/spf13/cobra"
 )
 
 // updateCmd represents the update command
@@ -130,62 +132,44 @@ func downloadFile(downurl, localPath, proxy string) error {
 
 	// 获取文件大小
 	fileSize, _ := strconv.Atoi(resp.Header.Get("Content-Length"))
-	progressChan := make(chan int64)
-	go func() {
-		var lastProgress float64 // 更改为 float64
-		for progress := range progressChan {
-			percentage := float64(progress) / float64(fileSize) * 100
-			if percentage-lastProgress >= 1 {
-				fmt.Printf("\r更新进度: %.2f%%", percentage)
-				lastProgress = percentage
-			}
-		}
-		fmt.Printf("\r更新进度: %.2f%%\n", float64(100)) //手动增加此行防止不显示100%
-	}()
 	// 获取当前程序完整位置
 	exe, err := os.Executable()
 	if err != nil {
-		close(progressChan)
 		return nil
 	}
 	// 当前旧版程序重命名实现备份效果
 	err = os.Rename(exe, exe+".bak")
 	if err != nil {
-		close(progressChan)
 		return err
 	}
 	// 写入最新版
 	out, err := os.Create(localPath)
 	if err != nil {
-		close(progressChan)
 		return err
 	}
 	defer out.Close()
 
-	// 写入文件并报告进度
-	writer := &progressWriter{
-		out:          out,
-		progressChan: progressChan,
-	}
-	_, err = io.Copy(writer, resp.Body)
-	if err != nil {
-		close(progressChan)
-		return err
+	reader := bufio.NewReader(resp.Body)
+	buff := make([]byte, 1024)
+	progressed := 0
+	for {
+		n, err := reader.Read(buff)
+		if err != nil {
+			if err != io.EOF {
+				return err
+			}
+			break
+		}
+		_, err = out.Write(buff[:n])
+		if err != nil {
+			return err
+		}
+		progressed += n
+		percentage := float64(progressed) / float64(fileSize) * 100
+
+		fmt.Printf("\r更新进度: %.2f%%", percentage)
 	}
 
-	close(progressChan)
+	fmt.Printf("\r更新进度: %.2f%%\n", float64(100)) //手动增加此行防止不显示100%
 	return nil
-}
-
-type progressWriter struct {
-	out          io.Writer
-	written      int64
-	progressChan chan int64
-}
-
-func (pw *progressWriter) Write(p []byte) (int, error) {
-	n, err := pw.out.Write(p)
-	pw.written += int64(n)
-	pw.progressChan <- pw.written
-	return n, err
 }
