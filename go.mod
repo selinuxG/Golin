@@ -5,6 +5,7 @@ go 1.20
 require (
 	github.com/go-redis/redis/v8 v8.11.5
 	github.com/jinzhu/gorm v1.9.16
+	github.com/mattn/go-colorable v0.1.13
 	github.com/spf13/cobra v1.6.1
 	github.com/xuri/excelize/v2 v2.7.1
 	go.uber.org/zap v1.24.0
@@ -18,6 +19,7 @@ require (
 	github.com/go-sql-driver/mysql v1.7.0 // indirect
 	github.com/inconshreveable/mousetrap v1.0.1 // indirect
 	github.com/jinzhu/inflection v1.0.0 // indirect
+	github.com/mattn/go-isatty v0.0.16 // indirect
 	github.com/mohae/deepcopy v0.0.0-20170929034955-c48cc78d4826 // indirect
 	github.com/richardlehane/mscfb v1.0.4 // indirect
 	github.com/richardlehane/msoleps v1.0.3 // indirect

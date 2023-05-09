@@ -12,6 +12,7 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/mattn/go-colorable"
 	"github.com/spf13/cobra"
 )
 
@@ -167,8 +168,26 @@ func downloadFile(downurl, localPath, proxy string) error {
 		}
 		progressed += n
 		percentage := float64(progressed) / float64(fileSize) * 100
+		colorOutput := colorable.NewColorableStdout()
 
-		fmt.Printf("\r更新进度: %.2f%%", percentage)
+		// 设置文本颜色为红色
+		redColor := "\033[31m"
+		// 设置文本颜色为绿色
+		greenColor := "\033[32m"
+		// 重置文本颜色
+		resetColor := "\033[0m"
+		// 根据百分比值选择相应颜色
+		var colorCode string
+		if percentage < 100 {
+			colorCode = redColor
+		} else {
+			colorCode = greenColor
+		}
+
+		// 使用定义好的颜色打印进度
+		fmt.Fprintf(colorOutput, "\r更新进度: %s%.2f%%%s", colorCode, percentage, resetColor)
+
+		//fmt.Printf("\r更新进度: %s%.2f%%%s", colorCode, percentage, resetColor)
 	}
 
 	return nil
