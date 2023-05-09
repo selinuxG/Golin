@@ -119,18 +119,18 @@ func Onlyonerun(value string, spr string, runtype string) {
 	address := net.ParseIP(Host)
 	if address == nil {
 		zlog.Warn("错误！不是正确的IP地址,退出！")
-		os.Exit(3)
+		return
 	}
 	//判断端口范围是否是1-65535
 	if Port == 0 || Port > 65535 {
 		zlog.Warn("错误！不是正确的端口范围,退出！")
-		os.Exit(3)
+		return
 	}
 	//如果是Windows先判断保存文件是否存在特殊字符,是的话不执行直接记录为失败主机
 	if runtime.GOOS == "windows" {
 		if InSlice(denynametype, Name) {
 			zlog.Warn("错误！保存文件包含特殊字符,无法保存,请修改在执行！")
-			os.Exit(3)
+			return
 		}
 	}
 	switch runtype {
