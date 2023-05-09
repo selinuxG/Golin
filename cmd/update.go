@@ -171,6 +171,5 @@ func downloadFile(downurl, localPath, proxy string) error {
 		fmt.Printf("\r更新进度: %.2f%%", percentage)
 	}
 
-	fmt.Printf("\r更新进度: %.2f%%\n", float64(100)) //手动增加此行防止不显示100%
 	return nil
 }
