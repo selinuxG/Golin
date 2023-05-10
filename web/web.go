@@ -5,7 +5,6 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/spf13/cobra"
 	"golin/global"
-	"golin/run"
 	"html/template"
 	"net/http"
 	"path/filepath"
@@ -32,17 +31,14 @@ func GolinIndex(c *gin.Context) {
 	c.HTML(http.StatusOK, "index", "")
 }
 
-// runtypepath 不同类型对应的采集完成目录的文件夹，拼接目录用
-var runtypepath = map[string]string{"Linux": "Linux", "Mysql": "MySQL", "Redis": "Redis"}
-
 // GolinSubmit 提交任务
 func GolinSubmit(c *gin.Context) {
 	name, ip, user, passwd, port, mode := c.PostForm("name"), c.PostForm("ip"), c.PostForm("user"), c.PostForm("password"), c.PostForm("port"), c.PostForm("run_mode")
-	//fmt.Println(name, ip, user, passwd, port, mode)
-	run.Onlyonerun(fmt.Sprintf("%s~~~%s~~~%s~~~%s~~~%s", name, ip, user, passwd, port), "~~~", mode)
-	successfile := filepath.Join(global.Succpath, runtypepath[mode], name+"_"+ip+".log")
+	fmt.Println(name, ip, user, passwd, port, mode)
+	//run.Onlyonerun(fmt.Sprintf("%s~~~%s~~~%s~~~%s~~~%s", name, ip, user, passwd, port), "~~~", mode)
+	successfile := filepath.Join(global.Succpath, mode, name+"_"+ip+".log")
 	if global.PathExists(successfile) {
-		filename := fmt.Sprintf("%s_%s(%s).log)", name, ip, mode)
+		filename := fmt.Sprintf("%s_%s(%s).log", name, ip, mode)
 		c.Header("Content-Description", "File Transfer")
 		c.Header("Content-Disposition", "attachment; filename="+filename)
 		c.Header("Content-Type", "application/octet-stream")

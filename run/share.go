@@ -147,6 +147,7 @@ func Onlyonerun(value string, spr string, runtype string) {
 		config.Log.Info("开启运行Redis模式", zap.String("名称:", Name), zap.String("IP", Host))
 		go Runredis(Name, User, Host, Passwrod, strconv.Itoa(Port))
 	}
+	wg.Wait() //等待运行结束
 }
 
 // Checkfile 判断某个模式下的默认文件是否存在
