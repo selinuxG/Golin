@@ -5,6 +5,19 @@
 > 此版本主做cli，目的是为了跨平台可用，并附带简易版Gui程序供选择。
 
 ## 子命令
+
+### web
+```shell
+Usage:
+  golin web [flags]
+
+Flags:
+  -h, --help          help for web
+  -i, --ip string     指定运行网卡ip (default "127.0.0.1")
+  -p, --port string   指定运行端口 (default "1818")
+  -s, --save          是否额外保存文件
+```
+
 ### update
 ```shell
 通过api.github.com进行检查更新程序

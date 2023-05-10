@@ -8,6 +8,7 @@ import (
 	"golin/run"
 	"html/template"
 	"net/http"
+	"os"
 	"path/filepath"
 )
 
@@ -36,22 +37,30 @@ func GolinIndex(c *gin.Context) {
 func GolinSubmit(c *gin.Context) {
 	name, ip, user, passwd, port, mode := c.PostForm("name"), c.PostForm("ip"), c.PostForm("user"), c.PostForm("password"), c.PostForm("port"), c.PostForm("run_mode")
 	//fmt.Println(name, ip, user, passwd, port, mode)
-	run.Onlyonerun(fmt.Sprintf("%s~~~%s~~~%s~~~%s~~~%s", name, ip, user, passwd, port), "~~~", mode)
-	successfile := filepath.Join(global.Succpath, mode, name+"_"+ip+".log")
+	savefilename := fmt.Sprintf("%s_%s.log", name, ip)                //保存的文件夹名：名称_ip.log
+	successfile := filepath.Join(global.Succpath, mode, savefilename) //保存的完整路径
 	if global.PathExists(successfile) {
-		filename := fmt.Sprintf("%s_%s(%s).log", name, ip, mode)
+		c.String(http.StatusOK, "保存的文件中有重名文件，更换一个吧客官~")
+		c.Abort()
+		return
+	}
+	run.Onlyonerun(fmt.Sprintf("%s~~~%s~~~%s~~~%s~~~%s", name, ip, user, passwd, port), "~~~", mode)
+	if global.PathExists(successfile) {
+		//如果不保存文件，文件返回后删除
+		defer func() {
+			if !save {
+				os.Remove(successfile)
+			}
+		}()
 		c.Header("Content-Description", "File Transfer")
-		c.Header("Content-Disposition", "attachment; filename="+filename)
+		c.Header("Content-Disposition", "attachment; filename="+fmt.Sprintf(fmt.Sprintf("%s_%s(%s).log", name, ip, mode)))
 		c.Header("Content-Type", "application/octet-stream")
 		//返回文件
 		c.File(successfile)
-		//此处暂时不生效，待解决！
-		//if !save {
-		//	os.Remove(successfile)
-		//}
 	} else {
 		c.String(200, "失败了哦客官～")
 	}
+
 }
 
 // IndexTemplate 返回包含模板内容的模板结构体
