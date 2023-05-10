@@ -5,6 +5,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/spf13/cobra"
 	"golin/global"
+	"golin/run"
 	"html/template"
 	"net/http"
 	"path/filepath"
@@ -34,8 +35,8 @@ func GolinIndex(c *gin.Context) {
 // GolinSubmit 提交任务
 func GolinSubmit(c *gin.Context) {
 	name, ip, user, passwd, port, mode := c.PostForm("name"), c.PostForm("ip"), c.PostForm("user"), c.PostForm("password"), c.PostForm("port"), c.PostForm("run_mode")
-	fmt.Println(name, ip, user, passwd, port, mode)
-	//run.Onlyonerun(fmt.Sprintf("%s~~~%s~~~%s~~~%s~~~%s", name, ip, user, passwd, port), "~~~", mode)
+	//fmt.Println(name, ip, user, passwd, port, mode)
+	run.Onlyonerun(fmt.Sprintf("%s~~~%s~~~%s~~~%s~~~%s", name, ip, user, passwd, port), "~~~", mode)
 	successfile := filepath.Join(global.Succpath, mode, name+"_"+ip+".log")
 	if global.PathExists(successfile) {
 		filename := fmt.Sprintf("%s_%s(%s).log", name, ip, mode)
