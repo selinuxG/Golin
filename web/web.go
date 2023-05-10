@@ -35,7 +35,7 @@ func GolinIndex(c *gin.Context) {
 
 // GolinSubmit 提交任务
 func GolinSubmit(c *gin.Context) {
-	name, ip, user, passwd, port, mode := c.PostForm("name"), c.PostForm("ip"), c.PostForm("user"), c.PostForm("password"), c.PostForm("port"), c.PostForm("run_mode")
+	name, ip, user, passwd, port, mode, down := c.PostForm("name"), c.PostForm("ip"), c.PostForm("user"), c.PostForm("password"), c.PostForm("port"), c.PostForm("run_mode"), c.PostForm("down")
 	//fmt.Println(name, ip, user, passwd, port, mode)
 	savefilename := fmt.Sprintf("%s_%s.log", name, ip)                //保存的文件夹名：名称_ip.log
 	successfile := filepath.Join(global.Succpath, mode, savefilename) //保存的完整路径
@@ -52,9 +52,12 @@ func GolinSubmit(c *gin.Context) {
 				os.Remove(successfile)
 			}
 		}()
-		c.Header("Content-Description", "File Transfer")
-		c.Header("Content-Disposition", "attachment; filename="+fmt.Sprintf(fmt.Sprintf("%s_%s(%s).log", name, ip, mode)))
-		c.Header("Content-Type", "application/octet-stream")
+		//down下载文件,preview预览文件
+		if down == "down" {
+			c.Header("Content-Description", "File Transfer")
+			c.Header("Content-Disposition", "attachment; filename="+fmt.Sprintf(fmt.Sprintf("%s_%s(%s).log", name, ip, mode)))
+			c.Header("Content-Type", "application/octet-stream")
+		}
 		//返回文件
 		c.File(successfile)
 	} else {
