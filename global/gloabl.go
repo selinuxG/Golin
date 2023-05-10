@@ -5,7 +5,7 @@ import (
 )
 
 const (
-	Version = "v1.3"                                                            //当前版本
+	Version = "v1.4"                                                            //新增web功能
 	RepoUrl = "https://api.github.com/repos/selinuxg/Golin-cli/releases/latest" //仓库最新版本
 )
 
