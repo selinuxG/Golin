@@ -149,7 +149,7 @@ func IndexHtml() string {
             <label for="run_mode">模式：</label>
             <select id="run_mode" name="run_mode" style="width: 100%;">
                 <option value="Linux">Linux</option>
-                <option value="Mysql">MySQL</option>
+                <option value="MySQL">MySQL</option>
                 <option value="Redis">Redis</option>
             </select>
         </div>

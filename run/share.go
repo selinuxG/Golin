@@ -138,7 +138,7 @@ func Onlyonerun(value string, spr string, runtype string) {
 		wg.Add(1)
 		zlog.Info("开启运行Linux模式", zap.String("名称:", Name), zap.String("IP", Host))
 		go Runssh(Name, Host, User, Passwrod, Port, runcmd)
-	case "Mysql":
+	case "MySQL":
 		wg.Add(1)
 		config.Log.Info("开启运行Mysql模式", zap.String("名称:", Name), zap.String("IP", Host))
 		go RunMysql(Name, User, Passwrod, Host, strconv.Itoa(Port))
