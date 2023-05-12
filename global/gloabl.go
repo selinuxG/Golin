@@ -5,7 +5,7 @@ import (
 )
 
 const (
-	Version = "v1.4"                                                            //新增web功能
+	Version = "v1.5"                                                            //web新增网络设备模式；自定义命令增加本地数据库格式命令
 	RepoUrl = "https://api.github.com/repos/selinuxg/Golin-cli/releases/latest" //仓库最新版本
 )
 
@@ -17,7 +17,7 @@ var (
 	CmdRedisPath = "redis.txt"                                          //默认Redis模式多主机模式下读取的文件
 	CmdRoutepath = "route.txt"                                          //默认route模式多主机模式下读取的文件
 	FilePer      = 0644                                                 //创建文件或目录时的默认权限，必须是0开头
-	Succpath     = "采集完成目录"                                             //成功主机写入日志的目录
+	Succpath     = "采集完成目录"                                       //成功主机写入日志的目录
 	Denynametype = []string{"\\", "\\/", "*", "?", "\"", "<", ">", "|"} //windos下不允许创建名称的特殊符号。
 )
 

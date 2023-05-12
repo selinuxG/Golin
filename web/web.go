@@ -9,7 +9,9 @@ import (
 	"html/template"
 	"net/http"
 	"os"
+	"os/exec"
 	"path/filepath"
+	"runtime"
 )
 
 var save bool
@@ -25,6 +27,17 @@ func Start(cmd *cobra.Command, args []string) {
 		golin.GET("/index", GolinIndex)    //首页
 		golin.POST("/submit", GolinSubmit) //提交任务
 	}
+	// Windows下在默认浏览器中打开网页
+	go func() {
+		if runtime.GOOS == "windows" {
+			cmd := exec.Command("cmd", "/C", fmt.Sprintf("start http://%s:%s/golin/index", ip, port))
+			err := cmd.Run()
+			if err != nil {
+				fmt.Println("Error opening the browser:", err)
+			}
+		}
+	}()
+	// 启动gin
 	r.Run(ip + ":" + port)
 }
 
@@ -44,7 +57,17 @@ func GolinSubmit(c *gin.Context) {
 		c.Abort()
 		return
 	}
-	run.Onlyonerun(fmt.Sprintf("%s~~~%s~~~%s~~~%s~~~%s", name, ip, user, passwd, port), "~~~", mode)
+
+	switch mode {
+	case "Route": //路由模式是单独的
+		for _, cmd := range run.Defroutecmd {
+			run.Routessh(successfile, ip, user, passwd, port, cmd)
+		}
+	default: //其他模式统一函数传参
+		run.Onlyonerun(fmt.Sprintf("%s~~~%s~~~%s~~~%s~~~%s", name, ip, user, passwd, port), "~~~", mode)
+	}
+
+	//run.Onlyonerun(fmt.Sprintf("%s~~~%s~~~%s~~~%s~~~%s", name, ip, user, passwd, port), "~~~", mode)
 	if global.PathExists(successfile) {
 		//如果不保存文件，文件返回后删除
 		defer func() {

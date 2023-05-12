@@ -8,7 +8,7 @@ func IndexHtml() string {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Golin自动化平台</title>
+    <title>Golin自动化平台_高业尚</title>
 
     <style>
         html,
@@ -151,6 +151,7 @@ func IndexHtml() string {
                 <option value="Linux">Linux</option>
                 <option value="MySQL">MySQL</option>
                 <option value="Redis">Redis</option>
+                <option value="Route">网络设备</option>
             </select>
         </div>
 

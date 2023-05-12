@@ -1,0 +1,1 @@
+mysql -uroot -p123456 -Dmysql -e"select version();select user,host from mysql.user"

@@ -22,6 +22,7 @@ var (
 	routecmd    []string            //执行的命令列表
 	python      bool                //python执行
 	Python_path = global.PythonPath //默认运行python路径
+	Defroutecmd = []string{"display version", "disp curr", "disp interface brief", "disp cpu-usage", "disp acl all", "disp password-control", "display users", "display log"}
 )
 
 func Route(cmd *cobra.Command, args []string) {
@@ -66,7 +67,7 @@ func Route(cmd *cobra.Command, args []string) {
 			routecmd = append(routecmd, v)
 		}
 	} else {
-		defroutecmd()
+		routecmd = Defroutecmd
 	}
 
 	//判断是否有自定义执行的命令，如果有则处理他，不执行cmd文件中的命令。
@@ -284,19 +285,20 @@ func Routessh(filename, Host, User, Passwrod, Port, Cmd string) {
 }
 
 // 默认命令
-func defroutecmd() {
-	cmd := `
-display version
-disp curr
-disp interface brief
-disp cpu-usage
-disp acl all
-disp password-control
-display log
-display users
-`
-	cmdlist := strings.Split(cmd, "\n")
-	for i := 0; i < len(cmdlist); i++ {
-		routecmd = append(routecmd, cmdlist[i])
-	}
-}
+//func Defroutecmd() []string {
+//	cmd := `
+//display version
+//disp curr
+//disp interface brief
+//disp cpu-usage
+//disp acl all
+//disp password-control
+//display log
+//display users`
+//	var routecmd []string
+//	cmdlist := strings.Split(cmd, "\n")
+//	for i := 0; i < len(cmdlist); i++ {
+//		routecmd = append(routecmd, cmdlist[i])
+//	}
+//	return routecmd
+//}
