@@ -97,6 +97,14 @@ func IndexHtml() string {
             font-weight: bold;
             margin-bottom: 14px;
         }
+        footer {
+            position: fixed;
+            bottom: 1rem;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 14px;
+            text-align: center;
+        }
     </style>
     <script>
         function handleSubmit(event) {
@@ -123,7 +131,7 @@ func IndexHtml() string {
 
 <body>
     <form id="golinForm" action="/golin/submit" method="post" onsubmit="handleSubmit(event)">
-        <div class="title">资产运行表</div>
+        <div class="title">单主机模式:版本</div>
 
         <div class="from-group">
             <label for="name">名称：</label>
@@ -164,6 +172,10 @@ func IndexHtml() string {
         </div>
         <input type="submit" value="提交">
     </form>
+    <footer>
+        如有用点个星星吧~
+        <a style="text-decoration: none;color: rgb(82, 196, 54);" href="https://github.com/selinuxG/Golin-cli" target="_blank">GitHub</a>
+    </footer>
 </body>
 
 </html>
@@ -237,11 +249,19 @@ func IndexFilehtml() string {
             padding: 15px;
             margin-bottom: 20px;
         }
+        footer {
+            position: fixed;
+            bottom: 1rem;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 14px;
+            text-align: center;
+        }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>多主机提交页面</h1>
+        <h1>多主机模式:版本</h1>
         <a href="/golin/index" class="single-host-mode-btn">单主机模式</a>
         <a href="/golin/modefile" class="download-btn">下载模板文件</a>
         <form action="/golin/submitfile" method="POST" enctype="multipart/form-data">
@@ -255,6 +275,10 @@ func IndexFilehtml() string {
             <button type="submit" class="download-btn">提交任务</button>
         </form>
     </div>
+    <footer>
+        如有用点个星星吧~ 
+        <a style="text-decoration: none;color: rgb(82, 196, 54);" href="https://github.com/selinuxG/Golin-cli" target="_blank">GitHub</a>
+    </footer>
 </body>
 </html>
 `
