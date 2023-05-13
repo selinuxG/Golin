@@ -8,7 +8,7 @@ func IndexHtml() string {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Golin自动化平台_高业尚</title>
+    <title>Golin自动化平台_单主机(高业尚:版本)</title>
 
     <style>
         html,
@@ -179,7 +179,7 @@ func IndexFilehtml() string {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>文件操作页面</title>
+    <title>Golin自动化平台_多主机(高业尚:版本)</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -251,9 +251,8 @@ func IndexFilehtml() string {
                 <option value="Linux">Linux</option>
                 <option value="Mysql">MySQL</option>
                 <option value="Redis">Redis</option>
-                <option value="Route">网络设备</option>
             </select>
-            <button type="submit" class="download-btn">提交表单</button>
+            <button type="submit" class="download-btn">提交任务</button>
         </form>
     </div>
 </body>

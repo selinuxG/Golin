@@ -10,19 +10,22 @@ import (
 	"os/exec"
 	"path/filepath"
 	"runtime"
+	"strings"
 	"time"
 )
 
 // GolinIndex 单主机首页
 func GolinIndex(c *gin.Context) {
 	c.Header("Content-Type", "text/html; charset=utf-8")
-	c.String(http.StatusOK, IndexHtml())
+	indexhtml := strings.Replace(IndexHtml(), "版本", global.Version, -1)
+	c.String(http.StatusOK, indexhtml)
 }
 
 // GolinIndexFile 多主机首页
 func GolinIndexFile(c *gin.Context) {
 	c.Header("Content-Type", "text/html; charset=utf-8")
-	c.String(http.StatusOK, IndexFilehtml())
+	indexhtml := strings.Replace(IndexFilehtml(), "版本", global.Version, -1)
+	c.String(http.StatusOK, indexhtml)
 }
 
 func GolinSubmitFile(c *gin.Context) {
