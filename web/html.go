@@ -169,3 +169,94 @@ func IndexHtml() string {
 </html>
 `
 }
+
+// 多主机文件
+
+func IndexFilehtml() string {
+	return `
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>文件操作页面</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f2f2f2;
+        }
+        .container {
+            width: 500px;
+            background-color: #ffffff;
+            padding: 40px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            border-radius: 10px;
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        button[type="submit"],
+        a.download-btn,
+        label.upload-btn,
+        a.single-host-mode-btn {
+            display: block;
+            text-align: center;
+            text-decoration: none;
+            color: #ffffff;
+            padding: 15px;
+            border-radius: 5px;
+            border: none;
+            cursor: pointer;
+            margin-bottom: 20px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+        a.download-btn {
+            background-color: #3498db;
+        }
+        input[type="file"] {
+            display: none;
+        }
+        label.upload-btn {
+            background-color: #34495e;
+        }
+        button[type="submit"] {
+            background-color: #27ae60;
+        }
+        a.single-host-mode-btn {
+            background-color: #9b59b6;
+        }
+        select.mode-select {
+            display: block;
+            width: 100%;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>多主机提交页面</h1>
+        <a href="/golin/index" class="single-host-mode-btn">单主机模式</a>
+        <a href="/golin/modefile" class="download-btn">下载模板文件</a>
+        <form action="/golin/submitfile" method="POST" enctype="multipart/form-data">
+            <label for="file-upload" class="upload-btn">上传文件路径</label>
+            <input type="file" id="file-upload" name="uploaded-file" onchange="document.querySelector('.upload-btn').textContent = this.files[0].name">
+            <select class="mode-select" name="mode">
+                <option value="Linux">Linux</option>
+                <option value="Mysql">MySQL</option>
+                <option value="Redis">Redis</option>
+                <option value="Route">网络设备</option>
+            </select>
+            <button type="submit" class="download-btn">提交表单</button>
+        </form>
+    </div>
+</body>
+</html>
+`
+}

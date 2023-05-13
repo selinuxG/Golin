@@ -96,6 +96,7 @@ func Rangefile(path string, spr string, runtype string) {
 			go Runredis(Name, User, Host, Passwrod, strconv.Itoa(Port))
 		}
 	}
+	wg.Wait()
 }
 
 // Onlyonerun 只允许一次的模式

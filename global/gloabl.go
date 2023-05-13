@@ -1,12 +1,19 @@
 package global
 
 import (
+	"net"
 	"os"
 )
 
 const (
-	Version = "v1.5"                                                            //web新增网络设备模式；自定义命令增加本地数据库格式命令
+	Version      = "v1.6"       //web新增网络设备模式；自定义命令增加本地数据库格式命令
+	Releasenotes = "web新增多主机模式" //web新增网络设备模式；自定义命令增加本地数据库格式命令
+
 	RepoUrl = "https://api.github.com/repos/selinuxg/Golin-cli/releases/latest" //仓库最新版本
+)
+
+const (
+	XlsxTemplateName = "golin上传文件模板文件.xlsx"
 )
 
 var (
@@ -66,4 +73,29 @@ func PathExists(path string) bool {
 		return false
 	}
 	return false
+}
+
+// GetLocalIPAddresses 获取本机网卡ip
+func GetLocalIPAddresses() ([]string, error) {
+	addrs, err := net.InterfaceAddrs()
+	if err != nil {
+		return nil, err
+	}
+
+	var ips []string
+	for _, addr := range addrs {
+		ipNet, ok := addr.(*net.IPNet)
+		if !ok || ipNet.IP.IsLoopback() {
+			continue
+		}
+
+		ip := ipNet.IP.To4()
+		if ip == nil { // 排除IPv6地址
+			continue
+		}
+
+		ips = append(ips, ip.String())
+	}
+
+	return ips, nil
 }
