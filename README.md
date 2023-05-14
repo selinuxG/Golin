@@ -1,8 +1,10 @@
-# 使用场景
-> 自动化运维、批量执行命令、等保（网络安全等级保护）测评工具、基线核查工具
-# CLI版
 
-> 此版本主做cli，目的是为了跨平台可用，并附带简易版Gui程序供选择。
+# 使用说明
+> 此版本初衷是只做CLI版本,压缩体积小、跨平台可用，随着功能越多、参数越多使用人记不住参数，增加了基于Python的简易Gui版本，可满足基本增加资产、运行不同模式、运行Cli指令，增加了基于Web的多主机以及单主机不同模式的基本运行功能。注：完整使用功能建议使用Cli版本。
+
+
+# 使用场景
+> 自动化运维、多线程Linux、MySql、Redis、网络设备批量执行命令、等级保护（网络安全等级保护）现场测评工具、基线核查工具、测试syslog等
 
 ## 子命令
 
@@ -137,5 +139,17 @@ Flags:
   -o, --sava string     此参数是指定保存的文件 (default "linux_xlsx.txt")
   -s, --sheet string    此参数是指定sheet名称 (default "Sheet1")
   -u, --user string     此参数是指定用户所代表的列
-
+```
+# 制作不同模式编辑启动脚本(bat)
+## gui
+```
+@echo off
+if "%1" == "h" goto begin
+mshta vbscript:createobject("wscript.shell").run("%~nx0 h",0)(window.close)&&exit
+:begin
+golin.exe gui
+```
+## web
+```
+golin.exe gui
 ```
