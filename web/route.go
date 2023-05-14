@@ -83,6 +83,14 @@ func GolinSubmitFile(c *gin.Context) {
 							return
 						}
 					}
+					GolinErrorhtml("Success", "虽然成功了，但是不是本地请求不给你看文件哦~", c)
+					c.Abort()
+					return
+				} else {
+					//获取确认是否有必要优化
+					GolinErrorhtml("Success", "虽然成功了，但是运行在非Windows下，手动打开存储目录看吧~", c)
+					c.Abort()
+					return
 				}
 			}
 		}
