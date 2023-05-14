@@ -54,6 +54,10 @@ func Runredis(myname, myuser, myhost, mypasswd, myport1 string) {
 	Port := strings.Replace(myport1, "\r", "", -1)
 	ctx := context.Background()
 	adr := myhost + ":" + Port
+	//如果为user=null则改为空密码，web功能会用到此功能
+	if myuser == "null" {
+		myuser = ""
+	}
 	client := redis.NewClient(&redis.Options{
 		Addr:            adr,
 		Username:        myuser,
