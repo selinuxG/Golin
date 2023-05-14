@@ -173,7 +173,7 @@ func IndexHtml() string {
         <input type="submit" value="提交">
     </form>
     <footer>
-        如有用点个星星吧~
+        如觉得对自己有帮助点个星星吧~
         <a style="text-decoration: none;color: rgb(82, 196, 54);" href="https://github.com/selinuxG/Golin-cli" target="_blank">GitHub</a>
     </footer>
 </body>
@@ -276,7 +276,7 @@ func IndexFilehtml() string {
         </form>
     </div>
     <footer>
-        如有用点个星星吧~ 
+        如觉得对自己有帮助点个星星吧~ 
         <a style="text-decoration: none;color: rgb(82, 196, 54);" href="https://github.com/selinuxG/Golin-cli" target="_blank">GitHub</a>
     </footer>
 </body>
@@ -364,9 +364,113 @@ func ErrorHtml() string {
   <div class="container">
     <h1>status</h1>
     <p>errbody</p>
-    <a href="/golin/indexfile">返回首页</a>
+    <a href="/golin/gys">返回首页</a>
   </div>
 </body>
 </html>
 `
+}
+
+// GolinHomeHtml 返回首页
+func GolinHomeHtml() string {
+	return `
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Golin Web</title>
+    <style>
+        body {
+            font-family: Arial, "微软雅黑", sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(120deg, #84fab0 0%, #8fd3f4 100%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 960px;
+            margin: 0 auto;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background-color: rgba(255, 255, 255, 0.8);
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 3rem;
+            color: #333;
+            margin-bottom: 50px;
+        }
+
+        .btn-group {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 20px;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 10px 20px;
+            border-radius: 5px;
+            font-size: 1.2rem;
+            text-align: center;
+            text-decoration: none;
+            background-color: #007bff;
+            color: #fff;
+            transition: background-color 0.3s, box-shadow 0.3s;
+            box-shadow: 0 4px 14px 0 rgba(0, 118, 255, 0.39);
+        }
+
+        .btn:hover {
+            background-color: #0056b3;
+            box-shadow: 0 6px 20px rgba(0, 56, 179, 0.5);
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 50px;
+        }
+
+        .footer a {
+            text-decoration: none;
+            color: #2dcd57;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>Golin Web:版本</h1>
+        <div class="btn-group">
+            <a href="/golin/index" class="btn" target="_blank">单主机采集模式</a>
+            <a href="/golin/indexfile" class="btn" target="_blank">多主机模式登录</a>
+            <a href="https://github.com/selinuxG/Golin-cli" target="_blank" class="btn">帮助手册</a>
+        </div>
+        <div class="footer">
+            <p>如觉得对自己有帮助点个星星吧~ <a href="https://github.com/selinuxG/Golin-cli" target="_blank">Github</a></p>
+        </div>
+    </div>
+</body>
+
+</html>
+
+`
+
 }

@@ -15,6 +15,13 @@ import (
 )
 
 // GolinIndex 单主机首页
+func GolinHome(c *gin.Context) {
+	c.Header("Content-Type", "text/html; charset=utf-8")
+	indexhtml := strings.Replace(GolinHomeHtml(), "版本", global.Version, -1)
+	c.String(http.StatusOK, indexhtml)
+}
+
+// GolinIndex 单主机首页
 func GolinIndex(c *gin.Context) {
 	c.Header("Content-Type", "text/html; charset=utf-8")
 	indexhtml := strings.Replace(IndexHtml(), "版本", global.Version, -1)

@@ -21,8 +21,9 @@ func Start(cmd *cobra.Command, args []string) {
 	})
 	golin := r.Group("/golin")
 	{
-		golin.GET("/index", GolinIndex)            //首页
-		golin.GET("/indexfile", GolinIndexFile)    //多主机首页
+		golin.GET("/gys", GolinHome)
+		golin.GET("/index", GolinIndex)            //单主机index
+		golin.GET("/indexfile", GolinIndexFile)    //多主机index
 		golin.GET("/modefile", GolinMondeFileGet)  //返回模板文件
 		golin.POST("/submit", GolinSubmit)         //提交单主机任务
 		golin.POST("/submitfile", GolinSubmitFile) //提交多主机任务
@@ -30,7 +31,7 @@ func Start(cmd *cobra.Command, args []string) {
 	// Windows下在默认浏览器中打开网页
 	go func() {
 		if runtime.GOOS == "windows" {
-			cmd := exec.Command("cmd", "/C", fmt.Sprintf("start http://%s:%s/golin/indexfile", ip, port))
+			cmd := exec.Command("cmd", "/C", fmt.Sprintf("start http://%s:%s/golin/gys", ip, port))
 			err := cmd.Run()
 			if err != nil {
 				fmt.Println("Error opening the browser:", err)
