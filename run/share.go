@@ -115,7 +115,7 @@ func Onlyonerun(value string, spr string, runtype string) {
 	Port, err := strconv.Atoi(Porttmp)
 	if err != nil {
 		zlog.Warn("错误！端口格式转换失败,退出！")
-		os.Exit(3)
+		return
 	}
 	address := net.ParseIP(Host)
 	if address == nil {

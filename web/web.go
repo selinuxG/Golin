@@ -5,8 +5,10 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/spf13/cobra"
 	"html/template"
+	"net/http"
 	"os/exec"
 	"runtime"
+	"strings"
 )
 
 var save bool
@@ -16,6 +18,12 @@ func Start(cmd *cobra.Command, args []string) {
 	port, _ := cmd.Flags().GetString("port")
 	save, _ = cmd.Flags().GetBool("save")
 	r := gin.Default()
+	r.NoRoute(func(c *gin.Context) {
+		c.Header("Content-Type", "text/html; charset=utf-8")
+		errhtml := strings.Replace(ErrorHtml(), "status", "404", -1)      //替换状态码
+		errhtml = strings.Replace(errhtml, "errbody", "sorry~请求不存在哦", -1) //替换实际错误描述
+		c.String(http.StatusOK, errhtml)
+	})
 	golin := r.Group("/golin")
 	{
 		golin.GET("/index", GolinIndex)            //首页
