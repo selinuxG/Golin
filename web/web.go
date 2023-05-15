@@ -27,6 +27,7 @@ func Start(cmd *cobra.Command, args []string) {
 		golin.GET("/modefile", GolinMondeFileGet)  //返回模板文件
 		golin.POST("/submit", GolinSubmit)         //提交单主机任务
 		golin.POST("/submitfile", GolinSubmitFile) //提交多主机任务
+		golin.GET("/update", GolinUpdate)          //检查更新
 	}
 	// Windows下在默认浏览器中打开网页
 	go func() {

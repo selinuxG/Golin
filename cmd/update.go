@@ -2,7 +2,6 @@ package cmd
 
 import (
 	"bufio"
-	"encoding/json"
 	"fmt"
 	"golin/global"
 	"io"
@@ -22,7 +21,7 @@ var updateCmd = &cobra.Command{
 	Short: "检查更新程序",
 	Long:  `通过api.github.com进行检查更新程序`,
 	Run: func(cmd *cobra.Command, args []string) {
-		newrelease, err := checkForUpdate()
+		newrelease, err := global.CheckForUpdate()
 		if err != nil {
 			fmt.Println("更新失败:", err)
 			return
@@ -63,46 +62,6 @@ var updateCmd = &cobra.Command{
 func init() {
 	rootCmd.AddCommand(updateCmd)
 	updateCmd.Flags().StringP("proxy", "p", "", "此参数是指定代理ip(仅允许http/https代理哦)")
-}
-
-type releaseInfo struct {
-	TagName string        `json:"tag_name"`
-	Assets  []BrowserDown `json:"assets"`
-}
-type BrowserDown struct {
-	BrowserDownloadUrl string `json:"browser_download_url"`
-}
-
-// checkForUpdate 检查更新
-func checkForUpdate() (releaseInfo, error) {
-	var info releaseInfo
-	response, err := http.Get(global.RepoUrl)
-	if err != nil {
-		return info, err
-	}
-	defer func(Body io.ReadCloser) {
-		err := Body.Close()
-		if err != nil {
-			fmt.Println(err)
-			os.Exit(1)
-		}
-	}(response.Body)
-
-	if response.StatusCode != http.StatusOK {
-		return info, fmt.Errorf("failed to fetch latest release information with status code %d", response.StatusCode)
-	}
-	body, err := io.ReadAll(response.Body)
-	if err != nil {
-		fmt.Println("无法读取响应正文:", err)
-		return info, err
-	}
-
-	err = json.Unmarshal(body, &info)
-	if err != nil {
-		return info, err
-	}
-
-	return info, nil
 }
 
 // downloadFile 下载更新

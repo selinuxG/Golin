@@ -12,7 +12,7 @@ import (
 	"time"
 )
 
-// GolinIndex 单主机首页
+// GolinHome GolinIndex 单主机首页
 func GolinHome(c *gin.Context) {
 	c.Header("Content-Type", "text/html; charset=utf-8")
 	indexhtml := strings.Replace(GolinHomeHtml(), "版本", global.Version, -1)
@@ -173,4 +173,20 @@ func sendFile(name string, c *gin.Context) {
 	c.Header("Content-Disposition", "attachment; filename="+name)
 	c.Header("Content-Type", "application/octet-stream")
 	c.File(name)
+}
+
+func GolinUpdate(c *gin.Context) {
+	release, err := global.CheckForUpdate()
+	if err != nil {
+		GolinErrorhtml("error", "获取最新版本失败,网络不好吧亲～", c)
+		c.Abort()
+		return
+	}
+	if release.TagName == global.Version {
+		GolinErrorhtml("success", "非常好！当前是最新版本哦~", c)
+		c.Abort()
+		return
+	}
+	GolinErrorhtml("update", fmt.Sprintf("<a href='https://github.com/selinuxG/Golin-cli/releases' target='_blank'>当前版本为:%s,最新版本为:%s,点击此处进行更新！</a>", global.Version, release.TagName), c)
+
 }

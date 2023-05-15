@@ -6,13 +6,6 @@ import (
 )
 
 const (
-	Version      = "v1.7"      //web新增网络设备模式；自定义命令增加本地数据库格式命令
-	Releasenotes = "web模式增加首页" //web新增网络设备模式；自定义命令增加本地数据库格式命令
-
-	RepoUrl = "https://api.github.com/repos/selinuxg/Golin-cli/releases/latest" //仓库最新版本
-)
-
-const (
 	XlsxTemplateName = "golin上传文件模板文件.xlsx"
 )
 

@@ -291,7 +291,7 @@ func ErrorHtml() string {
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Error</title>
+  <title>提示信息</title>
   <style>
     * {
       margin: 0;
@@ -460,8 +460,9 @@ func GolinHomeHtml() string {
         <h1>Golin Web:版本</h1>
         <div class="btn-group">
             <a href="/golin/index" class="btn" target="_blank">单主机采集模式</a>
-            <a href="/golin/indexfile" class="btn" target="_blank">多主机模式登录</a>
+            <a href="/golin/indexfile" class="btn" target="_blank">多主机采集模式</a>
             <a href="https://github.com/selinuxG/Golin-cli" target="_blank" class="btn">帮助手册</a>
+            <a href="/golin/update" class="btn">检查更新</a>
         </div>
         <div class="footer">
             <p>如觉得对自己有帮助点个星星吧~ <a href="https://github.com/selinuxG/Golin-cli" target="_blank">Github</a></p>
