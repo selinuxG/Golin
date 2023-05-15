@@ -131,7 +131,7 @@ func IndexHtml() string {
 
 <body>
     <form id="golinForm" action="/golin/submit" method="post" onsubmit="handleSubmit(event)">
-        <div class="title">单主机模式:版本</div>
+        <div class="title">单主机模式</div>
 
         <div class="from-group">
             <label for="name">名称：</label>
@@ -173,7 +173,7 @@ func IndexHtml() string {
         <input type="submit" value="提交">
     </form>
     <footer>
-        如觉得对自己有帮助点个星星吧~
+        version:版本 如觉得对自己有帮助点个星星吧~
         <a style="text-decoration: none;color: rgb(82, 196, 54);" href="https://github.com/selinuxG/Golin-cli" target="_blank">GitHub</a>
     </footer>
 </body>
@@ -261,7 +261,7 @@ func IndexFilehtml() string {
 </head>
 <body>
     <div class="container">
-        <h1>多主机模式:版本</h1>
+        <h1>多主机模式</h1>
         <a href="/golin/index" class="single-host-mode-btn">单主机模式</a>
         <a href="/golin/modefile" class="download-btn">下载模板文件</a>
         <form action="/golin/submitfile" method="POST" enctype="multipart/form-data">
@@ -276,7 +276,7 @@ func IndexFilehtml() string {
         </form>
     </div>
     <footer>
-        如觉得对自己有帮助点个星星吧~ 
+        version:版本 如觉得对自己有帮助点个星星吧~ 
         <a style="text-decoration: none;color: rgb(82, 196, 54);" href="https://github.com/selinuxG/Golin-cli" target="_blank">GitHub</a>
     </footer>
 </body>
@@ -457,7 +457,7 @@ func GolinHomeHtml() string {
 
 <body>
     <div class="container">
-        <h1>Golin Web:版本</h1>
+        <h1>Golin Web</h1>
         <div class="btn-group">
             <a href="/golin/index" class="btn" target="_blank">单主机采集模式</a>
             <a href="/golin/indexfile" class="btn" target="_blank">多主机采集模式</a>
@@ -465,7 +465,7 @@ func GolinHomeHtml() string {
             <a href="/golin/update" class="btn">检查更新</a>
         </div>
         <div class="footer">
-            <p>如觉得对自己有帮助点个星星吧~ <a href="https://github.com/selinuxG/Golin-cli" target="_blank">Github</a></p>
+            <p>version:版本 如觉得对自己有帮助点个星星吧~ <a href="https://github.com/selinuxG/Golin-cli" target="_blank">Github</a></p>
         </div>
     </div>
 </body>
