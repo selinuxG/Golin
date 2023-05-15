@@ -7,9 +7,7 @@ import (
 	"golin/run"
 	"net/http"
 	"os"
-	"os/exec"
 	"path/filepath"
-	"runtime"
 	"strings"
 	"time"
 )
@@ -47,16 +45,23 @@ func GolinSubmitFile(c *gin.Context) {
 	}
 	tempfilenamexlsx := fmt.Sprintf("%v.xlsx", time.Now().Unix())
 	tempfilenametxt := fmt.Sprintf("%v.txt", time.Now().Unix())
-	defer os.Remove(tempfilenamexlsx)
-	defer os.Remove(tempfilenametxt)
-
+	tempfilenamezip := fmt.Sprintf("%v.zip", time.Now().Unix())
+	//退出时删除临时文件
+	defer func() {
+		os.Remove(tempfilenamexlsx)
+		os.Remove(tempfilenametxt)
+		os.Remove(tempfilenamezip)
+	}()
+	//保存上传文件
 	err = c.SaveUploadedFile(filename, tempfilenamexlsx)
 	if err != nil {
 		GolinErrorhtml("error", "上传xlsx文件保存失败！", c)
 	}
 	if CreateTmpTxt(tempfilenamexlsx, tempfilenametxt) {
 		mode := c.PostForm("mode")
-		successiplist := []string{} //预期成功的主机
+		var alliplist []string   //预期成功的主机
+		var successlist []string //实际成功的主机
+
 		filedata, _ := os.ReadFile(tempfilenametxt)
 		for _, s := range strings.Split(string(filedata), "\n") {
 			if strings.Count(s, "~~") != 4 {
@@ -65,40 +70,44 @@ func GolinSubmitFile(c *gin.Context) {
 			namesplit := strings.Split(s, "~~")
 			apendname := filepath.Join(global.Succpath, mode, fmt.Sprintf("%s_%s.log", namesplit[0], namesplit[1]))
 			os.Remove(apendname) //删除同名主机记录
-			successiplist = append(successiplist, apendname)
+			alliplist = append(alliplist, apendname)
 		}
 		run.Rangefile(tempfilenametxt, "~~", mode) //运行多主机模式
-		for _, v := range successiplist {
+		//如果文件文件则写入到成功主机列表中
+		for _, v := range alliplist {
 			if global.PathExists(v) {
-				if runtime.GOOS == "windows" {
-					ip := c.RemoteIP()
-					iplist, _ := global.GetLocalIPAddresses()
-					//如果请求来源是本机网卡才弹窗显示
-					for _, v := range iplist {
-						if ip == v || ip == "127.0.0.1" {
-							cmd := exec.Command("explorer.exe", filepath.Join(global.Succpath, mode))
-							cmd.Run()
-							c.Redirect(302, "/golin/indexfile")
-							c.Abort()
-							return
-						}
-					}
-					GolinErrorhtml("Success", "虽然成功了，但是不是本地请求不给你看文件哦~", c)
-					c.Abort()
-					return
-				} else {
-					//获取确认是否有必要优化
-					GolinErrorhtml("Success", "虽然成功了，但是运行在非Windows下，手动打开存储目录看吧~", c)
-					c.Abort()
-					return
-				}
+				successlist = append(successlist, v)
 			}
 		}
-		GolinErrorhtml("error", "多主机模式所有主机失败了哦!", c)
+		if len(successlist) == 0 {
+			GolinErrorhtml("error", fmt.Sprintf("%d个主机全部执行失败了哦!", len(alliplist)), c)
+			c.Abort()
+			return
+		}
+		// 退出时如果sava=false，则删除文件
+		defer func() {
+			if !save {
+				for _, s := range successlist {
+					os.Remove(s)
+				}
+			}
+		}()
+		err := CreateZipFromFiles(successlist, tempfilenamezip)
+		if err != nil {
+			c.Header("Content-Type", "text/html; charset=utf-8")
+			GolinErrorhtml("error", "打包成zip包失败了！", c)
+			c.Abort()
+			return
+		}
+		if len(successlist) > 0 && len(successlist) != len(alliplist) {
+			tempfilenamezip = fmt.Sprintf("成功%d个失败%d个主机.zip", len(successlist), len(alliplist)-len(successlist))
+			os.Rename(tempfilenamezip, tempfilenamezip)
+		}
+		sendFile(tempfilenamezip, c)
 	}
 }
 
-// GolinSubmit 单词提交任务
+// GolinSubmit 单次提交任务
 func GolinSubmit(c *gin.Context) {
 	name, ip, user, passwd, port, mode, down := c.PostForm("name"), c.PostForm("ip"), c.PostForm("user"), c.PostForm("password"), c.PostForm("port"), c.PostForm("run_mode"), c.PostForm("down")
 	//fmt.Println(name, ip, user, passwd, port, mode)
@@ -147,11 +156,8 @@ func GolinMondeFileGet(c *gin.Context) {
 		errhtml = strings.Replace(errhtml, "errbody", "模板文件生成失败!", -1) //替换实际错误描述
 		c.String(http.StatusOK, errhtml)
 	}
-	// 添加必要的响应头以触发文件下载
-	c.Header("Content-Description", "File Transfer")
-	c.Header("Content-Disposition", "attachment; filename="+global.XlsxTemplateName)
-	c.Header("Content-Type", "application/octet-stream")
-	c.File(global.XlsxTemplateName)
+	// 返回模板文件
+	sendFile(global.XlsxTemplateName, c)
 }
 
 func GolinErrorhtml(status, errbody string, c *gin.Context) {
@@ -159,6 +165,12 @@ func GolinErrorhtml(status, errbody string, c *gin.Context) {
 	errhtml := strings.Replace(ErrorHtml(), "status", status, -1) //替换状态码
 	errhtml = strings.Replace(errhtml, "errbody", errbody, -1)    //替换实际错误描述
 	c.String(http.StatusOK, errhtml)
-	c.Abort()
-	return
+}
+
+// sendFile 发生文件
+func sendFile(name string, c *gin.Context) {
+	c.Header("Content-Description", "File Transfer")
+	c.Header("Content-Disposition", "attachment; filename="+name)
+	c.Header("Content-Type", "application/octet-stream")
+	c.File(name)
 }
