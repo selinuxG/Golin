@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/spf13/cobra"
+	"golin/global"
 	"html/template"
 	"os/exec"
 	"runtime"
@@ -12,6 +13,11 @@ import (
 var save bool
 
 func Start(cmd *cobra.Command, args []string) {
+
+	if !global.PathExists("cert.pem") || !global.PathExists("cert.key") {
+		CreateCert()
+	}
+
 	ip, _ := cmd.Flags().GetString("ip")
 	port, _ := cmd.Flags().GetString("port")
 	save, _ = cmd.Flags().GetBool("save")
@@ -33,7 +39,7 @@ func Start(cmd *cobra.Command, args []string) {
 	// Windows下在默认浏览器中打开网页
 	go func() {
 		if runtime.GOOS == "windows" {
-			cmd := exec.Command("cmd", "/C", fmt.Sprintf("start http://%s:%s/golin/gys", ip, port))
+			cmd := exec.Command("cmd", "/C", fmt.Sprintf("start https://%s:%s/golin/gys", ip, port))
 			err := cmd.Run()
 			if err != nil {
 				fmt.Println("Error opening the browser:", err)
@@ -41,7 +47,8 @@ func Start(cmd *cobra.Command, args []string) {
 		}
 	}()
 	// 启动gin
-	r.Run(ip + ":" + port)
+	//r.RunTLS(ip)//
+	r.RunTLS(ip+":"+port, "cert.pem", "key.pem")
 }
 
 // Template 返回包含模板内容的模板结构体
