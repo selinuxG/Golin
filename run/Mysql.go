@@ -4,11 +4,11 @@ import (
 	"bufio"
 	"database/sql"
 	"fmt"
-	"github.com/jinzhu/gorm"
-	_ "github.com/jinzhu/gorm/dialects/mysql"
 	"github.com/spf13/cobra"
 	"go.uber.org/zap"
 	"golin/global"
+	"gorm.io/driver/mysql"
+	"gorm.io/gorm"
 	"io/ioutil"
 	"os"
 	"path/filepath"
@@ -83,8 +83,7 @@ func Mysql(cmd *cobra.Command, args []string) {
 func RunMysql(myname string, myuser string, mypasswd string, myhost string, myport string) {
 	defer wg.Done()
 	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8mb4&parseTime=True&loc=Local&timeout=1.5s", myuser, mypasswd, myhost, myport, "mysql")
-	db, err := gorm.Open("mysql", dsn)
-	defer db.Close()
+	db, err := gorm.Open(mysql.Open(dsn))
 	if err != nil {
 		errhost = append(errhost, myhost)
 		return

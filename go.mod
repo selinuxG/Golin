@@ -5,13 +5,13 @@ go 1.20
 require (
 	github.com/gin-gonic/gin v1.9.0
 	github.com/go-redis/redis/v8 v8.11.5
-	github.com/jinzhu/gorm v1.9.16
 	github.com/mattn/go-colorable v0.1.13
 	github.com/spf13/cobra v1.6.1
 	github.com/xuri/excelize/v2 v2.7.1
 	go.uber.org/zap v1.24.0
 	golang.org/x/crypto v0.8.0
 	gopkg.in/natefinch/lumberjack.v2 v2.2.1
+	gorm.io/driver/mysql v1.5.0
 	gorm.io/driver/postgres v1.5.0
 	gorm.io/gorm v1.25.1
 )
