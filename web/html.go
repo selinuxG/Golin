@@ -465,6 +465,7 @@ func GolinHomeHtml() string {
             <a href="/golin/index" class="btn" target="_blank">单主机采集模式</a>
             <a href="/golin/history" class="btn" target="_blank">历史记录</a>
             <a href="https://github.com/selinuxG/Golin-cli" target="_blank" class="btn">帮助手册</a>
+            <a href="https://ihuace.yuque.com/org-wiki-ihuace-fyorr3/totgpt" target="_blank" class="btn">作业指导书</a>
             <a href="/golin/update" class="btn">检查更新</a>
         </div>
         <div class="footer">
