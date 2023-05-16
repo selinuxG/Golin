@@ -58,7 +58,7 @@ func GolinSubmitFile(c *gin.Context) {
 	}
 	if CreateTmpTxt(tempfilenamexlsx, tempfilenametxt) {
 		mode := c.PostForm("mode")
-		var allserver []Service
+		var allserver []Service  //Service结构体存储所有主机记录
 		var alliplist []string   //预期成功的主机
 		var successlist []string //实际成功的主机
 
@@ -70,9 +70,11 @@ func GolinSubmitFile(c *gin.Context) {
 			namesplit := strings.Split(s, "~~")
 			//增加到所有主机切片中
 			allserver = append(allserver, Service{Name: namesplit[0], User: namesplit[1], Ip: namesplit[1], Port: namesplit[4], Time: time.Now().Format(time.DateTime), Type: mode, Status: Failed})
+			//增加保存的文件路径名称到切片中
 			apendname := filepath.Join(global.Succpath, mode, fmt.Sprintf("%s_%s.log", namesplit[0], namesplit[1]))
-			os.Remove(apendname) //删除同名主机记录
 			alliplist = append(alliplist, apendname)
+			//删除同名主机记录
+			os.Remove(apendname)
 		}
 		run.Rangefile(tempfilenametxt, "~~", mode) //运行多主机模式
 		//如果文件文件则写入到成功主机列表中
@@ -162,6 +164,7 @@ func GolinMondeFileGet(c *gin.Context) {
 	sendFile(global.XlsxTemplateName, c)
 }
 
+// GolinErrorhtml 返回提示页面
 func GolinErrorhtml(status, errbody string, c *gin.Context) {
 	c.Header("Content-Type", "text/html; charset=utf-8")
 	errhtml := strings.Replace(ErrorHtml(), "status", status, -1) //替换状态码
@@ -223,7 +226,7 @@ func GolinHistory(c *gin.Context) {
 
 // FileAppendJson 将成功主机对比allserver主机，写入到json文件中
 // success = 采集完成目录\mode\name_ip.log,
-// 留存了个bug，正常使用不会触发
+// 留存了个bug，正常使用不会触发，所以不修复了没意义。
 func FileAppendJson(success []string, allserver []Service) {
 	for _, srv := range allserver {
 		for _, succip := range success {
