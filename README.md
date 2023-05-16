@@ -66,7 +66,7 @@ Flags:
 ### mysql
 
 ```shell
-基于Mysql远程通过多线程连接执行指定sql语句并记录。
+基于Mysql远程通过多线程连接执行指定sql语句并记录。(也可本地执行)
 
 Usage:
   golin mysql [flags]
@@ -141,6 +141,20 @@ Flags:
   -o, --sava string     此参数是指定保存的文件 (default "linux_xlsx.txt")
   -s, --sheet string    此参数是指定sheet名称 (default "Sheet1")
   -u, --user string     此参数是指定用户所代表的列
+```
+### pgsql
+```
+基于远程登录功能,通过多线程的方法批量进行采集(也可本地执行)
+Usage:
+  golin pgsql [flags]
+
+Flags:
+  -e, --echo            此参数是控制控制台是否输出结果,默认不进行输出
+  -h, --help            help for pgsql
+  -i, --ip string       此参数是指定待远程采集的IP文件位置 (default "pgsql.txt")
+  -s, --spript string   此参数是指定IP文件中的分隔字符 (default "~")
+  -v, --value string    此参数是单次执行
+
 ```
 # 制作不同模式编辑启动脚本(bat)
 ## gui

@@ -94,6 +94,8 @@ func Rangefile(path string, spr string, runtype string) {
 			go RunMysql(Name, User, Passwrod, Host, strconv.Itoa(Port))
 		case "Redis":
 			go Runredis(Name, User, Host, Passwrod, strconv.Itoa(Port))
+		case "pgsql":
+			go Pgsql(Name, Host, User, Passwrod, strconv.Itoa(Port))
 		}
 	}
 	wg.Wait()
@@ -147,6 +149,10 @@ func Onlyonerun(value string, spr string, runtype string) {
 		wg.Add(1)
 		config.Log.Info("开启运行Redis模式", zap.String("名称:", Name), zap.String("IP", Host))
 		go Runredis(Name, User, Host, Passwrod, strconv.Itoa(Port))
+	case "pgsql":
+		wg.Add(1)
+		config.Log.Info("开启运行pgsql模式", zap.String("名称:", Name), zap.String("IP", Host))
+		go Pgsql(Name, Host, User, Passwrod, strconv.Itoa(Port))
 	}
 	wg.Wait() //等待运行结束
 }

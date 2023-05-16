@@ -159,6 +159,7 @@ func IndexHtml() string {
                 <option value="Linux">Linux</option>
                 <option value="MySQL">MySQL</option>
                 <option value="Redis">Redis</option>
+                <option value="pgsql">PostgreSQl</option>
                 <option value="Route">网络设备</option>
             </select>
         </div>
@@ -271,6 +272,7 @@ func IndexFilehtml() string {
                 <option value="Linux">Linux</option>
                 <option value="Mysql">MySQL</option>
                 <option value="Redis">Redis</option>
+                <option value="pgsql">PostgreSQl</option>
             </select>
             <button type="submit" class="download-btn">提交任务</button>
         </form>
