@@ -63,6 +63,11 @@ type PgAuthID struct {
 	Rolvaliduntil sql.NullTime `gorm:"column:rolvaliduntil"` // Use sql.NullTime for nullable time fields
 }
 
+// version 变量结构
+type Version struct {
+	PgVersion string `gorm:"column:version"`
+}
+
 // 连接pgsql运行内置命令
 func Pgsql(name, host, user, passwd, port string) {
 	defer wg.Done()
@@ -86,7 +91,12 @@ func Pgsql(name, host, user, passwd, port string) {
 	defer file.Close()
 	write := bufio.NewWriter(file)
 
-	// 原生 SQL
+	var version Version
+	db.Raw("SELECT version()").Scan(&version)
+	write.WriteString(fmt.Sprintf("版本信息：%s\n", version.PgVersion))
+	write.WriteString(fmt.Sprintf("-----------------用户相关：\n"))
+
+	// 查询用户相关信息
 	var result []PgAuthID
 	db.Raw("SELECT oid,rolname,rolpassword,rolsuper,rolcanlogin,rolvaliduntil FROM pg_authid").Scan(&result)
 	for _, user := range result {

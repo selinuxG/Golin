@@ -175,7 +175,7 @@ func RunMysql(myname string, myuser string, mypasswd string, myhost string, mypo
 		if strings.Contains(grantdata, "GRANT ALL PRIVILEGES ON *.*") || strings.Contains(grantdata, "GRANT SUPER") {
 			write.WriteString("账户类别：超级管理员(人工基于上述权限自己判断,仅供参考)\n")
 		} else {
-			write.WriteString("账户类别：(人工基于上述权限自己判断,仅供参考)\n")
+			write.WriteString("账户类别：业务账户(人工基于上述权限自己判断,仅供参考)\n")
 		}
 		write.WriteString("\n\n")
 	}
