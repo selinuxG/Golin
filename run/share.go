@@ -98,6 +98,9 @@ func Rangefile(path string, spr string, runtype string) {
 			go Pgsql(Name, Host, User, Passwrod, strconv.Itoa(Port))
 		case "sqlserver":
 			go SqlServerrun(Name, Host, User, Passwrod, strconv.Itoa(Port))
+		case "oracle":
+			config.Log.Info("开启运行oracle模式", zap.String("名称:", Name), zap.String("IP", Host))
+			go OracleRun(Name, Host, User, Passwrod, strconv.Itoa(Port))
 		}
 	}
 	wg.Wait()
@@ -159,6 +162,10 @@ func Onlyonerun(value string, spr string, runtype string) {
 		wg.Add(1)
 		config.Log.Info("开启运行sqlserver模式", zap.String("名称:", Name), zap.String("IP", Host))
 		go SqlServerrun(Name, Host, User, Passwrod, strconv.Itoa(Port))
+	case "oracle":
+		wg.Add(1)
+		config.Log.Info("开启运行oracle模式", zap.String("名称:", Name), zap.String("IP", Host))
+		go OracleRun(Name, Host, User, Passwrod, strconv.Itoa(Port))
 	}
 	wg.Wait() //等待运行结束
 }

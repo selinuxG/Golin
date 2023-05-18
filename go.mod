@@ -6,6 +6,7 @@ require (
 	github.com/gin-gonic/gin v1.9.0
 	github.com/go-redis/redis/v8 v8.11.5
 	github.com/mattn/go-colorable v0.1.13
+	github.com/sijms/go-ora/v2 v2.7.6
 	github.com/spf13/cobra v1.6.1
 	github.com/xuri/excelize/v2 v2.7.1
 	go.uber.org/zap v1.24.0

@@ -17,8 +17,9 @@ var (
 	CmdMysqlPath     = "mysql.txt"     //默认Mysql模式多主机模式下读取的文件
 	CmdRedisPath     = "redis.txt"     //默认Redis模式多主机模式下读取的文件
 	CmdRoutepath     = "route.txt"     //默认route模式多主机模式下读取的文件
-	CmdPgsqlPath     = "pgsql.txt"     //默认Linux模式多主机模式下读取的文件
-	CmdsqlServerPath = "sqlserver.txt" //默认Linux模式多主机模式下读取的文件
+	CmdPgsqlPath     = "pgsql.txt"     //默认pgsql模式多主机模式下读取的文件
+	CmdsqlServerPath = "sqlserver.txt" //默认sqlserver模式多主机模式下读取的文件
+	CmdOraclePath    = "oracle.txt"    //默认oracle模式多主机模式下读取的文件
 
 	FilePer      = 0644                                                 //创建文件或目录时的默认权限，必须是0开头
 	Succpath     = "采集完成目录"                                             //CLi模式成功主机写入日志的目录
