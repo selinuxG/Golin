@@ -76,19 +76,22 @@ func OracleRun(name, host, user, passwd, port string) {
 	firenmame := filepath.Join(fullPath, fmt.Sprintf("%s_%s.log", name, host))
 	//先删除之前的同名记录文件
 	os.Remove(firenmame)
+
+	//查询版本,如果发生错误肯定输入有问题！
+	rows, err := db.Query("select * from v$version")
+	if err != nil {
+		errhost = append(errhost, host)
+		return
+	}
+	//无问题则创建文件在写入
 	file, _ := os.OpenFile(firenmame, os.O_CREATE|os.O_APPEND|os.O_RDWR, os.FileMode(global.FilePer))
 	defer file.Close()
 	write := bufio.NewWriter(file)
-
-	//查询版本
-	rows, err := db.Query("select * from v$version")
-	if err == nil {
-		write.WriteString("--------查询版本\n")
-		for rows.Next() {
-			var version string
-			rows.Scan(&version)
-			write.WriteString(version + "\n")
-		}
+	write.WriteString("--------查询版本\n")
+	for rows.Next() {
+		var version string
+		rows.Scan(&version)
+		write.WriteString(version + "\n")
 	}
 
 	//退出时写入文件

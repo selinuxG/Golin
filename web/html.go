@@ -3,100 +3,129 @@ package web
 func IndexHtml() string {
 	return `
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Golin自动化平台_单主机(高业尚:版本)</title>
-
     <style>
-        html,
         body {
-            width: 100%;
-            height: 100%;
-        }
-        
-        body {
-            font-family: Arial, sans-serif;
-            background-image: linear-gradient(to right, #56c6a8, #FED6E3);
             margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            background: linear-gradient(to right, #4bb1d5, #f022b6);
+        }
+
+        .container {
             display: flex;
             justify-content: center;
             align-items: center;
+            min-height: 90vh;
+            /* 将min-height从100vh更改为90vh */
+            margin-bottom: 20px;
+            /* 增加底部外边距 */
         }
-        
+
+        /* 添加抖动动画 keyframes */
+        @keyframes shake {
+            0%,100% {transform: translateX(0);}
+            10%,30%,50%,70%,90% {transform: translateX(-3px);}
+            20%,40%,60%,80% {transform: translateX(3px);}
+        }
+
         form {
-            background-color: #ffffff;
-            padding: 30px;
-            border-radius: 10px;
-            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
-            /* max-width: 400px; */
-            width: 400px;
-        }
-        
-        label,
-        input[type=text],
-        input[type=password],
-        select {
-            display: block;
-            margin-bottom: 15px;
-        }
-        
-        input[type=text],
-        input[type=password],
-        select {
-            padding: 10px;
-            border: 2px solid #ccc;
-            border-radius: 5px;
-            outline: none;
-            width: 100%;
-            box-sizing: border-box;
-            font-size: 14px;
-        }
-        
-        input[type=text]:focus,
-        input[type=password]:focus,
-        select:focus {
-            border-color: #FF6B81;
-        }
-        
-        input[type=submit] {
-            background-color: #FF6B81;
-            color: white;
-            padding: 10px 20px;
-            margin-top: 20px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 16px;
-            width: 100%;
-            transition: background-color 0.2s;
-        }
-        
-        input[type=submit]:hover {
-            background-color: #47ff50;
-        }
-        
-        .from-group {
             display: flex;
-            border-bottom: 1px solid #ccc;
-            padding-top: 10px;
+            flex-direction: column;
+            gap: 30px;
+            padding: 25px;
+            border-radius: 12px;
+            background-color: rgba(251, 250, 250, 0.9);
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
         }
-        
-        .from-group label {
-            width: 120px;
-            text-align: left;
-            margin-right: 10px;
-        }
-        
-        .title {
-            color: #43ddcb;
+
+        h1 {
             text-align: center;
-            font-size: 29px;
+            color: #57e3a6;
             font-weight: bold;
-            margin-bottom: 14px;
+            margin-bottom: 15px;
+            font-size: 30px;
         }
+
+        .input-row {
+            display: flex;
+            gap: 10px;
+            /* 更改gap为10像素 */
+            justify-content: center;
+            /* 添加此项以居中输入框 */
+        }
+
+        input[type="text"],
+        input[type="password"],
+        input[type="number"] {
+            width: 120px;
+            /* 将输入框宽度减少到130像素 */
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: all 0.3s ease-in-out;
+            animation: shake 0.4s linear;
+            /* 修改抖动动画时间 */
+
+        }
+
+        input[type="text"]:focus,
+        input[type="password"]:focus,
+        input[type="number"]:focus {
+            outline: none;
+            border-color: #0072ff;
+            box-shadow: 0 0 5px rgba(0, 114, 255, 0.2);
+        }
+
+        .select-container {
+            position: relative;
+        }
+
+        select {
+            width: 100%;
+            /* 让选择栏宽度与整体输入框宽度一致 */
+            padding: 10px;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+            font-size: 14px;
+            appearance: none;
+            background-color: #f8f9fa;
+            /* 添加背景色 */
+            color: #495057;
+            /* 更改文字颜色 */
+            cursor: pointer;
+            text-align-last: center;
+            /* 使文本内容居中 */
+            animation: shake 0.4s linear;
+            /* 修改抖动动画时间 */
+
+        }
+
+        button {
+            padding: 12px 25px;
+            border: none;
+            background-color: #2ae04b;
+            color: #fff;
+            font-size: 16px;
+            font-weight: bold;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.3s ease-in-out;
+            animation: shake 0.4s linear;
+            /* 修改抖动动画时间 */
+
+        }
+
+        button:hover {
+            background-color: #560d96;
+        }
+
         footer {
             position: fixed;
             bottom: 1rem;
@@ -104,81 +133,73 @@ func IndexHtml() string {
             transform: translateX(-50%);
             font-size: 14px;
             text-align: center;
+            color: #fff;
+            /* 文字颜色更改为白色 */
+        }
+
+        footer a {
+            text-decoration: none;
+            color: rgb(82, 196, 54);
+            transition: all 0.3s;
+        }
+
+        footer a:hover {
+            color: rgba(82, 196, 54, 0.6);
+            /* 鼠标悬停时降低透明度 */
+        }
+
+        .margin-top {
+            margin-top: 20px;
+            /* 自定义边距，可以根据需要调整 */
         }
     </style>
-    <script>
-        function handleSubmit(event) {
-            var obj = document.getElementById("operate");
-            var index = obj.selectedIndex;
-            var value = obj.options[index].value;
-            if (value == "preview") {
-                document.getElementById("golinForm").target = "_blank";
-                // event.target.action = "/golin/submit";
-            } else {
-                document.getElementById("golinForm").target = "_self";
-            }
-            var inputs = document.querySelectorAll('input[type=text], input[type=password]');
-            for (var i = 0; i < inputs.length; i++) {
-                if (inputs[i].value.trim() === '') {
-                    alert("请确保所有输入框都填写了内容!");
-                    event.preventDefault();
-                    return;
-                }
-            }
-        }
-    </script>
+
 </head>
 
 <body>
-    <form id="golinForm" action="/golin/submit" method="post" onsubmit="handleSubmit(event)">
-        <div class="title">单主机模式</div>
+    <div class="container">
+        <form action="/golin/submit" method="post">
+            <h1>单主机采集模式</h1>
+            <div class="input-row">
+                <input type="text" placeholder="名称" name="name" required>
+                <input type="text" placeholder="IP" name="ip" required>
+                <input type="text" placeholder="用户" name="user" required>
+                <input type="password" placeholder="密码" name="password" required>
+                <input type="number" placeholder="端口" name="port" list="port-options" required>
+				<datalist id="port-options">
+					<option value="22">SSH</option>
+					<option value="3306">MySQL</option>
+					<option value="6379">Redis</option>
+					<option value="5432">Pgsql</option>
+					<option value="1433">SqlServer</option>
+					<option value="1521">Oracle</option>
+				</datalist>
+            </div>
+            <div class="select-container">
+                <select name="run_mode" required>
+                    <option value="Linux">Linux</option>
+                    <option value="MySQL">MySQL</option>
+                    <option value="Redis">Redis</option>
+                    <option value="pgsql">PostgreSQl</option>
+                    <option value="sqlserver">SQLServer</option>
+                    <option value="oracle">oracle</option>
+                    <option value="Route">H3C</option>
+                </select>
+                <select name="down" class="margin-top" required>
+                    <option value="down">下载</option>
+                    <option value="preview">预览</option>
+                </select>
+            </div>
+            <button type="submit">提交</button>
+        </form>
+    </div>
 
-        <div class="from-group">
-            <label for="name">名称：</label>
-            <input type="text" id="name" name="name">
-        </div>
-        <div class="from-group">
-            <label for="ip">IP：</label>
-            <input type="text" id="ip" name="ip">
-        </div>
-        <div class="from-group">
-            <label for="user">用户：</label>
-            <input type="text" id="user" name="user">
-        </div>
-        <div class="from-group">
-            <label for="password">密码：</label>
-            <input type="password" id="password" name="password">
-        </div>
-        <div class="from-group">
-            <label for="port">端口：</label>
-            <input type="text" id="port" name="port">
-        </div>
-        <div class="from-group">
-            <label for="run_mode">模式：</label>
-            <select id="run_mode" name="run_mode" style="width: 100%;">
-                <option value="Linux">Linux</option>
-                <option value="MySQL">MySQL</option>
-                <option value="Redis">Redis</option>
-                <option value="pgsql">PostgreSQl</option>
-                <option value="sqlserver">SQLServer</option>
-                <option value="oracle">oracle</option>
-                <option value="Route">网络设备</option>
-            </select>
-        </div>
-
-        <div class="from-group">
-            <label for="operate">操作：</label>
-            <select id="operate" name="down" style="width: 100%;">
-                <option value="down">下载</option>
-                <option value="preview">预览</option>
-            </select>
-        </div>
-        <input type="submit" value="提交">
-    </form>
     <footer>
         version:版本 如觉得对自己有帮助点个星星吧~
-        <a style="text-decoration: none;color: rgb(82, 196, 54);" href="https://github.com/selinuxG/Golin-cli" target="_blank">GitHub</a>
+        <a style="text-decoration: none;color: rgb(82, 196, 54);" href="https://github.com/selinuxG/Golin-cli"
+            target="_blank">GitHub</a>
     </footer>
+
 </body>
 
 </html>
