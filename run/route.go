@@ -19,10 +19,12 @@ import (
 )
 
 var (
-	routecmd    []string            //执行的命令列表
-	python      bool                //python执行
-	Python_path = global.PythonPath //默认运行python路径
-	Defroutecmd = []string{"display version", "disp curr", "disp interface brief", "disp cpu-usage", "disp acl all", "disp password-control", "display users", "display log"}
+	routecmd          []string                                                                                                            //执行的命令列表
+	python            bool                                                                                                                //python执行
+	Python_path       = global.PythonPath                                                                                                 //默认运行python路径
+	Defroutecmd       = []string{"display version", "disp curr", "disp interface brief", "disp cpu-usage"}                                //默认h3c命令
+	DefroutecmdHuawei = []string{"display local-user", "display local-aaa-user password policy access-user", "display aaa configuration"} //默认华为命令
+
 )
 
 func Route(cmd *cobra.Command, args []string) {
@@ -106,15 +108,15 @@ func Route(cmd *cobra.Command, args []string) {
 	}
 	// 下面开始执行函数
 	fmt.Println("-------------------------------------> run type:route")
-	rourange(ippath, spr)
-	//完成前最后写入文件 python模式下不输出
+	Rourange(ippath, spr, Defroutecmd)
+	//完成前最后写入文件 python模式下不写入
 	if python {
 		return
 	}
 	Deffile("Route", count, count-len(errhost), errhost)
 }
 
-func rourange(path string, spr string) {
+func Rourange(path string, spr string, cmd []string) {
 	fire, _ := ioutil.ReadFile(path)
 	lines := strings.Split(string(fire), "\n")
 	for i := 0; i < len(lines); i++ {
@@ -219,7 +221,7 @@ func rourange(path string, spr string) {
 		filename := fmt.Sprintf("%s_%s.log", Name, Host)
 		filename = filepath.Join(firepath, filename)
 		os.Remove(filename)
-		for _, v := range routecmd {
+		for _, v := range cmd {
 			//命令为空则跳过
 			if len(v) == 0 {
 				continue

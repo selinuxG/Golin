@@ -72,11 +72,23 @@ func GolinSubmitFile(c *gin.Context) {
 			allserver = append(allserver, Service{Name: namesplit[0], User: namesplit[1], Ip: namesplit[1], Port: namesplit[4], Time: time.Now().Format(time.DateTime), Type: mode, Status: Failed})
 			//增加保存的文件路径名称到切片中
 			apendname := filepath.Join(global.Succpath, mode, fmt.Sprintf("%s_%s.log", namesplit[0], namesplit[1]))
+			//如果是网络设备：拼接目录时需要更改为Route
+			if mode == "h3c" || mode == "huawei" {
+				apendname = filepath.Join(global.Succpath, "Route", fmt.Sprintf("%s_%s.log", namesplit[0], namesplit[1]))
+			}
+			fmt.Println(apendname)
 			alliplist = append(alliplist, apendname)
 			//删除同名主机记录
 			os.Remove(apendname)
 		}
-		run.Rangefile(tempfilenametxt, "~~", mode) //运行多主机模式
+		switch mode {
+		case "h3c":
+			run.Rourange(tempfilenametxt, "~~", run.Defroutecmd) //运行H3C多主机模式
+		case "huawei":
+			run.Rourange(tempfilenametxt, "~~", run.DefroutecmdHuawei) //运行huawei多主机模式，待测试
+		default:
+			run.Rangefile(tempfilenametxt, "~~", mode) //运行多主机模式
+		}
 		//如果文件文件则写入到成功主机列表中
 		for _, v := range alliplist {
 			if global.PathExists(v) {
@@ -114,6 +126,10 @@ func GolinSubmit(c *gin.Context) {
 	name, ip, user, passwd, port, mode, down := c.PostForm("name"), c.PostForm("ip"), c.PostForm("user"), c.PostForm("password"), c.PostForm("port"), c.PostForm("run_mode"), c.PostForm("down")
 	savefilename := fmt.Sprintf("%s_%s.log", name, ip)                //保存的文件夹名：名称_ip.log
 	successfile := filepath.Join(global.Succpath, mode, savefilename) //保存的完整路径
+	//如果是网络设备：拼接目录时需要更改为Route
+	if mode == "h3c" || mode == "huawei" {
+		successfile = filepath.Join(global.Succpath, "Route", savefilename) //网络设备模式下的完整路径
+	}
 	if global.PathExists(successfile) {
 		WriteJSONToHistory(Service{name, ip, user, port, mode, time.Now().Format(time.DateTime), Failed})
 		GolinErrorhtml("error", "保存的文件中有重名文件，更换一个吧客官~", c)
@@ -121,8 +137,12 @@ func GolinSubmit(c *gin.Context) {
 	}
 
 	switch mode {
-	case "Route": //路由模式是单独的
+	case "h3c":
 		for _, cmd := range run.Defroutecmd {
+			run.Routessh(successfile, ip, user, passwd, port, cmd)
+		}
+	case "huawei":
+		for _, cmd := range run.DefroutecmdHuawei {
 			run.Routessh(successfile, ip, user, passwd, port, cmd)
 		}
 	default: //其他模式统一函数传参

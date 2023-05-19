@@ -153,6 +153,19 @@ func IndexHtml() string {
             /* 自定义边距，可以根据需要调整 */
         }
     </style>
+    <script>
+        function validateInput() {
+            var input = document.getElementById("port-input");
+            var min = parseInt(input.min);
+            var max = parseInt(input.max);
+
+            if (input.value < min) {
+                input.value = min;
+            } else if (input.value > max) {
+                input.value = max;
+            }
+        }
+    </script>
 
 </head>
 
@@ -163,9 +176,17 @@ func IndexHtml() string {
             <div class="input-row">
                 <input type="text" placeholder="名称" name="name" required>
                 <input type="text" placeholder="IP" name="ip" required>
-                <input type="text" placeholder="用户" name="user" required>
+                <input type="text" placeholder="用户" name="user" list="user" required>
+				<datalist id="user">
+					<option value="root">SSH</option>
+					<option value="root">MySQL</option>
+					<option value="null">Redis</option>
+					<option value="postgres">Pgsql</option>
+					<option value="sa">SqlServer</option>
+					<option value="admin">route</option>
+				</datalist>
                 <input type="password" placeholder="密码" name="password" required>
-                <input type="number" placeholder="端口" name="port" list="port-options" required>
+                <input type="number" placeholder="端口" name="port" id="port-input" list="port-options" min="1" max="65535" oninput="validateInput()" required>
 				<datalist id="port-options">
 					<option value="22">SSH</option>
 					<option value="3306">MySQL</option>
@@ -182,8 +203,9 @@ func IndexHtml() string {
                     <option value="Redis">Redis</option>
                     <option value="pgsql">PostgreSQl</option>
                     <option value="sqlserver">SQLServer</option>
-                    <option value="oracle">oracle</option>
-                    <option value="Route">H3C</option>
+                    <option value="oracle">Oracle</option>
+                    <option value="h3c">H3C</option>
+                	<option value="huawei">Huawei</option>
                 </select>
                 <select name="down" class="margin-top" required>
                     <option value="down">下载</option>
@@ -297,7 +319,9 @@ func IndexFilehtml() string {
                 <option value="Redis">Redis</option>
                 <option value="pgsql">PostgreSQl</option>
                 <option value="sqlserver">SqlServer</option>
-                <option value="oracle">oracle</option>
+                <option value="oracle">Oracle</option>
+                <option value="h3c">H3C</option>
+                <option value="huawei">Huawei</option>
             </select>
             <button type="submit" class="download-btn">提交任务</button>
         </form>
