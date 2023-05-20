@@ -1,5 +1,6 @@
 package web
 
+// IndexHtml 单主机页面
 func IndexHtml() string {
 	return `
 <!DOCTYPE html>
@@ -14,7 +15,7 @@ func IndexHtml() string {
             margin: 0;
             padding: 0;
             font-family: Arial, sans-serif;
-            background: linear-gradient(to right, #4bb1d5, #f022b6);
+            background: linear-gradient(to right, #5886e2, #d55de0);
         }
 
         .container {
@@ -29,9 +30,26 @@ func IndexHtml() string {
 
         /* 添加抖动动画 keyframes */
         @keyframes shake {
-            0%,100% {transform: translateX(0);}
-            10%,30%,50%,70%,90% {transform: translateX(-3px);}
-            20%,40%,60%,80% {transform: translateX(3px);}
+
+            0%,
+            100% {
+                transform: translateX(0);
+            }
+
+            10%,
+            30%,
+            50%,
+            70%,
+            90% {
+                transform: translateX(-5px);
+            }
+
+            20%,
+            40%,
+            60%,
+            80% {
+                transform: translateX(5px);
+            }
         }
 
         form {
@@ -46,7 +64,7 @@ func IndexHtml() string {
 
         h1 {
             text-align: center;
-            color: #57e3a6;
+            color: #5272f496;
             font-weight: bold;
             margin-bottom: 15px;
             font-size: 30px;
@@ -69,8 +87,8 @@ func IndexHtml() string {
             border: 1px solid #ccc;
             border-radius: 8px;
             font-size: 16px;
-            transition: all 0.3s ease-in-out;
-            animation: shake 0.4s linear;
+            transition: all 1s ease-in-out;
+            animation: shake 30s linear;
             /* 修改抖动动画时间 */
 
         }
@@ -79,8 +97,8 @@ func IndexHtml() string {
         input[type="password"]:focus,
         input[type="number"]:focus {
             outline: none;
-            border-color: #0072ff;
-            box-shadow: 0 0 5px rgba(0, 114, 255, 0.2);
+            border-color: #00ff88;
+            box-shadow: 0 0 5px rgba(12, 217, 152, 0.775);
         }
 
         .select-container {
@@ -97,12 +115,12 @@ func IndexHtml() string {
             appearance: none;
             background-color: #f8f9fa;
             /* 添加背景色 */
-            color: #495057;
+            color: #2d2d31;
             /* 更改文字颜色 */
             cursor: pointer;
             text-align-last: center;
             /* 使文本内容居中 */
-            animation: shake 0.4s linear;
+            animation: shake 1s linear;
             /* 修改抖动动画时间 */
 
         }
@@ -110,7 +128,7 @@ func IndexHtml() string {
         button {
             padding: 12px 25px;
             border: none;
-            background-color: #2ae04b;
+            background-color: #8d61c7;
             color: #fff;
             font-size: 16px;
             font-weight: bold;
@@ -123,7 +141,7 @@ func IndexHtml() string {
         }
 
         button:hover {
-            background-color: #560d96;
+            background-color: #864ab1;
         }
 
         footer {
@@ -152,19 +170,93 @@ func IndexHtml() string {
             margin-top: 20px;
             /* 自定义边距，可以根据需要调整 */
         }
+
+        /* 此处以下为填写帮助 */
+        .form-container {
+            position: relative;
+        }
+
+        .help-btn {
+            position: absolute;
+            top: 1px;
+            right: 1px;
+            cursor: pointer;
+            font-weight: bold;
+            padding: 5px 12px;
+            background-color: rgb(251, 250, 250);
+            color: rgb(54, 222, 88);
+            border-radius: 4px;
+            transition: transform 0.3s ease-in-out;
+            z-index: 1000;
+            border: none;
+        }
+
+        .help-btn:hover {
+            transform: scale(1.05);
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 2000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.6);
+        }
+
+        .modal-content {
+            background-color: #94f5ce;
+            margin: 10% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 500px;
+            /* 设置宽度 */
+            text-align: center;
+            position: relative;
+            max-height: 70%;
+            /* 设置最大高度为视口的70% */
+            overflow-y: auto;
+            /* 添加滚动条以适应内容 */
+        }
+
+
+        .close {
+            color: #aaa;
+            position: absolute;
+            top: 0;
+            right: 14px;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .close:hover,
+        .close:focus {
+            color: black;
+            text-decoration: none;
+        }
     </style>
     <script>
-        function validateInput() {
-            var input = document.getElementById("port-input");
-            var min = parseInt(input.min);
-            var max = parseInt(input.max);
+        // 此处js代码只服务于填写手册
+        document.addEventListener("DOMContentLoaded", function () {
+            document.getElementById("helpBtn").addEventListener("click", function () {
+                document.getElementById("myModal").style.display = "block";
+            });
 
-            if (input.value < min) {
-                input.value = min;
-            } else if (input.value > max) {
-                input.value = max;
-            }
-        }
+            document.getElementsByClassName("close")[0].addEventListener("click", function () {
+                document.getElementById("myModal").style.display = "none";
+            });
+
+            window.addEventListener("click", function (event) {
+                if (event.target == document.getElementById("myModal")) {
+                    document.getElementById("myModal").style.display = "none";
+                }
+            });
+        });
+
     </script>
 
 </head>
@@ -172,29 +264,34 @@ func IndexHtml() string {
 <body>
     <div class="container">
         <form action="/golin/submit" method="post">
+            <div class="form-container">
+                <button type="button" id="helpBtn" class="help-btn">填写帮助</button>
+            </div>
+
             <h1>单主机采集模式</h1>
             <div class="input-row">
                 <input type="text" placeholder="名称" name="name" required>
                 <input type="text" placeholder="IP" name="ip" required>
                 <input type="text" placeholder="用户" name="user" list="user" required>
-				<datalist id="user">
-					<option value="root">SSH</option>
-					<option value="root">MySQL</option>
-					<option value="null">Redis</option>
-					<option value="postgres">Pgsql</option>
-					<option value="sa">SqlServer</option>
-					<option value="admin">route</option>
-				</datalist>
+                <datalist id="user">
+                    <option value="root">SSH</option>
+                    <option value="root">MySQL</option>
+                    <option value="null">Redis</option>
+                    <option value="postgres">Pgsql</option>
+                    <option value="sa">SqlServer</option>
+                    <option value="admin">route</option>
+                </datalist>
                 <input type="password" placeholder="密码" name="password" required>
-                <input type="number" placeholder="端口" name="port" id="port-input" list="port-options" min="1" max="65535" oninput="validateInput()" required>
-				<datalist id="port-options">
-					<option value="22">SSH</option>
-					<option value="3306">MySQL</option>
-					<option value="6379">Redis</option>
-					<option value="5432">Pgsql</option>
-					<option value="1433">SqlServer</option>
-					<option value="1521">Oracle</option>
-				</datalist>
+                <input type="number" placeholder="端口" name="port" id="port-input" list="port-options" min="1"
+                    max="65535" required>
+                <datalist id="port-options">
+                    <option value="22">SSH</option>
+                    <option value="3306">MySQL</option>
+                    <option value="6379">Redis</option>
+                    <option value="5432">Pgsql</option>
+                    <option value="1433">SqlServer</option>
+                    <option value="1521">Oracle</option>
+                </datalist>
             </div>
             <div class="select-container">
                 <select name="run_mode" required>
@@ -205,7 +302,7 @@ func IndexHtml() string {
                     <option value="sqlserver">SQLServer</option>
                     <option value="oracle">Oracle</option>
                     <option value="h3c">H3C</option>
-                	<option value="huawei">Huawei</option>
+                    <option value="huawei">Huawei</option>
                 </select>
                 <select name="down" class="margin-top" required>
                     <option value="down">下载</option>
@@ -221,6 +318,17 @@ func IndexHtml() string {
         <a style="text-decoration: none;color: rgb(82, 196, 54);" href="https://github.com/selinuxG/Golin-cli"
             target="_blank">GitHub</a>
     </footer>
+    <!-- 帮助手册 -->
+    <div id="myModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <!-- <h2>自定义内容标题</h2> -->
+            <p>Pgsql模式默认连接的数据库为postgres;</p>
+            <p>如果Redis模式无用户填写为null,代表空用户;</p>
+            <p>Oracle模式默认连接的oid为orcl,如需更改名称后增加oid=名称;</p>
+            <p>虽然咱们有此功能但是实在不建议使用此工具连接网络设备！</p>
+        </div>
+    </div>
 
 </body>
 
@@ -228,7 +336,7 @@ func IndexHtml() string {
 `
 }
 
-// 多主机文件
+// IndexFilehtml 多主机模式页面
 
 func IndexFilehtml() string {
 	return `
@@ -422,9 +530,10 @@ func ErrorHtml() string {
 `
 }
 
-// GolinHomeHtml 返回首页
+// GolinHomeHtml 首页
 func GolinHomeHtml() string {
 	return `
+<!DOCTYPE html>
 <!DOCTYPE html>
 <html lang="zh-CN">
 
@@ -437,7 +546,7 @@ func GolinHomeHtml() string {
             font-family: Arial, "微软雅黑", sans-serif;
             margin: 0;
             padding: 0;
-            background: linear-gradient(120deg, #84fab0 0%, #8fd3f4 100%);
+            background: linear-gradient(120deg, #e06645 0%, #007bff 100%);
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -479,15 +588,16 @@ func GolinHomeHtml() string {
             font-size: 1.2rem;
             text-align: center;
             text-decoration: none;
-            background-color: #007bff;
-            color: #fff;
-            transition: background-color 0.3s, box-shadow 0.3s;
-            box-shadow: 0 4px 14px 0 rgba(0, 118, 255, 0.39);
+            background-color: #4c5fe0;
+            color: rgb(252, 252, 252);
+            transition: background-color 0.3s, box-shadow 0.3s, transform 0.2s ease-out;
+            box-shadow: 0 4px 14px 0 rgba(65, 135, 214, 0.39);
         }
 
         .btn:hover {
-            background-color: #0056b3;
-            box-shadow: 0 6px 20px rgba(0, 56, 179, 0.5);
+            background-color: #18e27d;
+            box-shadow: 0 6px 20px rgba(100, 255, 180, 0.5);
+            transform: scale(1.4);
         }
 
         .footer {
@@ -524,7 +634,6 @@ func GolinHomeHtml() string {
 </body>
 
 </html>
-
 `
 }
 
