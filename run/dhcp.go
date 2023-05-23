@@ -10,14 +10,7 @@ echo
 echo "------------------------------------------------------------------------------------------------------"
 echo "测评结果------GYSv1.0"
 echo "应对登录的用户进行身份标识和鉴别，身份标识具有唯一性，身份鉴别信息具有复杂度要求并定期更换；"
-echo "不具备用户唯一性的用户为:";cat /etc/passwd |awk -F":" '{print $1}'|uniq -c|awk -F" " '$3 >1 {print $2}'
-echo "密码最大使用周期为:$(cat /etc/login.defs | grep PASS_MAX_DAYS | grep -v ^# | awk '{print $2}')"
-echo "密码短使用周期为:$(cat /etc/login.defs | grep PASS_MIN_DAYS | grep -v ^# | awk '{print $2}')"
-echo "密码数字位数要求为:$(cat /etc/pam.d/sshd|grep difok | awk -F'dcredit=' '{print $2}' | awk '{print $1}')"
-echo "密码小写位数要求为:$(cat /etc/pam.d/sshd|grep difok | awk -F'lcredit=' '{print $2}' | awk '{print $1}')"
-echo "密码大写位数要求为:$(cat /etc/pam.d/sshd|grep difok | awk -F'ucredit=' '{print $2}' | awk '{print $1}')"
-echo "密码特殊符号位数要求为:$(cat /etc/pam.d/sshd|grep difok | awk -F'ocredit=' '{print $2}' | awk '{print $1}')"
-echo "密码长度要求为:$(cat /etc/pam.d/sshd|grep minlen | awk -F'dcredit=' '{print $2}' | awk '{print $1}')"
+echo $(IFS=':'; output="经核查，登录系统确认服务器采用tty登录及远程登录，均存在口令鉴别措施，无法通过空口令进行登录；查看/etc/passwd文件中"; while read -r user enc_passwd uid gid full_name home shell; do if [[ ! "$shell" =~ ^(/sbin/nologin|/usr/sbin/nologin|/bin/false|/sbin/shutdown|/sbin/halt|/bin/sync|/usr/bin/false)$ ]]; then password_expiry_day=$(awk -F':' -v username="$user" '($1 == username) {print $5}' /etc/shadow); output+="存在可登录用户:${user},UID:${uid},密码更换周期为:${password_expiry_day}天; "; fi; done < /etc/passwd; output+="无重复用户以及uid身份标识唯一，在测试环境下测试创建重复用户root提示无法创建同名账户；查看/etc/shadow文件不存在 空口令账户，测试验证现有用户均无法使用空口令进行tty登录及远程登录;"; minlen=$(grep "pam_pwquality.so" /etc/pam.d/system-auth | grep -oP "minlen=\K[^[:space:]]+" || echo "0"); ucredit=$(grep "pam_pwquality.so" /etc/pam.d/system-auth | grep -oP "ucredit=-\K[^[:space:]]+" || echo "0"); lcredit=$(grep "pam_pwquality.so" /etc/pam.d/system-auth | grep -oP "lcredit=-\K[^[:space:]]+" || echo "0"); dcredit=$(grep "pam_pwquality.so" /etc/pam.d/system-auth | grep -oP "dcredit=-\K[^[:space:]]+" || echo "0"); ocredit=$(grep "pam_pwquality.so" /etc/pam.d/system-auth | grep -oP "ocredit=-\K[^[:space:]]+" || echo "0"); enforce_for_root=$(grep "pam_pwquality.so" /etc/pam.d/system-auth | grep -o "enforce_for_root" || echo "无"); output+="查看/etc/pam.d/system-auth文件配置了password requisite pam_pwquality.so ucredit=-$ucredit lcredit=-$lcredit dcredit=-$dcredit ocredit=-$ocredit minlen=$minlen 口令长度为${minlen}位、小写字为${lcredit}位、大写字母位${ucredit}位、特殊符号为${ocredit}位、数字为${dcredit}位，"; if [ $enforce_for_root = "无" ]; then output+="未配置enforce_for_root无法对管理员用户生效。"; else output+="并配置了enforce_for_root对管理员用户生效。"; fi; pass_max_days=$(grep -E "^PASS_MAX_DAYS" /etc/login.defs | awk '{ print $2 }'); output+="查看/etc/login.defs文件PASS_MAX_DAYS为${pass_max_days}文件新建用户时密码更换周期为:${pass_max_days}天,新建用户时"; if [ $pass_max_days -le 90 ]; then output+="满足密码定期更换周期要求。"; else output+="不满足密码定期更换周期要求。"; fi; echo "$output")
 echo
 echo "------------------------------------------------------------------------------------------------------"
 echo "应具有登录失败处理功能，应配置并启用结束会话、限制非法登录次数和当登录连接超时自动退出等相关措施；"
