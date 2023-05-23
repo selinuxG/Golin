@@ -69,7 +69,7 @@ func GolinSubmitFile(c *gin.Context) {
 			}
 			namesplit := strings.Split(s, "~~")
 			//增加到所有主机切片中
-			allserver = append(allserver, Service{Name: namesplit[0], User: namesplit[1], Ip: namesplit[1], Port: namesplit[4], Time: time.Now().Format(time.DateTime), Type: mode, Status: Failed})
+			allserver = append(allserver, Service{Name: namesplit[0], User: namesplit[2], Ip: namesplit[1], Port: namesplit[4], Time: time.Now().Format(time.DateTime), Type: mode, Status: Failed})
 			//增加保存的文件路径名称到切片中
 			apendname := filepath.Join(global.Succpath, mode, fmt.Sprintf("%s_%s.log", namesplit[0], namesplit[1]))
 			//如果是网络设备：拼接目录时需要更改为Route

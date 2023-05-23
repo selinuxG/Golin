@@ -1,12 +1,12 @@
 package global
 
 import (
-	"net"
 	"os"
 )
 
 const (
 	XlsxTemplateName = "golin上传文件模板文件.xlsx"
+	Licensename      = "license.lic"
 )
 
 // 文件相关公共变量
@@ -72,29 +72,4 @@ func PathExists(path string) bool {
 		return false
 	}
 	return false
-}
-
-// GetLocalIPAddresses 获取本机网卡ip
-func GetLocalIPAddresses() ([]string, error) {
-	addrs, err := net.InterfaceAddrs()
-	if err != nil {
-		return nil, err
-	}
-
-	var ips []string
-	for _, addr := range addrs {
-		ipNet, ok := addr.(*net.IPNet)
-		if !ok || ipNet.IP.IsLoopback() {
-			continue
-		}
-
-		ip := ipNet.IP.To4()
-		if ip == nil { // 排除IPv6地址
-			continue
-		}
-
-		ips = append(ips, ip.String())
-	}
-
-	return ips, nil
 }
