@@ -167,5 +167,5 @@ golin.exe gui
 ```
 ## web
 ```
-golin.exe gui
+golin.exe web
 ```
