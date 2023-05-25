@@ -8,6 +8,11 @@
 
 # 预览地址
 > https://148.100.78.184:1818/golin/gys
+
+[![p9HPoRA.png](https://s1.ax1x.com/2023/05/25/p9HPoRA.png)](https://imgse.com/i/p9HPoRA)
+[![p9HiKQ1.png](https://s1.ax1x.com/2023/05/25/p9HiKQ1.png)](https://imgse.com/i/p9HiKQ1)
+[![p9HiMsx.png](https://s1.ax1x.com/2023/05/25/p9HiMsx.png)](https://imgse.com/i/p9HiMsx)
+
 ## 子命令
 
 ### web
@@ -121,7 +126,7 @@ Flags:
   -i, --ip string         此参数是指定待远程采集的IP文件位置 (default "route.txt")
   -p, --python            此参数是指定python位置，绝对路径，如'D:\python3\python.exe'
   -s, --spript string     此参数是指定IP文件中的分隔字符 (default "~")
-```  
+```
 ### 
 
 ### execl
