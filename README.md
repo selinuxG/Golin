@@ -9,9 +9,9 @@
 # 预览地址
 > https://148.100.78.184:1818/golin/gys
 
-[![p9HPoRA.png](https://s1.ax1x.com/2023/05/25/p9HPoRA.png)](https://imgse.com/i/p9HPoRA)
-[![p9HiKQ1.png](https://s1.ax1x.com/2023/05/25/p9HiKQ1.png)](https://imgse.com/i/p9HiKQ1)
-[![p9HiMsx.png](https://s1.ax1x.com/2023/05/25/p9HiMsx.png)](https://imgse.com/i/p9HiMsx)
+[![p9HPoRA.md.png](https://s1.ax1x.com/2023/05/25/p9HPoRA.md.png)](https://imgse.com/i/p9HPoRA)
+[![p9HiKQ1.md.png](https://s1.ax1x.com/2023/05/25/p9HiKQ1.md.png)](https://imgse.com/i/p9HiKQ1)
+[![p9HiMsx.md.png](https://s1.ax1x.com/2023/05/25/p9HiMsx.md.png)](https://imgse.com/i/p9HiMsx)
 
 ## 子命令
 
