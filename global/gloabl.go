@@ -8,6 +8,7 @@ import (
 	"os"
 	"os/exec"
 	"strings"
+	"unicode/utf8"
 )
 
 const (
@@ -81,12 +82,20 @@ func PathExists(path string) bool {
 }
 
 func ExecCommands(commands ...string) string {
+	//commands = append([]string{"chcp 65001"}, commands...)
 	cmd := strings.Join(commands, " && ")
 	out, err := exec.Command("cmd", "/C", cmd).CombinedOutput()
 	if err != nil {
 		return ""
 	}
-	output, _ := gbkToUtf8(out)
+	var output []byte
+	// 检查输出是否为有效的 UTF-8 编码
+	if utf8.Valid(out) {
+		output = out
+	} else {
+		output, _ = gbkToUtf8(out)
+	}
+	//output, _ := gbkToUtf8(out)
 	return string(output)
 }
 

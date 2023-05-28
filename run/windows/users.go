@@ -46,7 +46,7 @@ func usercheck() {
 						uu.Name = uservaule[1]
 					case "全名":
 						uu.Nameall = uservaule[1]
-					case "注释":
+					case "注释", "Comment":
 						echo := ""
 						if len(uservaule) >= 1 {
 							for i := 1; i < len(uservaule); i++ {
