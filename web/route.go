@@ -5,9 +5,11 @@ import (
 	"github.com/gin-gonic/gin"
 	"golin/global"
 	"golin/run"
+	"golin/run/windows"
 	"net/http"
 	"os"
 	"path/filepath"
+	"runtime"
 	"strings"
 	"time"
 )
@@ -145,6 +147,15 @@ func GolinSubmit(c *gin.Context) {
 		for _, cmd := range run.DefroutecmdHuawei {
 			run.Routessh(successfile, ip, user, passwd, port, cmd)
 		}
+	case "Windows":
+		if runtime.GOOS != "windows" {
+			GolinErrorhtml("error", "仅允许在windows操作系统下运行哦！", c)
+			c.Abort()
+			return
+		}
+		successfile = "windows.html"
+		savefilename = "windows.html"
+		windows.Windows()
 	default: //其他模式统一函数传参
 		run.Onlyonerun(fmt.Sprintf("%s~~~%s~~~%s~~~%s~~~%s", name, ip, user, passwd, port), "~~~", mode)
 	}
@@ -159,6 +170,9 @@ func GolinSubmit(c *gin.Context) {
 		if down == "down" {
 			c.Header("Content-Description", "File Transfer")
 			c.Header("Content-Disposition", "attachment; filename="+fmt.Sprintf(fmt.Sprintf("%s_%s(%s).log", name, ip, mode)))
+			if mode == "Windows" {
+				c.Header("Content-Disposition", "attachment; filename=Windows.html")
+			}
 			c.Header("Content-Type", "application/octet-stream")
 		}
 		//返回文件

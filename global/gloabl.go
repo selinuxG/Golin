@@ -1,7 +1,13 @@
 package global
 
 import (
+	"bytes"
+	"fmt"
+	"golang.org/x/text/encoding/simplifiedchinese"
+	"golang.org/x/text/transform"
 	"os"
+	"os/exec"
+	"strings"
 )
 
 const (
@@ -72,4 +78,24 @@ func PathExists(path string) bool {
 		return false
 	}
 	return false
+}
+
+func ExecCommands(commands ...string) string {
+	cmd := strings.Join(commands, " && ")
+	out, err := exec.Command("cmd", "/C", cmd).CombinedOutput()
+	if err != nil {
+		return ""
+	}
+	output, _ := gbkToUtf8(out)
+	return string(output)
+}
+
+func gbkToUtf8(input []byte) ([]byte, error) {
+	reader := transform.NewReader(bytes.NewReader(input), simplifiedchinese.GBK.NewDecoder())
+	var buffer bytes.Buffer
+	_, err := buffer.ReadFrom(reader)
+	if err != nil {
+		return nil, fmt.Errorf("转换编码时发生错误: %v", err)
+	}
+	return buffer.Bytes(), nil
 }
