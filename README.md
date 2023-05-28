@@ -172,3 +172,19 @@ golin.exe gui
 ```
 golin.exe web
 ```
+## windows
+```
+@echo off
+net session >nul 2>&1
+if %errorLevel% == 0 (
+    echo Running with admin privileges...
+) else (
+    echo Requesting admin privileges...
+    :: Run this script again with admin privileges
+    PowerShell -Command "Start-Process cmd.exe -Verb runAs -ArgumentList '/c %~dpnx0'"
+    exit /B
+)
+cd /D %~dp0
+start "" "golin.exe" windows
+exit /B
+```

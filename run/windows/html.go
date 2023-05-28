@@ -100,7 +100,7 @@ func Windowshtml() string {
 <body>
 
     <div id="content">
-        <h2 id="user">用户信息</h2>
+        <h2 id="osinfo">操作系统信息</h2>
         <table>
             <thead>
                 <tr>
@@ -245,6 +245,7 @@ func Windowshtml() string {
     <div id="toc">
         <h3>目录</h3>
         <ul>
+            <li><a href="#osinfo">操作系统信息</a></li>
             <li><a href="#user">用户信息</a></li>
             <li><a href="#password-accounts">密码有效期核查结果</a></li>
             <li><a href="#password-check">密码复杂度核查结果</a></li>
