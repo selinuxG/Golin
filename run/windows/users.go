@@ -33,7 +33,7 @@ func usercheck() {
 	//var users []UserInformation //结构体用户信息
 	for _, user := range userlist {
 		uu := UserInformation{}
-		u := global.ExecCommands(fmt.Sprintf("net user %s", user))
+		u := global.ExecCommands("chcp 936", fmt.Sprintf("net user %s", user))
 		u = strings.ReplaceAll(u, "\r\n", "\n")
 		for _, s := range strings.Split(u, "\n") {
 			if len(s) > 0 {

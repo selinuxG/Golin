@@ -45,6 +45,7 @@ func Windows() {
 		fmt.Println("是否用管理员执行了？")
 		return
 	}
+	defer os.Remove("policy.txt")
 
 	// 读取导出的安全策略文件
 	data, err := os.ReadFile("policy.txt")
@@ -79,5 +80,4 @@ func Windows() {
 	html = strings.ReplaceAll(html, "<td>否</td>", `<td style="color: rgb(255, 0, 0)">否</td>`)
 	os.Remove("windows.html")
 	os.WriteFile("windows.html", []byte(html), os.FileMode(global.FilePer))
-
 }

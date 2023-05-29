@@ -13,7 +13,7 @@ func lock() []Policyone {
 	intv, _ := strconv.Atoi(v)
 	if ok {
 		one := Policyone{Name: "检查在锁定账户之前允许的无效登录尝试次数", Static: No, Value: v, Steer: "不多于5次"}
-		if intv > 0 && intv < 5 {
+		if intv > 0 && intv <= 5 {
 			one.Static = Yes
 		}
 		locls = append(locls, one)

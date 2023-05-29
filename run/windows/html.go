@@ -227,6 +227,10 @@ func Windowshtml() string {
                 防火墙状态检查结果
             </tbody>
         </table>
+
+		<h2 id="patch">已安装补丁信息</h2>
+        <pre><code>补丁相关结果</code></pre>
+
         <h2 id="domainrlue">核查域防火墙规则</h2>
         <pre><code>域防火墙规则结果</code></pre>
         <h2 id="privaterlue">核查专网防火墙规则</h2>
@@ -236,9 +240,6 @@ func Windowshtml() string {
 
         <h2 id="port">开放端口</h2>
         <pre><code>端口相关结果</code></pre>
-
-        <h2 id="patch">已安装补丁信息</h2>
-        <pre><code>补丁相关结果</code></pre>
 
     </div>
 
