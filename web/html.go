@@ -295,7 +295,6 @@ func IndexHtml() string {
             </div>
             <div class="select-container">
                 <select name="run_mode" required>
-                    <option value="Windows">Windows</option>
                     <option value="Linux">Linux</option>
                     <option value="MySQL">MySQL</option>
                     <option value="Redis">Redis</option>
