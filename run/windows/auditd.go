@@ -59,4 +59,12 @@ func auditd() {
 		echo += fmt.Sprintf("<tr><td>%s</td><td>%s</td><td>%s</td><td>%s</td></tr>", v.Name, v.Value, v.Static, v.Steer)
 	}
 	html = strings.ReplaceAll(html, "高级审计策略结果", echo)
+
+	echo = ""
+	eventLogs := []string{"Application", "Security", "Setup", "System"}
+	for _, v := range eventLogs {
+		cmd := global.ExecCommands(fmt.Sprintf("wevtutil get-log %s", v))
+		echo += cmd + "\n"
+	}
+	html = strings.ReplaceAll(html, "日志属性结果", echo)
 }

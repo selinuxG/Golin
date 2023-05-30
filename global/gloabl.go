@@ -83,10 +83,10 @@ func PathExists(path string) bool {
 
 // ExecCommands 执行cmd命令
 func ExecCommands(commands ...string) string {
-	//commands = append([]string{"chcp 65001"}, commands...)
 	cmd := strings.Join(commands, " && ")
 	out, err := exec.Command("cmd", "/C", cmd).CombinedOutput()
 	if err != nil {
+		fmt.Println(err)
 		return ""
 	}
 	var output []byte

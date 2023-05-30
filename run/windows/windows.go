@@ -66,6 +66,7 @@ func Windows() {
 			Policy[strings.Split(i2, "=")[0]] = strings.Split(i2, "=")[1]
 		}
 	}
+	mstsc()
 	osinfo()      //操作系统信息
 	iptables()    //防火墙状态核查结果
 	usercheck()   //用户详细信息
@@ -77,7 +78,7 @@ func Windows() {
 	iptables()    //防火墙状态核查结果
 
 	html = strings.ReplaceAll(html, "端口相关结果", global.ExecCommands("netstat -ano"))                                                                                                           //开放端口
-	html = strings.ReplaceAll(html, "进程列表结果", global.ExecCommands("tasklist"))                                                                                                               //进程列表
+	html = strings.ReplaceAll(html, "进程列表结果", global.ExecCommands(`tasklist | sort`))                                                                                                        //进程列表
 	html = strings.ReplaceAll(html, "定时任务结果", global.ExecCommands(`schtasks /query /fo LIST`))                                                                                               //定时任务
 	html = strings.ReplaceAll(html, "安装组件结果", global.ExecCommandsPowershll(`Get-WindowsOptionalFeature -Online | Where-Object {$_.State -eq "Enabled"} | Select-Object FeatureName, State`)) //安装组件结果
 	html = strings.ReplaceAll(html, "安装程序结果", global.ExecCommandsPowershll(`Get-Package | Select-Object Name,Version,ProviderName,Source | Format-Table`))                                   //安装程序结果

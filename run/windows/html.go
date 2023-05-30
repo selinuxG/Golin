@@ -96,6 +96,8 @@ func Windowshtml() string {
             border-radius: 5px;
             overflow-x: auto;
             font-family: "Courier New", Courier, monospace;
+			white-space: pre-wrap;
+			word-break: break-word;
         }
     </style>
 
@@ -151,6 +153,24 @@ func Windowshtml() string {
             </thead>
             <tbody>
                 密码复杂度结果
+            </tbody>
+        </table>
+
+        <h2 id="mstsc">远程桌面</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>检查项</th>
+                    <th>是否关闭</th>
+                    <th>建议结果</th>
+                </tr>
+            </thead>
+            <tbody>
+				<tr>
+					<td>是否开启远程桌面</td>
+					<td>开启远程桌面结果</td>
+					<td>根据业务场景判断是否有必要开启</td>
+				</tr>
             </tbody>
         </table>
 
@@ -214,6 +234,25 @@ func Windowshtml() string {
                 高级审计策略结果
             </tbody>
         </table>
+
+		<h2 id="auditattribute">日志属性</h2>
+        <pre><code>日志属性结果
+字段解释：
+name: 标识配置文件的名称
+enabled: 表示此配置是否启用
+type: 配置文件的类型
+owningPublisher: 此项应包含发布者的信息
+isolation: 描述配置的隔离层级
+channelAccess: 定义了如何访问该通道的权限设置。各段括号内的权限是按照特定顺序和格式排列的，每一段表示不同的用户或组的权限。
+logging: 包含日志记录的相关信息：
+logFileName: 日志文件的存储路径
+retention: 是否保留旧日志。
+autoBackup: 是否自动备份日志文件
+maxSize: 日志文件的最大大小（以字节为单位）
+publishing: 包含发布相关设置的信息：
+fileMax: 最大文件数量
+		</code></pre>
+
 
         <h2 id="screen">屏幕保护核查</h2>
         <table>
@@ -319,8 +358,10 @@ QuickScanStartTime: 快速扫描的开始时间。
             <li><a href="#password-accounts">密码有效期</a></li>
             <li><a href="#password-check">密码复杂度</a></li>
             <li><a href="#lockout-check">失败锁定</a></li>
+            <li><a href="#mstsc">远程桌面</a></li>
             <li><a href="#auditd">审计策略</a></li>
             <li><a href="#highauditd">高级审计策略</a></li>
+            <li><a href="#auditattribute">日志属性</a></li>
             <li><a href="#screen">屏幕保护</a></li>
             <li><a href="#port">开放端口</a></li>
             <li><a href="#computer">防病毒</a></li>
