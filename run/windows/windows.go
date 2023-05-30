@@ -66,20 +66,33 @@ func Windows() {
 			Policy[strings.Split(i2, "=")[0]] = strings.Split(i2, "=")[1]
 		}
 	}
-	osinfo()                                                                       //操作系统信息
-	iptables()                                                                     //防火墙状态核查结果
-	usercheck()                                                                    //用户详细信息
-	checkpasswd()                                                                  //密码策略
-	lock()                                                                         //失败锁定策略
-	auditd()                                                                       //日志策略
-	screen()                                                                       //屏幕锁定策略
-	patch()                                                                        //补丁信息
-	iptables()                                                                     //防火墙状态核查结果
-	html = strings.ReplaceAll(html, "端口相关结果", global.ExecCommands("netstat -ano")) //开放端口
+	osinfo()      //操作系统信息
+	iptables()    //防火墙状态核查结果
+	usercheck()   //用户详细信息
+	checkpasswd() //密码策略
+	lock()        //失败锁定策略
+	auditd()      //日志策略
+	screen()      //屏幕锁定策略
+	patch()       //补丁信息
+	iptables()    //防火墙状态核查结果
+
+	html = strings.ReplaceAll(html, "端口相关结果", global.ExecCommands("netstat -ano"))                                                                                                           //开放端口
+	html = strings.ReplaceAll(html, "进程列表结果", global.ExecCommands("tasklist"))                                                                                                               //进程列表
+	html = strings.ReplaceAll(html, "定时任务结果", global.ExecCommands(`schtasks /query /fo LIST`))                                                                                               //定时任务
+	html = strings.ReplaceAll(html, "安装组件结果", global.ExecCommandsPowershll(`Get-WindowsOptionalFeature -Online | Where-Object {$_.State -eq "Enabled"} | Select-Object FeatureName, State`)) //安装组件结果
+	html = strings.ReplaceAll(html, "安装程序结果", global.ExecCommandsPowershll(`Get-Package | Select-Object Name,Version,ProviderName,Source | Format-Table`))                                   //安装程序结果
+	html = strings.ReplaceAll(html, "Service结果", global.ExecCommands("sc query state=all"))                                                                                                  //Service结果
+	html = strings.ReplaceAll(html, "共享资源结果", global.ExecCommands("net share"))                                                                                                              //共享资源
+	html = strings.ReplaceAll(html, "联网测试结果", global.ExecCommands("ping www.baidu.com"))                                                                                                     //联网测试
+	html = strings.ReplaceAll(html, "群组信息结果", global.ExecCommandsPowershll(`Get-CimInstance -ClassName Win32_Group | Select-Object Name, SID, Description | Format-List`))                   //群组信息结果
+	html = strings.ReplaceAll(html, "防病毒结果", global.ExecCommandsPowershll(`Get-MpComputerStatus`))                                                                                           //防病毒
 
 	//给结果增加颜色并写入文件
 	html = strings.ReplaceAll(html, "<td>是</td>", `<td style="color: rgb(32, 199, 29)">是</td>`)
 	html = strings.ReplaceAll(html, "<td>否</td>", `<td style="color: rgb(255, 0, 0)">否</td>`)
 	os.Remove("windows.html")
 	os.WriteFile("windows.html", []byte(html), os.FileMode(global.FilePer))
+	if global.PathExists("windows.html") {
+		_ = global.ExecCommands("start windows.html")
+	}
 }

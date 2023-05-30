@@ -18,6 +18,9 @@ func osinfo() {
 	arch = re.FindAllString(arch, -1)[0]
 	InstallDate := cmdvalue(`wmic os get InstallDate /value`)
 	html = strings.ReplaceAll(html, "操作系统详细信息", fmt.Sprintf("<tr><td>%s</td><td>%s</td><td>%s</td><td>%s</td></tr>", name, Version, arch, InstallDate))
+	systeminfo := global.ExecCommands("systeminfo")
+	html = strings.ReplaceAll(html, "系统信息结果", systeminfo)
+
 }
 
 func cmdvalue(cmd string) string {

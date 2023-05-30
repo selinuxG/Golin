@@ -4,6 +4,8 @@ package windows
 
 import (
 	"fmt"
+	"golin/global"
+	"regexp"
 	"strings"
 )
 
@@ -31,4 +33,30 @@ func auditd() {
 		echo += fmt.Sprintf("<tr><td>%s</td><td>%s</td><td>%s</td><td>%s</td></tr>", v.Name, v.Value, v.Static, v.Steer)
 	}
 	html = strings.ReplaceAll(html, "审计相关结果", echo)
+
+	//高级审核策略
+	aud := global.ExecCommands(`auditpol /get /category:*`)
+	aud = strings.ReplaceAll(aud, "\r\r\n", "\n")
+	for _, v := range strings.Split(aud, "\n") {
+		// 创建一个正则表达式匹配多个空格 将多个连续空格替换为一个
+		re := regexp.MustCompile(`\s{2,}`)
+		v = re.ReplaceAllString(v, " ")
+		if len(strings.Split(v, " ")) == 3 {
+			one := Policyone{Name: strings.Split(v, " ")[1], Value: strings.Split(v, " ")[2], Steer: "配置为成功和失败"}
+			switch strings.Split(v, " ")[2] {
+			case "成功":
+				one.Static = No
+			case "无审核":
+				one.Static = No
+			case "成功和失败":
+				one.Static = Yes
+			}
+			auditlist = append(auditlist, one)
+		}
+	}
+	echo = ""
+	for _, v := range auditlist {
+		echo += fmt.Sprintf("<tr><td>%s</td><td>%s</td><td>%s</td><td>%s</td></tr>", v.Name, v.Value, v.Static, v.Steer)
+	}
+	html = strings.ReplaceAll(html, "高级审计策略结果", echo)
 }

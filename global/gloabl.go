@@ -81,6 +81,7 @@ func PathExists(path string) bool {
 	return false
 }
 
+// ExecCommands 执行cmd命令
 func ExecCommands(commands ...string) string {
 	//commands = append([]string{"chcp 65001"}, commands...)
 	cmd := strings.Join(commands, " && ")
@@ -99,6 +100,7 @@ func ExecCommands(commands ...string) string {
 	return string(output)
 }
 
+// gbkToUtf8 转码utf8
 func gbkToUtf8(input []byte) ([]byte, error) {
 	reader := transform.NewReader(bytes.NewReader(input), simplifiedchinese.GBK.NewDecoder())
 	var buffer bytes.Buffer
@@ -107,4 +109,21 @@ func gbkToUtf8(input []byte) ([]byte, error) {
 		return nil, fmt.Errorf("转换编码时发生错误: %v", err)
 	}
 	return buffer.Bytes(), nil
+}
+
+// ExecCommandsPowershll 执行Powershll命令
+func ExecCommandsPowershll(commands ...string) string {
+	cmdLine := strings.Join(commands, " ; ")
+	out, err := exec.Command("powershell", "-Command", cmdLine).CombinedOutput()
+	if err != nil {
+		return ""
+	}
+	var output []byte
+	// 检查输出是否为有效的 UTF-8 编码
+	if utf8.Valid(out) {
+		output = out
+	} else {
+		output, _ = gbkToUtf8(out)
+	}
+	return string(output)
 }
