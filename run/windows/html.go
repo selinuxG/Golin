@@ -10,7 +10,7 @@ func Windowshtml() string {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Windows等级保护核查结果</title>
+    <title>Windows安全策略核查</title>
     <style>
         body {
             display: grid;
@@ -104,6 +104,7 @@ func Windowshtml() string {
 <body>
 
     <div id="content">
+        <center><h1>生成日期 Windows安全策略核查</h1></center>
         <h2 id="osinfo">操作系统信息</h2>
         <table>
             <thead>
@@ -116,6 +117,22 @@ func Windowshtml() string {
             </thead>
             <tbody>
                 操作系统详细信息
+            </tbody>
+        </table>
+
+        <h2 id="disk">磁盘信息</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>盘符</th>
+                    <th>类型</th>
+                    <th>剩余可用</th>
+                    <th>共计</th>
+                    <th>剩余百分比</th>
+                </tr>
+            </thead>
+            <tbody>
+                磁盘信息结果
             </tbody>
         </table>
 
@@ -339,6 +356,9 @@ QuickScanStartTime: 快速扫描的开始时间。
 		<h2 id="patch">已安装补丁信息</h2>
         <pre><code>补丁相关结果</code></pre>
 
+		<h2 id="driverquery">已安装驱动</h2>
+        <pre><code>安装驱动结果</code></pre>
+
         <h2 id="domainrlue">核查域防火墙规则</h2>
         <pre><code>域防火墙规则结果</code></pre>
         <h2 id="privaterlue">核查专网防火墙规则</h2>
@@ -353,6 +373,7 @@ QuickScanStartTime: 快速扫描的开始时间。
         <h3>目录</h3>
         <ul>
             <li><a href="#osinfo">操作系统信息</a></li>
+            <li><a href="#disk">磁盘信息</a></li>
             <li><a href="#user">用户信息</a></li>
             <li><a href="#group">群组信息</a></li>
             <li><a href="#password-accounts">密码有效期</a></li>
@@ -373,6 +394,7 @@ QuickScanStartTime: 快速扫描的开始时间。
             <li><a href="#Service">Service</a></li>
             <li><a href="#schtasks">定时任务</a></li>
             <li><a href="#patch">安装补丁信息</a></li>
+            <li><a href="#driverquery">安装驱动信息</a></li>
             <li><a href="#network">联网测试</a></li>
             <li><a href="#iptables">防火墙状态</a></li>
             <li><a href="#domainrlue">域防火墙规则</a></li>
@@ -381,11 +403,33 @@ QuickScanStartTime: 快速扫描的开始时间。
         </ul>
     </div>
 
-	<div class="watermark" style="top: 10%; left: 15%;">高业尚-SelinuxG</div>
-	<div class="watermark" style="top: 20%; left: 40%;">高业尚-SelinuxG</div>
-	<div class="watermark" style="top: 50%; left: 10%;">高业尚-SelinuxG</div>
-	<div class="watermark" style="top: 80%; left: 65%;">高业尚-SelinuxG</div>
-	<div class="watermark" style="top: 30%; left: 20%;">高业尚-SelinuxG</div>
+	<div class="watermark" style="top: 1%; left: 50%;">高业尚-SelinuxG</div>
+	<div class="watermark" style="top: 2%; left: 40%;">高业尚-SelinuxG</div>
+	<div class="watermark" style="top: 3%; left: 10%;">高业尚-SelinuxG</div>
+	<div class="watermark" style="top: 4%; left: 65%;">高业尚-SelinuxG</div>
+	<div class="watermark" style="top: 5%; left: 20%;">高业尚-SelinuxG</div>
+	<div class="watermark" style="top: 6%; left: 20%;">高业尚-SelinuxG</div>
+	<div class="watermark" style="top: 7%; left: 20%;">高业尚-SelinuxG</div>
+	<div class="watermark" style="top: 8%; left: 20%;">高业尚-SelinuxG</div>
+	<div class="watermark" style="top: 9%; left: 20%;">高业尚-SelinuxG</div>
+	<div class="watermark" style="top: 21%; left: 50%;">高业尚-SelinuxG</div>
+	<div class="watermark" style="top: 22%; left: 40%;">高业尚-SelinuxG</div>
+	<div class="watermark" style="top: 23%; left: 10%;">高业尚-SelinuxG</div>
+	<div class="watermark" style="top: 24%; left: 65%;">高业尚-SelinuxG</div>
+	<div class="watermark" style="top: 25%; left: 20%;">高业尚-SelinuxG</div>
+	<div class="watermark" style="top: 26%; left: 20%;">高业尚-SelinuxG</div>
+	<div class="watermark" style="top: 27%; left: 20%;">高业尚-SelinuxG</div>
+	<div class="watermark" style="top: 28%; left: 20%;">高业尚-SelinuxG</div>
+	<div class="watermark" style="top: 29%; left: 20%;">高业尚-SelinuxG</div>
+	<div class="watermark" style="top: 50%; left: 50%;">高业尚-SelinuxG</div>
+	<div class="watermark" style="top: 51%; left: 40%;">高业尚-SelinuxG</div>
+	<div class="watermark" style="top: 52; left: 10%;">高业尚-SelinuxG</div>
+	<div class="watermark" style="top: 54%; left: 65%;">高业尚-SelinuxG</div>
+	<div class="watermark" style="top: 55%; left: 20%;">高业尚-SelinuxG</div>
+	<div class="watermark" style="top: 56%; left: 20%;">高业尚-SelinuxG</div>
+	<div class="watermark" style="top: 57%; left: 20%;">高业尚-SelinuxG</div>
+	<div class="watermark" style="top: 58%; left: 20%;">高业尚-SelinuxG</div>
+	<div class="watermark" style="top: 59%; left: 20%;">高业尚-SelinuxG</div>
 
 
 </body>
