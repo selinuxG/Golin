@@ -639,12 +639,11 @@ func GolinHomeHtml() string {
     <div class="container">
         <h1>Golin Web</h1>
         <div class="btn-group">
-            <a href="#" onclick="openPopupWindow('/golin/indexfile');" class="btn">多主机采集模式</a>
-            <a href="#" onclick="openPopupWindow('/golin/index');" class="btn">单主机采集模式</a>
+            <a href="/golin/indexfile" class="btn"  target="_blank" >多主机采集模式</a>
+            <a href="/golin/index"  class="btn"  target="_blank">单主机采集模式</a>
  			<a href="/golin/history" target="_blank" class="btn">历史记录</a>
-            <a href="#" onclick="openPopupWindow('https://github.com/selinuxG/Golin-cli');" class="btn">帮助手册</a>
-            <a href="#" onclick="openPopupWindow('https://ihuace.yuque.com/org-wiki-ihuace-fyorr3/totgpt');"class="btn">作业指导书</a>
-            <a href="#" onclick="openPopupWindow('/golin/update');" class="btn">检查更新</a>
+            <a href="https://github.com/selinuxG/Golin-cli" class="btn"  target="_blank">帮助手册</a>
+            <a href="/golin/update" class="btn" class="btn">检查更新</a>
         </div>
         <div class="footer">
             <p>version:版本 如觉得对自己有帮助点个星星吧~ <a href="https://github.com/selinuxG/Golin-cli" target="_blank">Github</a></p>
