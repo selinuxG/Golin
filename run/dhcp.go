@@ -8,27 +8,24 @@ echo "系统架构:$(uname -m)"
 echo "网卡信息:$(echo;ifconfig |grep inet |grep -v "inet6"|awk -F' ' '{print $2}')"
 echo
 echo "------------------------------------------------------------------------------------------------------"
-echo "测评结果------GYSv1.0"
+echo "测评结果------v2.0"
 echo "应对登录的用户进行身份标识和鉴别，身份标识具有唯一性，身份鉴别信息具有复杂度要求并定期更换；"
 echo
 echo $(IFS=':';output="经核查，登录系统确认服务器采用tty登录及远程登录，均存在口令鉴别措施，无法通过空口令进行登录；查看/etc/passwd文件中"; while read -r user enc_passwd uid gid full_name home shell; do if [[ ! "$shell" =~ ^(/sbin/nologin|/usr/sbin/nologin|/bin/false|/sbin/shutdown|/sbin/halt|/bin/sync|/usr/bin/false)$ ]]; then password_expiry_day=$(awk -F':' -v username="$user" '($1 == username) {print $5}' /etc/shadow); output+="存在可登录用户:${user},UID:${uid},密码更换周期为:${password_expiry_day}天; "; fi; done < /etc/passwd; output+="无重复用户以及uid身份标识唯一，在测试环境下测试创建重复用户root提示无法创建同名账户；查看/etc/shadow文件不存在 空口令账户，测试验证现有用户均无法使用空口令进行tty登录及远程登录;"; minlen=$(grep "pam_pwquality.so" /etc/pam.d/system-auth | grep -oP "minlen=\K[^[:space:]]+" || echo "0"); ucredit=$(grep "pam_pwquality.so" /etc/pam.d/system-auth | grep -oP "ucredit=-\K[^[:space:]]+" || echo "0"); lcredit=$(grep "pam_pwquality.so" /etc/pam.d/system-auth | grep -oP "lcredit=-\K[^[:space:]]+" || echo "0"); dcredit=$(grep "pam_pwquality.so" /etc/pam.d/system-auth | grep -oP "dcredit=-\K[^[:space:]]+" || echo "0"); ocredit=$(grep "pam_pwquality.so" /etc/pam.d/system-auth | grep -oP "ocredit=-\K[^[:space:]]+" || echo "0"); enforce_for_root=$(grep "pam_pwquality.so" /etc/pam.d/system-auth | grep -o "enforce_for_root" || echo "无"); output+="查看/etc/pam.d/system-auth文件配置了password requisite pam_pwquality.so ucredit=-$ucredit lcredit=-$lcredit dcredit=-$dcredit ocredit=-$ocredit minlen=$minlen 口令长度为${minlen}位、小写字为${lcredit}位、大写字母位${ucredit}位、特殊符号为${ocredit}位、数字为${dcredit}位，"; if [ $enforce_for_root = "无" ]; then output+="未配置enforce_for_root无法对管理员用户生效。"; else output+="并配置了enforce_for_root对管理员用户生效。"; fi; pass_max_days=$(grep -E "^PASS_MAX_DAYS" /etc/login.defs | awk '{ print $2 }'); output+="查看/etc/login.defs文件PASS_MAX_DAYS为${pass_max_days}文件新建用户时密码更换周期为:${pass_max_days}天,新建用户时"; if [ $pass_max_days -le 90 ]; then output+="满足密码定期更换周期要求。"; else output+="不满足密码定期更换周期要求。"; fi; echo "$output")
 echo
 echo "------------------------------------------------------------------------------------------------------"
 echo "应具有登录失败处理功能，应配置并启用结束会话、限制非法登录次数和当登录连接超时自动退出等相关措施；"
-echo "超时退出时间为:$(echo $TMOUT)"
-echo "登陆错误失败次数为:$(cat /etc/pam.d/sshd | grep deny | awk -F'deny=' '{print $2}' | awk '{print $1}')"
-echo "失败锁定时常为:$(cat /etc/pam.d/sshd |grep unlock_time | awk -F'unlock_time=' '{print $2}' | awk '{print $1}')"
-DENYROOT=$(cat /etc/pam.d/sshd |grep -v "^#"| grep even_deny_root |wc -l);
-echo "是否设置ROOT用户失败锁定:$(if [ $DENYROOT -eq 1 ];then echo "yes";else echo "未配置";fi)"
-echo "ROOT用户失败锁定时常为:$(cat /etc/pam.d/sshd |grep root_unlock_time | awk -F'root_unlock_time=' '{print $2}' | awk '{print $1}')"
+echo
+echo $(files=("/etc/pam.d/system-auth" "/etc/pam.d/password-auth" "/etc/pam.d/sshd");regex="pam_tally2.so.*deny=([0-9]+).*unlock_time=([0-9]+)";root_regex="even_deny_root";output="";if [ "$(systemctl get-default)" = "graphical.target" ];then output+="经核查，通过ssh登录此操作系统确认服务器采用tty登录，远程登录以及桌面登录，";else output+="经核查，通过ssh登录此操作系统确认服务器采用tty登录及远程登录未开启桌面登录，";fi;for file in "${files[@]}"; do output+=$'检查文件'$file$'';if [[ -f $file ]]; then match=$(grep -Eo "$regex" $file);if [[ -z $match ]]; then output+="中确认未开启失败锁定次数和锁定时间，"$'';else deny_count=$(echo $match | grep -Eo 'deny=[0-9]+' | cut -d'=' -f2);unlock_time=$(echo $match | grep -Eo 'unlock_time=[0-9]+' | cut -d'=' -f2);output+="连续登录失败$deny_count次后锁定账户$unlock_time秒，";root_match=$(grep -E "$root_regex" $file);if [[ -z $root_match ]]; then output+="针对root用户的失败锁定未开启，"$'';else output+="针对root用户的失败锁定已开启，"$'';fi;fi;else output+="文件不存在: $file"$'';fi;output+=$'';done;contmout=$(grep -vE "^#|^$" /etc/ssh/sshd_config | grep "LoginGraceTime");con_value=$(echo $contmout | grep -oE '[0-9]+');if [[ -z $con_value ]]; then con_value="0";output+="未配置在远程连接过程中超时退出策略，";else output+="在ssh远程建立连接过程中通过etc/ssh/sshd_config配置文件设置LoginGraceTime为${con_value}，连接过程超过${con_value}秒后自动退出，";fi;tmout_value=$(cat /etc/profile | grep "TMOUT");tmout_v=$(echo $tmout_value | grep -oE '[0-9]+');if [[ -z $tmout_value ]]; then tmout_value="0";output+="在成功登录后未在全局配置文件/etc/profile中配置超时退出功能。";else output+="在成功登录后通过全局配置文件/etc/profile中配置超过${tmout_v}秒后自动退出功能。";fi;echo -e "$output")
 echo
 echo "------------------------------------------------------------------------------------------------------"
 echo "当进行远程管理时，应采取必要措施防止鉴别信息在网络传输过程中被窃听；"
-echo "当使用此工具时默认符合。此工具逻辑为通过SSH登陆。需确认下面是否开启telnet服务。"
+echo
+echo $(output=""; outputtelnet=$(service telnet.socket status 2>/dev/null); version=$(grep -w "Protocol" /etc/ssh/sshd_config | awk -F " " '{print $2}'); if [[ -z $version ]]; then version=2; fi; if [[ $outputtelnet =~ "active (listening)" ]]; then output+="经核查，此设备在进行远程管理时，采用ssh以及Telnet协议进行远程管 理，通过通过Wireshark抓包验证在使用Telnet鉴别信息为明文传输，无法防止鉴别信息在网络传输过程中被窃听。"; else output+="经核查，此设备在进行远程管理时，采用ssh的加密协议进行远程管理，通过查看sshd_config文件中Protocol字段，确认ssh使用V${version}版本协议，并且已禁用telnet等明文传输协议，通过Wireshark抓包验证鉴别信息为密文传输，可防止鉴别信息在网络传输过程中被窃听。"; fi; echo $output)
 echo
 echo "------------------------------------------------------------------------------------------------------"
 echo "应采用口令、密码技术、生物技术等两种或两种以上组合的鉴别技术对用户进行身份鉴别，且其中一种鉴别技术至少应使用密码技术来实现；"
-echo "经核查，通过ssh协议远程登录尝试可直接登录系统，未采用两种或两种以上组合的鉴别技术对用户进行身份鉴别。"
+echo "经核查，此操作系统仅采用用户名+密码进行身份鉴别，未采用动态口令、数字证书、生物技术或设备指纹等组合方式对用户进行身份鉴别。"
 echo
 echo "------------------------------------------------------------------------------------------------------"
 echo "应对登录的用户分配账户和权限------"
