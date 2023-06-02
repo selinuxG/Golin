@@ -5,7 +5,6 @@ go 1.20
 require (
 	github.com/gin-gonic/gin v1.9.0
 	github.com/go-redis/redis/v8 v8.11.5
-	github.com/google/uuid v1.3.0
 	github.com/mattn/go-colorable v0.1.13
 	github.com/sijms/go-ora/v2 v2.7.6
 	github.com/spf13/cobra v1.6.1
