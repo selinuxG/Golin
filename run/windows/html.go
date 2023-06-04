@@ -338,6 +338,9 @@ QuickScanStartTime: 快速扫描的开始时间。
 		<h2 id="installer">安装程序</h2>
         <pre><code>安装程序结果</code></pre>
 
+		<h2 id="set">环境变量</h2>
+        <pre><code>环境变量结果</code></pre>
+
 		<h2 id="systeminfo">系统信息</h2>
         <pre><code>系统信息结果</code></pre>
 
@@ -391,6 +394,7 @@ QuickScanStartTime: 快速扫描的开始时间。
             <li><a href="#tasklist">进程列表</a></li>
             <li><a href="#installer">已安装程序</a></li>
             <li><a href="#OptionalFeature">已安装组件</a></li>
+            <li><a href="#set">环境变量</a></li>
             <li><a href="#Service">Service</a></li>
             <li><a href="#schtasks">定时任务</a></li>
             <li><a href="#patch">安装补丁信息</a></li>

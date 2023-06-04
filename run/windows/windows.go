@@ -92,6 +92,7 @@ func Windows() {
 		{"群组信息结果", `Get-CimInstance -ClassName Win32_Group | Select-Object Name, SID, Description | Format-List`, true},
 		{"防病毒结果", `Get-MpComputerStatus`, true},
 		{"安装驱动结果", `driverquery`, false},
+		{"环境变量结果", `set`, false},
 	}
 	wg.Add(len(commands))
 	for _, cmd := range commands {

@@ -89,7 +89,6 @@ func ExecCommands(commands ...string) string {
 	execCmd.SysProcAttr = &syscall.SysProcAttr{HideWindow: true} //关闭弹窗
 	out, err := execCmd.CombinedOutput()
 	if err != nil {
-		fmt.Println(err)
 		return ""
 	}
 	var output []byte
