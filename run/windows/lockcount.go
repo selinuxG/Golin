@@ -9,7 +9,7 @@ import (
 )
 
 // lock 核查锁定次数
-func lock() []Policyone {
+func lock() {
 	locls := []Policyone{}
 	v, ok := Policy["LockoutBadCount"] //在锁定账户之前允许的无效登录尝试次数
 	intv, _ := strconv.Atoi(v)
@@ -44,6 +44,4 @@ func lock() []Policyone {
 		echo += fmt.Sprintf("<tr><td>%s</td><td>%s</td><td>%s</td><td>%s</td></tr>", v.Name, v.Value, v.Static, v.Steer)
 	}
 	html = strings.ReplaceAll(html, "失败锁定结果", echo)
-
-	return locls
 }

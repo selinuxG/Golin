@@ -8,6 +8,7 @@ import (
 	"os"
 	"os/exec"
 	"strings"
+	"syscall"
 	"unicode/utf8"
 )
 
@@ -84,7 +85,9 @@ func PathExists(path string) bool {
 // ExecCommands 执行cmd命令
 func ExecCommands(commands ...string) string {
 	cmd := strings.Join(commands, " && ")
-	out, err := exec.Command("cmd", "/C", cmd).CombinedOutput()
+	execCmd := exec.Command("cmd", "/C", cmd)
+	execCmd.SysProcAttr = &syscall.SysProcAttr{HideWindow: true} //关闭弹窗
+	out, err := execCmd.CombinedOutput()
 	if err != nil {
 		fmt.Println(err)
 		return ""
@@ -114,6 +117,8 @@ func gbkToUtf8(input []byte) ([]byte, error) {
 // ExecCommandsPowershll 执行Powershll命令
 func ExecCommandsPowershll(commands ...string) string {
 	cmdLine := strings.Join(commands, " ; ")
+	execCmd := exec.Command("powershell", "-Command", cmdLine)
+	execCmd.SysProcAttr = &syscall.SysProcAttr{HideWindow: true}
 	out, err := exec.Command("powershell", "-Command", cmdLine).CombinedOutput()
 	if err != nil {
 		return ""
