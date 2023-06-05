@@ -22,9 +22,9 @@ func disk() {
 		v = re.ReplaceAllString(v, " ")
 		data := strings.Split(v, " ")
 		if len(data) == 5 {
-			free, _ := strconv.Atoi(data[2])
+			free, _ := strconv.ParseUint(data[2], 10, 64) //如果为int会溢出,int类型在32位系统上的最大值是2147483647
 			freeg := fmt.Sprintf("%d/G", free/1024.0/1024.0/1024.0)
-			all, _ := strconv.Atoi(data[3])
+			all, _ := strconv.ParseUint(data[3], 10, 64) //如果为int会溢出,int类型在32位系统上的最大值是2147483647
 			allg := fmt.Sprintf("%d/G", all/1024.0/1024.0/1024.0)
 			if freeg == "0/G" || allg == "0/G" {
 				freeg = fmt.Sprintf("%d/M", free/1024.0/1024.0)
