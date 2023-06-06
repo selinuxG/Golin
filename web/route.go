@@ -12,6 +12,12 @@ import (
 	"time"
 )
 
+// GolinDj 模拟定级
+func GolinDj(c *gin.Context) {
+	c.Header("Content-Type", "text/html; charset=utf-8")
+	c.String(http.StatusOK, DjHtml())
+}
+
 // GolinHome GolinIndex 单主机首页
 func GolinHome(c *gin.Context) {
 	c.Header("Content-Type", "text/html; charset=utf-8")
@@ -242,6 +248,31 @@ func GolinHistory(c *gin.Context) {
 	}
 	html := GolinHistoryIndex()
 	c.String(200, strings.Replace(html, "主机列表", allserverhtml, -1))
+}
+
+// GolinDjPost 处理提交表单信息
+func GolinDjPost(c *gin.Context) {
+	yeslist := []string{"涉及到民用民生", "涉及金钱交易", "为社会成员提供服务", "存储了涉密信息", "云计算平台", "基础网络但承载三级系统", "大数据平台", "上级单位要求备案三级", "并网前需要测评报告", "影响社会成员使用公共设施", "影响社会成员获取公开数据", "影响社会成员接收公共服务", "会引起法律纠纷"}
+	option, _ := c.GetPostFormArray("option[]")
+	var commonElements []string
+	for _, opt := range option {
+		for _, yes := range yeslist {
+			if opt == yes {
+				commonElements = append(commonElements, opt)
+				break
+			}
+		}
+	}
+	if len(commonElements) == 0 {
+		data := strings.Join(option, ",")
+		c.String(http.StatusOK, fmt.Sprintf("基于您提交的：%s,综合判断均为2级系统特征!", data))
+		c.Abort()
+		return
+	}
+	data := strings.Join(commonElements, ",")
+	c.String(http.StatusOK, fmt.Sprintf("基于您提交的：%s,综合判断均为3级系统特征!", data))
+	c.Abort()
+	return
 }
 
 // FileAppendJson 将成功主机对比allserver主机，写入到json文件中
