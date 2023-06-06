@@ -55,12 +55,12 @@ func Oraclestart(cmd *cobra.Command, args []string) {
 
 func OracleRun(name, host, user, passwd, port string) {
 	defer wg.Done()
-	oid := "orcl"
-	oidlist := strings.Split(name, "oid=")
+	sid := "orcl"
+	oidlist := strings.Split(name, "sid=")
 	if len(oidlist) == 2 {
-		oid = oidlist[1]
+		sid = oidlist[1]
 	}
-	dsn := fmt.Sprintf("oracle://%s:%s@%s:%s/%s", user, passwd, host, port, oid)
+	dsn := fmt.Sprintf("oracle://%s:%s@%s:%s/%s", user, passwd, host, port, sid)
 	db, err := sql.Open("oracle", dsn)
 	if err != nil {
 		errhost = append(errhost, host)

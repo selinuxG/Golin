@@ -280,6 +280,7 @@ func IndexHtml() string {
                     <option value="postgres">Pgsql</option>
                     <option value="sa">SqlServer</option>
                     <option value="admin">route</option>
+                    <option value="system">oracle</option>
                 </datalist>
                 <input type="password" placeholder="密码" name="password" required>
                 <input type="number" placeholder="端口" name="port" id="port-input" list="port-options" min="1"
@@ -325,7 +326,7 @@ func IndexHtml() string {
             <!-- <h2>自定义内容标题</h2> -->
             <p>Pgsql模式默认连接的数据库为postgres;</p>
             <p>如果Redis模式无用户填写为null,代表空用户;</p>
-            <p>Oracle模式默认连接的oid为orcl,如需更改名称后增加oid=名称;</p>
+            <p>Oracle模式默认连接的sid为orcl,如需更改名称后增加sid=名称;</p>
             <p>虽然咱们有此功能但是实在不建议使用此工具连接网络设备！</p>
         </div>
     </div>

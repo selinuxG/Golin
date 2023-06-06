@@ -74,7 +74,7 @@ type ConfigTimeout struct {
 	RunValue    int    //当前正在运行的值。服务器实际上使用的值可能与配置值不同，特别是当修改了配置并未重新启动服务时。通常情况下，在执行RECONFIGURE命令之后，config_value和run_value应该相同。
 }
 
-// SqlServerrun 连接pgsql运行内置命令
+// SqlServerrun 连接SQLServer运行内置命令
 func SqlServerrun(name, host, user, passwd, port string) {
 	defer wg.Done()
 	dsn := fmt.Sprintf("sqlserver://%s:%s@%s:%s?database=master&timeout=1.5s", user, passwd, host, port)
@@ -96,12 +96,25 @@ func SqlServerrun(name, host, user, passwd, port string) {
 	defer file.Close()
 	write := bufio.NewWriter(file)
 	//查询版本
+	write.WriteString("\n-----版本信息：\n")
 	rows, _ := db.Raw("select @@version").Rows()
 	var version string
 	for rows.Next() {
 		rows.Scan(&version)
-		write.WriteString(fmt.Sprintf("当前版本为：%s\n", strings.Replace(version, "\n", "", -1)))
+		write.WriteString(fmt.Sprintf("%s\n", strings.Replace(version, "\n", "", -1)))
 	}
+
+	//查询当前连接是否加密
+	write.WriteString("\n-----查询当前连接是否加密：\n")
+	rows, _ = db.Raw(`SELECT encrypt_option FROM sys.dm_exec_connections WHERE session_id = @@SPID;`).Rows()
+	var nowssl string
+	for rows.Next() {
+		rows.Scan(&nowssl)
+		write.WriteString(fmt.Sprintf("加密传输：%s\n", strings.Replace(nowssl, "\n", "", -1)))
+	}
+
+	//查询用户信息
+	write.WriteString("\n-----用户信息查询：\n")
 
 	var result []User
 	sqlQuery := "SELECT  P.name AS UserName, P.is_disabled AS IsDisabled, L.is_policy_checked AS IsPolicyChecked, L.is_expiration_checked AS IsExpirationChecked, LOGINPROPERTY(P.name, 'DaysUntilExpiration') AS DaysUntilExpiration, LOGINPROPERTY(P.name, 'PasswordLastSetTime') AS PasswordLastSetTime FROM sys.server_principals P JOIN sys.sql_logins L ON P.principal_id = L.principal_id WHERE P.type_desc = 'SQL_LOGIN' ORDER BY P.name;"
@@ -129,6 +142,22 @@ func SqlServerrun(name, host, user, passwd, port string) {
 		write.WriteString(fmt.Sprintf("密码过期时间：%v\n", daysUntilExpirationStr))
 		PasswordLastSetTime := m.PasswordLastSetTime
 		write.WriteString(fmt.Sprintf("上次修改密码时间：%v\n\n", PasswordLastSetTime))
+	}
+
+	write.WriteString("\n------空密码账户查询：\n")
+	rows, _ = db.Raw(`SELECT name FROM sys.sql_logins WHERE PWDCOMPARE('', password_hash) = 1 ;`).Rows()
+	var PWDCOMPARE string
+	for rows.Next() {
+		rows.Scan(&PWDCOMPARE)
+		write.WriteString(fmt.Sprintf("空密码账户：%s\n", strings.Replace(PWDCOMPARE, "\n", "", -1)))
+	}
+
+	write.WriteString("\n------远程管理查询：\n")
+	rows, _ = db.Raw(`SELECT value_in_use FROM sys.configurations WHERE name = 'remote access';`).Rows()
+	var value_in_use string
+	for rows.Next() {
+		rows.Scan(&value_in_use)
+		write.WriteString(fmt.Sprintf("远程登录管理状态：%s(0为关闭，1为开启)\n", strings.Replace(value_in_use, "\n", "", -1)))
 	}
 
 	write.WriteString("\n------超时相关：\n")
