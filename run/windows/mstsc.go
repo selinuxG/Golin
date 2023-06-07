@@ -3,12 +3,11 @@
 package windows
 
 import (
-	"golin/global"
 	"strings"
 )
 
 func mstsc() {
-	mst := global.ExecCommandsPowershll(`(Get-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control\Terminal Server" -Name "fDenyTSConnections").fDenyTSConnections`)
+	mst := ExecCommandsPowershll(`(Get-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control\Terminal Server" -Name "fDenyTSConnections").fDenyTSConnections`)
 	mst = strings.ReplaceAll(mst, "\r\n", "")
 	if mst == "1" {
 		mst = Yes

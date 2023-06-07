@@ -3,13 +3,18 @@
 package windows
 
 import (
+	"bytes"
 	"fmt"
+	"golang.org/x/text/encoding/simplifiedchinese"
+	"golang.org/x/text/transform"
 	"golin/global"
 	"os"
 	"os/exec"
 	"strings"
 	"sync"
+	"syscall"
 	"time"
+	"unicode/utf8"
 )
 
 var (
@@ -43,7 +48,7 @@ type replaceCommand struct {
 
 type Policyone struct {
 	Name   string //检查项
-	Value  string //但当前值
+	Value  string //当前值
 	Static string //状态
 	Steer  string //建议
 }
@@ -119,7 +124,7 @@ func Windows() {
 	os.Remove("windows.html")
 	os.WriteFile("windows.html", []byte(html), os.FileMode(global.FilePer))
 	if global.PathExists("windows.html") {
-		_ = global.ExecCommands("start windows.html")
+		_ = ExecCommands("start windows.html")
 	}
 }
 
@@ -129,22 +134,75 @@ func replaceAsync(html *string, cmd replaceCommand, wg *sync.WaitGroup) {
 	defer func() { <-ch }()
 	var result string
 	if cmd.Powershell {
-		result = global.ExecCommandsPowershll(cmd.Command)
+		result = ExecCommandsPowershll(cmd.Command)
 	} else {
-		result = global.ExecCommands(cmd.Command)
+		result = ExecCommands(cmd.Command)
 	}
 
 	*html = strings.ReplaceAll(*html, cmd.Placeholder, result)
 }
 
-//mstsc()       //远程桌面
-//osinfo()      //操作系统信息
-//iptables()    //防火墙状态核查结果
-//usercheck()   //用户详细信息
-//checkpasswd() //密码策略
-//lock()        //失败锁定策略
-//auditd()      //日志策略
-//screen()      //屏幕锁定策略
-//patch()       //补丁信息
-//iptables()    //防火墙状态核查结果
-//disk()        //磁盘信息
+// ExecCommands 执行cmd命令
+func ExecCommands(commands ...string) string {
+	cmd := strings.Join(commands, " && ")
+	execCmd := exec.Command("cmd", "/C", cmd)
+	execCmd.SysProcAttr = &syscall.SysProcAttr{HideWindow: true} //关闭弹窗
+	out, err := execCmd.CombinedOutput()
+	if err != nil {
+		return ""
+	}
+	var output []byte
+	// 检查输出是否为有效的 UTF-8 编码
+	if utf8.Valid(out) {
+		output = out
+	} else {
+		output, _ = gbkToUtf8(out)
+	}
+	//output, _ := gbkToUtf8(out)
+	return string(output)
+}
+
+// gbkToUtf8 转码utf8
+func gbkToUtf8(input []byte) ([]byte, error) {
+	reader := transform.NewReader(bytes.NewReader(input), simplifiedchinese.GBK.NewDecoder())
+	var buffer bytes.Buffer
+	_, err := buffer.ReadFrom(reader)
+	if err != nil {
+		return nil, fmt.Errorf("转换编码时发生错误: %v", err)
+	}
+	return buffer.Bytes(), nil
+}
+
+// ExecCommandsPowershll 执行Powershll命令
+func ExecCommandsPowershll(commands ...string) string {
+	cmdLine := strings.Join(commands, " ; ")
+	execCmd := exec.Command("powershell", "-Command", cmdLine)
+	execCmd.SysProcAttr = &syscall.SysProcAttr{HideWindow: true}
+	out, err := exec.Command("powershell", "-Command", cmdLine).CombinedOutput()
+	if err != nil {
+		return ""
+	}
+	var output []byte
+	// 检查输出是否为有效的 UTF-8 编码
+	if utf8.Valid(out) {
+		output = out
+	} else {
+		output, _ = gbkToUtf8(out)
+	}
+	return string(output)
+}
+
+/*
+	mstsc()       //远程桌面
+	osinfo()      //操作系统信息
+	iptables()    //防火墙状态核查结果
+	usercheck()   //用户详细信息
+	checkpasswd() //密码策略
+	lock()        //失败锁定策略
+	auditd()      //日志策略
+	screen()      //屏幕锁定策略
+	patch()       //补丁信息
+	iptables()    //防火墙状态核查结果
+	disk()        //磁盘信息
+	ExecCommands 执行cmd命令
+*/

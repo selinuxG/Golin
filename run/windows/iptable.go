@@ -5,7 +5,6 @@ package windows
 import (
 	"fmt"
 	"golang.org/x/sys/windows/registry"
-	"golin/global"
 	"strings"
 )
 
@@ -51,13 +50,13 @@ func iptables() {
 	html = strings.ReplaceAll(html, "防火墙状态检查结果", echo)
 
 	//域防火墙规则
-	domainrlue := global.ExecCommands("netsh advfirewall firewall show rule name=all profile=domain")
+	domainrlue := ExecCommands("netsh advfirewall firewall show rule name=all profile=domain")
 	html = strings.ReplaceAll(html, "域防火墙规则结果", domainrlue)
 	//专网防火墙规则
-	privaterlue := global.ExecCommands("netsh advfirewall firewall show rule name=all profile=private")
+	privaterlue := ExecCommands("netsh advfirewall firewall show rule name=all profile=private")
 	html = strings.ReplaceAll(html, "专网防火墙规则结果", privaterlue)
 	//公共防火墙规则
-	publicrlue := global.ExecCommands("netsh advfirewall firewall show rule name=all profile=public")
+	publicrlue := ExecCommands("netsh advfirewall firewall show rule name=all profile=public")
 	html = strings.ReplaceAll(html, "公共防火墙规则结果", publicrlue)
 
 }

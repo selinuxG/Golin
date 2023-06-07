@@ -905,7 +905,7 @@ func DjHtml() string {
         <div class="checkbox-container">
             <label><input type="checkbox" name="option[]" value="涉及到民用民生">涉及到民用民生</label>
             <label><input type="checkbox" name="option[]" value="涉及金钱交易">涉及金钱交易</label>
-            <label><input type="checkbox" name="option[]" value="">仅内部员工使用</label>
+            <label><input type="checkbox" name="option[]" value="仅内部员工使用">仅内部员工使用</label>
             <label><input type="checkbox" name="option[]" value="为社会成员提供服务">为社会成员提供服务</label>
             <label><input type="checkbox" name="option[]" value="门户/官方网站">门户/官方网站</label>
             <label><input type="checkbox" name="option[]" value="存储了涉密信息">存储了涉密信息</label>
@@ -918,10 +918,107 @@ func DjHtml() string {
             <label><input type="checkbox" name="option[]" value="影响社会成员获取公开数据">影响社会成员获取公开数据</label>
             <label><input type="checkbox" name="option[]" value="影响社会成员接收公共服务">影响社会成员接收公共服务</label>
             <label><input type="checkbox" name="option[]" value="会引起法律纠纷">会引起法律纠纷</label>
+            <label><input type="checkbox" name="option[]" value="同行业定为2级">同行业定为2级</label>
+            <label><input type="checkbox" name="option[]" value="仅处理内部办公">仅处理内部办公</label>
+            <label><input type="checkbox" name="option[]" value="存储数据与其他系统共享">存储数据与其他系统共享</label>
         </div>
 
         <button type="submit" class="submit-btn">提交</button>
     </form>
+</body>
+
+</html>
+`
+}
+
+// DjLevelHtml 输出定级结果
+func DjLevelHtml() string {
+	return `
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Echo Information</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f5f5f5;
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 2rem;
+            color: #3aa0f3;
+            margin-top: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: auto;
+            padding: 1rem;
+            background-color: #ffffff;
+            box-shadow: 0 4px 12px 0 rgba(0, 0, 0, 0.05);
+        }
+
+        p {
+            font-size: 1.1rem;
+            line-height: 1.6;
+            color: #333;
+        }
+
+        h2 {
+            font-size: 1.5rem;
+            color: #333;
+            margin-top: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+            margin-bottom: 1.5rem;
+        }
+
+        th,
+        td {
+            border: 1px solid #ccc;
+            padding: 8px;
+        }
+
+        th {
+            background-color: #f2f2f2;
+            font-weight: bold;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>替换单位</h1>
+        <p>系统名称：替换系统</p>
+        <p>建议等级：替换等级（级）</p>
+        <p>判断依据：<a href="https://openstd.samr.gov.cn/bzgk/gb/newGbInfo?hcno=63B89FFF7CC97EBBBED8A403396F0F00">标准号：GB/T
+                22240-2020《信息安全技术 网络安全等级保护定级指南》
+            </a></a>
+        </p>
+        <h2>您选择的以下特征是替换等级（级）系统具备的特征:</h2>
+        <table>
+            <tr>
+                <th>Feature</th>
+            </tr>
+            替换特征
+        </table>
+    </div>
 </body>
 
 </html>

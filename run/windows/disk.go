@@ -4,14 +4,13 @@ package windows
 
 import (
 	"fmt"
-	"golin/global"
 	"regexp"
 	"strconv"
 	"strings"
 )
 
 func disk() {
-	value := global.ExecCommands(`wmic logicaldisk get DeviceID, FileSystem, Size, FreeSpace`)
+	value := ExecCommands(`wmic logicaldisk get DeviceID, FileSystem, Size, FreeSpace`)
 	value = strings.ReplaceAll(value, "\r\r\n", "\n")
 	echo := ""
 	for _, v := range strings.Split(value, "\n") {

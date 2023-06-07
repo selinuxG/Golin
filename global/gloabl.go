@@ -1,15 +1,7 @@
 package global
 
 import (
-	"bytes"
-	"fmt"
-	"golang.org/x/text/encoding/simplifiedchinese"
-	"golang.org/x/text/transform"
 	"os"
-	"os/exec"
-	"strings"
-	"syscall"
-	"unicode/utf8"
 )
 
 const (
@@ -80,54 +72,4 @@ func PathExists(path string) bool {
 		return false
 	}
 	return false
-}
-
-// ExecCommands 执行cmd命令
-func ExecCommands(commands ...string) string {
-	cmd := strings.Join(commands, " && ")
-	execCmd := exec.Command("cmd", "/C", cmd)
-	execCmd.SysProcAttr = &syscall.SysProcAttr{HideWindow: true} //关闭弹窗
-	out, err := execCmd.CombinedOutput()
-	if err != nil {
-		return ""
-	}
-	var output []byte
-	// 检查输出是否为有效的 UTF-8 编码
-	if utf8.Valid(out) {
-		output = out
-	} else {
-		output, _ = gbkToUtf8(out)
-	}
-	//output, _ := gbkToUtf8(out)
-	return string(output)
-}
-
-// gbkToUtf8 转码utf8
-func gbkToUtf8(input []byte) ([]byte, error) {
-	reader := transform.NewReader(bytes.NewReader(input), simplifiedchinese.GBK.NewDecoder())
-	var buffer bytes.Buffer
-	_, err := buffer.ReadFrom(reader)
-	if err != nil {
-		return nil, fmt.Errorf("转换编码时发生错误: %v", err)
-	}
-	return buffer.Bytes(), nil
-}
-
-// ExecCommandsPowershll 执行Powershll命令
-func ExecCommandsPowershll(commands ...string) string {
-	cmdLine := strings.Join(commands, " ; ")
-	execCmd := exec.Command("powershell", "-Command", cmdLine)
-	execCmd.SysProcAttr = &syscall.SysProcAttr{HideWindow: true}
-	out, err := exec.Command("powershell", "-Command", cmdLine).CombinedOutput()
-	if err != nil {
-		return ""
-	}
-	var output []byte
-	// 检查输出是否为有效的 UTF-8 编码
-	if utf8.Valid(out) {
-		output = out
-	} else {
-		output, _ = gbkToUtf8(out)
-	}
-	return string(output)
 }

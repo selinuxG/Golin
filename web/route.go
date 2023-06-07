@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"strconv"
 	"strings"
 	"time"
 )
@@ -252,27 +253,53 @@ func GolinHistory(c *gin.Context) {
 
 // GolinDjPost 处理提交表单信息
 func GolinDjPost(c *gin.Context) {
-	yeslist := []string{"涉及到民用民生", "涉及金钱交易", "为社会成员提供服务", "存储了涉密信息", "云计算平台", "基础网络但承载三级系统", "大数据平台", "上级单位要求备案三级", "并网前需要测评报告", "影响社会成员使用公共设施", "影响社会成员获取公开数据", "影响社会成员接收公共服务", "会引起法律纠纷"}
-	option, _ := c.GetPostFormArray("option[]")
-	var commonElements []string
-	for _, opt := range option {
-		for _, yes := range yeslist {
-			if opt == yes {
-				commonElements = append(commonElements, opt)
-				break
-			}
+	type echo struct {
+		name    string   //单位名称
+		system  string   //系统名称
+		level   int      //建议等级
+		feature []string //特征
+	}
+	check := echo{}
+	yesList := []string{"涉及到民用民生", "涉及金钱交易", "为社会成员提供服务", "存储了涉密信息", "云计算平台", "基础网络但承载三级系统", "大数据平台", "上级单位要求备案三级", "并网前需要测评报告", "影响社会成员使用公共设施", "影响社会成员获取公开数据", "影响社会成员接收公共服务", "会引起法律纠纷", "存储数据与其他系统共享"}
+	name, _ := c.GetPostForm("unit-name")     //单位名称
+	system, _ := c.GetPostForm("system-name") //系统名称
+	check.name = name
+	check.system = system
+	check.level = 2
+	options, _ := c.GetPostFormArray("option[]") //多选框选择结果
+	var commonElements []string                  //存储选择的三级特征
+	yesListSet := make(map[string]bool)
+
+	for _, yes := range yesList {
+		yesListSet[yes] = true
+	}
+
+	for _, opt := range options {
+		if yesListSet[opt] {
+			commonElements = append(commonElements, opt)
 		}
 	}
-	if len(commonElements) == 0 {
-		data := strings.Join(option, ",")
-		c.String(http.StatusOK, fmt.Sprintf("基于您提交的：%s,综合判断均为2级系统特征!", data))
-		c.Abort()
-		return
+
+	if len(commonElements) == 0 { // 如果符合特征是0个，则是二级
+		check.feature = append(check.feature, options...)
 	}
-	data := strings.Join(commonElements, ",")
-	c.String(http.StatusOK, fmt.Sprintf("基于您提交的：%s,综合判断均为3级系统特征!", data))
-	c.Abort()
-	return
+
+	if len(commonElements) > 0 { // 如果符合特征大于0个，则是三级
+		check.level = 3
+		check.feature = append(check.feature, commonElements...)
+	}
+	html := DjLevelHtml()
+	html = strings.ReplaceAll(html, "替换单位", check.name)
+	html = strings.ReplaceAll(html, "替换系统", check.system)
+	html = strings.ReplaceAll(html, "替换等级", strconv.Itoa(check.level))
+	echofeature := ""
+	for _, v := range check.feature {
+		echofeature += fmt.Sprintf("<tr><td>%s</td></tr>", v)
+	}
+	html = strings.ReplaceAll(html, "替换特征", echofeature)
+	c.Header("Content-Type", "text/html; charset=utf-8")
+	c.String(http.StatusOK, html)
+
 }
 
 // FileAppendJson 将成功主机对比allserver主机，写入到json文件中

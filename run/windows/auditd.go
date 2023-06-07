@@ -4,7 +4,6 @@ package windows
 
 import (
 	"fmt"
-	"golin/global"
 	"regexp"
 	"strings"
 )
@@ -35,7 +34,7 @@ func auditd() {
 	html = strings.ReplaceAll(html, "审计相关结果", echo)
 
 	//高级审核策略
-	aud := global.ExecCommands(`auditpol /get /category:*`)
+	aud := ExecCommands(`auditpol /get /category:*`)
 	aud = strings.ReplaceAll(aud, "\r\r\n", "\n")
 	for _, v := range strings.Split(aud, "\n") {
 		// 创建一个正则表达式匹配多个空格 将多个连续空格替换为一个
@@ -63,7 +62,7 @@ func auditd() {
 	echo = ""
 	eventLogs := []string{"Application", "Security", "Setup", "System"}
 	for _, v := range eventLogs {
-		cmd := global.ExecCommands(fmt.Sprintf("wevtutil get-log %s", v))
+		cmd := ExecCommands(fmt.Sprintf("wevtutil get-log %s", v))
 		echo += cmd + "\n"
 	}
 	html = strings.ReplaceAll(html, "日志属性结果", echo)

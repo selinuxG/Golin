@@ -4,7 +4,6 @@ package windows
 
 import (
 	"fmt"
-	"golin/global"
 	"strings"
 )
 
@@ -25,7 +24,7 @@ type UserInformation struct {
 func usercheck() {
 	echo := ""
 	userlist := []string{}
-	use := global.ExecCommands("wmic useraccount list full")
+	use := ExecCommands("wmic useraccount list full")
 	use = strings.ReplaceAll(use, "\r\r\n", "\n")
 	for _, i := range strings.Split(use, "\n") {
 		if strings.Count(i, "Name=") == 1 && strings.Count(i, "FullName") == 0 {
@@ -35,7 +34,7 @@ func usercheck() {
 	//var users []UserInformation //结构体用户信息
 	for _, user := range userlist {
 		uu := UserInformation{}
-		u := global.ExecCommands("chcp 936", fmt.Sprintf("net user %s", user))
+		u := ExecCommands("chcp 936", fmt.Sprintf("net user %s", user))
 		u = strings.ReplaceAll(u, "\r\n", "\n")
 		for _, s := range strings.Split(u, "\n") {
 			if len(s) > 0 {
@@ -81,7 +80,7 @@ func usercheck() {
 			}
 		}
 		//获取用户sid
-		sid := global.ExecCommands(fmt.Sprintf("wmic useraccount where name='%s' get sid", user))
+		sid := ExecCommands(fmt.Sprintf("wmic useraccount where name='%s' get sid", user))
 		sid = strings.ReplaceAll(sid, "\r\r\n", "")
 		sid = strings.ReplaceAll(sid, "SID", "")
 		sid = strings.ReplaceAll(sid, " ", "")
