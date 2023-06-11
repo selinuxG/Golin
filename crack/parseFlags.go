@@ -110,6 +110,9 @@ func checkMode(mode string) {
 	case "sqlserver":
 		port = 1433
 		userlist = append(userlist, df_sqlserveruser...)
+	case "ftp":
+		port = 21
+		userlist = append(userlist, df_ftpuser...)
 	}
 
 }

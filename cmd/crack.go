@@ -7,7 +7,7 @@ import (
 
 var expCmd = &cobra.Command{
 	Use:   "crack",
-	Short: "暴力破解功能,目前支持：ssh、mysql、redis、postgresql、sqlserver",
+	Short: "暴力破解功能,目前支持：ssh、mysql、redis、postgresql、sqlserver、ftp",
 }
 
 // 破解 ssh
@@ -45,9 +45,16 @@ var sqlserver = &cobra.Command{
 	Run:   crack.Run,
 }
 
+// 破解 ftp
+var ftp = &cobra.Command{
+	Use:   "ftp",
+	Short: "ftp暴力破解",
+	Run:   crack.Run,
+}
+
 func init() {
 	rootCmd.AddCommand(expCmd)
-	commands := []*cobra.Command{ssh, mysql, redis, pgsql, sqlserver}
+	commands := []*cobra.Command{ssh, mysql, redis, pgsql, sqlserver, ftp}
 	for _, cmd := range commands {
 		expCmd.AddCommand(cmd)
 		cmd.Flags().StringP("ip", "i", "", "此参数是指定暴力破解的IP")

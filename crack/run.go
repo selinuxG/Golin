@@ -5,17 +5,14 @@ import (
 	"fmt"
 	"github.com/spf13/cobra"
 	"sync"
-	"time"
 )
 
 var (
-	ch        = make(chan struct{}, 100)
-	wg        = sync.WaitGroup{}
-	starttime = time.Time{}
+	ch = make(chan struct{}, 30)
+	wg = sync.WaitGroup{}
 )
 
 func Run(cmd *cobra.Command, args []string) {
-	starttime = time.Now()
 	info := parseFlags(cmd)
 	fmt.Printf("[*] 运行暴力破解模式:%s,主机:%d个,尝试用户%d个,尝试密码%d个,共计%d种可能！ 线程数:%d\n", info.Mode, len(info.IP), len(info.User), len(info.Passwd), len(info.User)*len(info.Passwd), info.Chan)
 	ch = make(chan struct{}, info.Chan)
@@ -45,6 +42,8 @@ func Run(cmd *cobra.Command, args []string) {
 					go sqlservercon(ctx, cancel, ip, user, passwd, info.Prot)
 				case "oracle":
 					go oracle(ctx, cancel, ip, user, passwd, info.Prot)
+				case "ftp":
+					go ftpcon(ip, user, passwd, info.Prot) //因为ftp匿名账户的问题，所以让字典跑完
 				}
 			}
 		}
@@ -54,5 +53,5 @@ func Run(cmd *cobra.Command, args []string) {
 
 // end 结束
 func end(ip, user, passwd string, port int) {
-	fmt.Printf("[*] 破解完成！IP:%s  用户:%s  密码:%s  端口:%d  \n", ip, user, passwd, port)
+	fmt.Printf("[*] 发现口令！IP:%s  用户:%s  密码:%s  端口:%d  \n", ip, user, passwd, port)
 }
