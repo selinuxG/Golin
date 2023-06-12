@@ -8,7 +8,7 @@ import (
 	"gorm.io/gorm/logger"
 )
 
-func mySql(ctx context.Context, cancel context.CancelFunc, ip, user, passwd string, port int) {
+func mySql(ctx context.Context, cancel context.CancelFunc, ip, user, passwd string, port, timeout int) {
 	defer func() {
 		wg.Done()
 		<-ch
@@ -18,7 +18,7 @@ func mySql(ctx context.Context, cancel context.CancelFunc, ip, user, passwd stri
 		return
 	default:
 	}
-	dsn := fmt.Sprintf("%s:%s@tcp(%s:%d)/%s?charset=utf8mb4&parseTime=True&loc=Local&timeout=1.5s", user, passwd, ip, port, "mysql")
+	dsn := fmt.Sprintf("%s:%s@tcp(%s:%d)/%s?charset=utf8mb4&parseTime=True&loc=Local&timeout=%ds", user, passwd, ip, port, "mysql", timeout)
 	_, err := gorm.Open(mysql.Open(dsn), &gorm.Config{
 		Logger: logger.Default.LogMode(logger.Silent), // 设置日志级别为 silent
 	})

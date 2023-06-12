@@ -18,13 +18,14 @@ var (
 )
 
 type INFO struct {
-	Mode   string   //运行模式
-	IP     []string //暴力破解的地址
-	User   []string //暴力破解的用户列表
-	Passwd []string //暴力破解的密码列表
-	Prot   int      //暴力破解的端口
-	NoPing bool     //是否禁止ping监测
-	Chan   int      //并发数量
+	Mode    string   //运行模式
+	IP      []string //暴力破解的地址
+	User    []string //暴力破解的用户列表
+	Passwd  []string //暴力破解的密码列表
+	Prot    int      //暴力破解的端口
+	NoPing  bool     //是否禁止ping监测
+	Chan    int      //并发数量
+	Timeout int      //超时等待时常
 }
 
 func parseFlags(cmd *cobra.Command) INFO {
@@ -77,16 +78,24 @@ func parseFlags(cmd *cobra.Command) INFO {
 		passwdlist = append(passwdlist, strings.Split(string(passwdstr), "\n")...)
 	}
 
-	ping, _ := cmd.Flags().GetBool("noping")   //是否禁止ping
+	ping, _ := cmd.Flags().GetBool("noping") //是否禁止ping
+
 	chancount, _ := cmd.Flags().GetInt("chan") //并发数量
+
+	timeout, _ := cmd.Flags().GetInt("time") //超时等待时常
+	if timeout <= 0 {
+		timeout = 3
+	}
+
 	info := INFO{
-		Mode:   mode,
-		IP:     iplist,
-		User:   removeDuplicates(userlist),
-		Passwd: removeDuplicates(passwdlist),
-		Prot:   port,
-		NoPing: ping,
-		Chan:   chancount,
+		Mode:    mode,
+		IP:      iplist,
+		User:    removeDuplicates(userlist),
+		Passwd:  removeDuplicates(passwdlist),
+		Prot:    port,
+		NoPing:  ping,
+		Chan:    chancount,
+		Timeout: timeout,
 	}
 
 	return info

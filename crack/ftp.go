@@ -6,12 +6,12 @@ import (
 	"time"
 )
 
-func ftpcon(ip, user, passwd string, port int) {
+func ftpcon(ip, user, passwd string, port, timeout int) {
 	defer func() {
 		wg.Done()
 		<-ch
 	}()
-	c, err := ftp.Dial(fmt.Sprintf("%s:%d", ip, port), ftp.DialWithTimeout(3*time.Second))
+	c, err := ftp.Dial(fmt.Sprintf("%s:%d", ip, port), ftp.DialWithTimeout(time.Duration(timeout)*time.Second))
 	if err == nil {
 		err = c.Login(user, passwd)
 		if err == nil {
@@ -19,4 +19,5 @@ func ftpcon(ip, user, passwd string, port int) {
 			_ = c.Quit()
 		}
 	}
+	return
 }

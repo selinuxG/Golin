@@ -8,7 +8,7 @@ import (
 	"gorm.io/gorm/logger"
 )
 
-func sqlservercon(ctx context.Context, cancel context.CancelFunc, ip, user, passwd string, port int) {
+func sqlservercon(ctx context.Context, cancel context.CancelFunc, ip, user, passwd string, port, timeout int) {
 	defer func() {
 		wg.Done()
 		<-ch
@@ -19,7 +19,7 @@ func sqlservercon(ctx context.Context, cancel context.CancelFunc, ip, user, pass
 	default:
 	}
 
-	dsn := fmt.Sprintf("sqlserver://%s:%s@%s:%d?database=master&timeout=1.5s", user, passwd, ip, port)
+	dsn := fmt.Sprintf("sqlserver://%s:%s@%s:%d?database=master&timeout=%ds", user, passwd, ip, port, timeout)
 	_, err := gorm.Open(sqlserver.Open(dsn), &gorm.Config{
 		Logger: logger.Default.LogMode(logger.Silent),
 	})

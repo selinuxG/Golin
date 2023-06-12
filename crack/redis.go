@@ -9,7 +9,7 @@ import (
 
 var ctx = context.Background()
 
-func rediscon(ip, user, passwd string, port int) {
+func rediscon(ip, user, passwd string, port, timeout int) {
 	defer func() {
 		wg.Done()
 		<-ch
@@ -19,9 +19,9 @@ func rediscon(ip, user, passwd string, port int) {
 		Username:        user,
 		Password:        passwd,
 		DB:              0,
-		DialTimeout:     1 * time.Second,
-		MinRetryBackoff: 1 * time.Second,
-		ReadTimeout:     1 * time.Second,
+		DialTimeout:     time.Duration(timeout) * time.Second,
+		MinRetryBackoff: time.Duration(timeout) * time.Second,
+		ReadTimeout:     time.Duration(timeout) * time.Second,
 	})
 	_, err := client.Ping(ctx).Result()
 	if err == nil {

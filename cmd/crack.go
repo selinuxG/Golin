@@ -62,6 +62,7 @@ func init() {
 		cmd.Flags().StringP("user", "u", "", "此参数是指定用户文件")
 		cmd.Flags().StringP("passwd", "p", "", "此参数是指定密码文件")
 		cmd.Flags().IntP("chan", "c", 30, "并发数量")
+		cmd.Flags().IntP("time", "t", 3, "超时等待时常/s")
 		cmd.Flags().Bool("noping", false, "此参数是指定不运行ping监测")
 	}
 }

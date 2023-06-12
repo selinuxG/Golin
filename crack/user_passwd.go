@@ -6,7 +6,7 @@ var (
 	df_redisuser     = []string{"", "redis", "root"}                                                         //redis模式下默认用户
 	df_pgsqluser     = []string{"postgres", "root"}                                                          //pgsql模式下默认用户
 	df_sqlserveruser = []string{"sa", "administrator"}                                                       //pgsql模式下默认用户
-	df_ftpuser       = []string{"", "ftp", "anonymous", "admin", "FTP", "ftpadmin"}                          //ftp模式下默认用户
+	df_ftpuser       = []string{"ftp", "ftpadmin", "admin"}                                                  //ftp模式下默认用户
 	passwdlist       = []string{                                                                             //默认密码
 		"root",
 		"admin",

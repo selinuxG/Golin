@@ -8,7 +8,7 @@ import (
 	"gorm.io/gorm/logger"
 )
 
-func pgsql(ctx context.Context, cancel context.CancelFunc, ip, user, passwd string, port int) {
+func pgsql(ctx context.Context, cancel context.CancelFunc, ip, user, passwd string, port, timeout int) {
 	defer func() {
 		wg.Done()
 		<-ch
@@ -18,7 +18,7 @@ func pgsql(ctx context.Context, cancel context.CancelFunc, ip, user, passwd stri
 		return
 	default:
 	}
-	dsn := fmt.Sprintf("host=%s user=%s password=%s dbname=postgres port=%d sslmode=disable  TimeZone=Asia/Shanghai connect_timeout=3", ip, user, passwd, port)
+	dsn := fmt.Sprintf("host=%s user=%s password=%s dbname=postgres port=%d sslmode=disable  TimeZone=Asia/Shanghai connect_timeout=%d", ip, user, passwd, port, timeout)
 	_, err := gorm.Open(postgres.Open(dsn), &gorm.Config{
 		Logger: logger.Default.LogMode(logger.Silent),
 	})

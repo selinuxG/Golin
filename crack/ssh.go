@@ -7,7 +7,7 @@ import (
 	"time"
 )
 
-func SSH(ctx context.Context, cancel context.CancelFunc, ip, user, passwd string, port int) {
+func SSH(ctx context.Context, cancel context.CancelFunc, ip, user, passwd string, port, timeout int) {
 	defer func() {
 		wg.Done()
 		<-ch
@@ -18,7 +18,7 @@ func SSH(ctx context.Context, cancel context.CancelFunc, ip, user, passwd string
 	default:
 	}
 	configssh := &ssh.ClientConfig{
-		Timeout:         time.Second * 2, // ssh连接timeout时间
+		Timeout:         time.Duration(timeout) * time.Second, // ssh连接timeout时间
 		User:            user,
 		HostKeyCallback: ssh.InsecureIgnoreHostKey(),
 	}
