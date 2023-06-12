@@ -20,7 +20,6 @@ var (
 		"jvbzd",
 		"vizxv",
 		"oracle",
-		"GYS1015..",
 		"user",
 		"support",
 		"xc3511",

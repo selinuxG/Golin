@@ -20,8 +20,9 @@ func Run(cmd *cobra.Command, args []string) {
 	defer cancel() //
 	// 确保所有的goroutine都已经退出
 	for _, ip := range info.IP {
-		if info.NoPing {
-			if !NetWorkStatus(ip) { //进行ping
+		if !info.NoPing { //true为跳过ping
+			if !NetWorkStatus(ip) {
+				fmt.Printf("[-] 网络不可达：%s,可通过--noping跳过ping检测\n", ip)
 				continue
 			}
 		}
