@@ -101,26 +101,36 @@ func parseFlags(cmd *cobra.Command) INFO {
 	return info
 }
 
+// defaule_port 各个服务默认端口
+var defaule_port = map[string]int{
+	"ssh":       22,
+	"mysql":     3306,
+	"redis":     6379,
+	"pgsql":     5432,
+	"sqlserver": 1433,
+	"ftp":       21,
+}
+
 // checkMode 基于模式设置默认端口以及用户列表
 func checkMode(mode string) {
 	switch mode {
 	case "ssh":
-		port = 22
+		port = defaule_port[mode]
 		userlist = append(userlist, df_sshuser...)
 	case "mysql":
-		port = 3306
+		port = defaule_port[mode]
 		userlist = append(userlist, df_mysqluser...)
 	case "redis":
-		port = 6379
+		port = defaule_port[mode]
 		userlist = append(userlist, df_redisuser...)
 	case "pgsql":
-		port = 5432
+		port = defaule_port[mode]
 		userlist = append(userlist, df_pgsqluser...)
 	case "sqlserver":
-		port = 1433
+		port = defaule_port[mode]
 		userlist = append(userlist, df_sqlserveruser...)
 	case "ftp":
-		port = 21
+		port = defaule_port[mode]
 		userlist = append(userlist, df_ftpuser...)
 	}
 

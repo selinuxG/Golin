@@ -4,7 +4,7 @@
 
 
 # 使用场景
-> 自动化运维、多线程Linux、MySql、Redis、PostgreSQL、网络设备批量执行命令、等级保护（网络安全等级保护）现场测评工具、基线核查工具、测试syslog等
+> 弱口令检测、自动化运维、多线程Linux、MySql、Redis、PostgreSQL、网络设备批量执行命令、等级保护（网络安全等级保护）现场测评工具、基线核查工具、测试syslog等
 
 # 预览地址
 > https://148.100.78.184:1818/golin/gys
@@ -12,7 +12,20 @@
 ![golin](https://github.com/withmeT/tucahung/blob/main/3.gif)
 
 ## 子命令
-
+```
+ Usage:
+    crack [ftp、mysql、pgsql、redis、sqlserver、ssh]
+    
+ Flags:
+  -c, --chan int        并发数量 (default 30)
+  -h, --help            help for ssh
+  -i, --ip string       此参数是指定暴力破解的IP
+      --noping          此参数是指定不运行ping监测
+  -p, --passwd string   此参数是指定密码文件
+  -P, --port int        此参数是指定暴力的端口
+  -t, --time int        超时等待时常/s (default 3)
+  -u, --user string     此参数是指定用户文件
+```
 ### web
 ```shell
 Usage:
