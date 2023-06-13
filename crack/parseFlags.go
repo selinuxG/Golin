@@ -8,13 +8,9 @@ import (
 	"os"
 	"os/exec"
 	"runtime"
+	"strconv"
 	"strings"
-)
-
-var (
-	userlist = []string{}
-	iplist   = []string{} //暴力破解主机列表
-	port     = 0
+	"time"
 )
 
 type INFO struct {
@@ -28,28 +24,48 @@ type INFO struct {
 	Timeout int      //超时等待时常
 }
 
+// 爆破成功的主机列表
+type successip struct {
+	ip     string
+	port   string
+	passwd string
+}
+
+var (
+	userlist    = []string{}
+	iplist      = []string{} //暴力破解主机列表
+	port        = 0
+	fireip      = map[string]int{} //读取文件中的主机列表
+	successlist []successip
+)
+
 func parseFlags(cmd *cobra.Command) INFO {
 	mode := cmd.Use
 	checkMode(mode)
 
-	ip, _ := cmd.Flags().GetString("ip")
-	if strings.Count(ip, "/") == 0 { //单个IP地址
-		if net.ParseIP(ip) == nil {
-			fmt.Printf(" [x] IP地址不正确，退出！\n")
-			os.Exit(1)
-		}
-		iplist = append(iplist, ip)
-	}
-	if strings.Count(ip, "/") == 1 { //范围IP地址
-		_, ipnet, _ := net.ParseCIDR(ip)
-		for ipl := ipnet.IP.Mask(ipnet.Mask); ipnet.Contains(ipl); incrementIP(ipl) {
-			if len(ipl.To4()) == net.IPv4len {
-				lastByte := ipl.To4()[3]
-				if lastByte == 0 || lastByte == 255 { //起初0开头以及255结尾
-					continue
-				}
+	ippath, _ := cmd.Flags().GetString("fire") //主机列表文件
+	if global.PathExists(ippath) {
+		Readfile(ippath)
+	} else {
+		ip, _ := cmd.Flags().GetString("ip")
+		if strings.Count(ip, "/") == 0 { //单个IP地址
+			if net.ParseIP(ip) == nil {
+				fmt.Printf(" [x] IP地址不正确，退出！\n")
+				os.Exit(1)
 			}
-			iplist = append(iplist, ipl.String())
+			iplist = append(iplist, ip)
+		}
+		if strings.Count(ip, "/") == 1 { //范围IP地址
+			_, ipnet, _ := net.ParseCIDR(ip)
+			for ipl := ipnet.IP.Mask(ipnet.Mask); ipnet.Contains(ipl); incrementIP(ipl) {
+				if len(ipl.To4()) == net.IPv4len {
+					lastByte := ipl.To4()[3]
+					if lastByte == 0 || lastByte == 255 { //起初0开头以及255结尾
+						continue
+					}
+				}
+				iplist = append(iplist, ipl.String())
+			}
 		}
 	}
 
@@ -177,5 +193,50 @@ func incrementIP(ip net.IP) {
 		if ip[j] > 0 {
 			break
 		}
+	}
+}
+
+// IsPortOpen 检查给定主机和端口是否开放，并设置超时时间。
+func IsPortOpen(host string, port int, timeout int) bool {
+	address := net.JoinHostPort(host, strconv.Itoa(port))
+	conn, err := net.DialTimeout("tcp", address, time.Duration(timeout)*time.Second)
+	if err != nil {
+		if _, ok := err.(net.Error); ok {
+			return false
+		}
+		return false
+	}
+	_ = conn.Close()
+	return true
+}
+
+// Readfile 读取主机列表保存到切片
+func Readfile(name string) {
+	data, err := os.ReadFile(name)
+	if err != nil {
+		return
+	}
+	str := string(data)
+	str = strings.ReplaceAll(str, "\r\n", "\n")
+	for _, s := range strings.Split(str, "\n") {
+		if strings.Count(s, ":") == 1 {
+			ip := strings.Split(s, ":")[0]
+			intport, err := strconv.Atoi(strings.Split(s, ":")[1])
+			if err != nil {
+				return
+			}
+			if net.ParseIP(ip) == nil {
+				return
+			}
+			if port != 0 && port > 65535 {
+				return
+			}
+			iplist = append(iplist, ip)
+			fireip[ip] = intport
+		}
+	}
+	if len(fireip) == 0 {
+		fmt.Printf("[-] 文件：%s 不存在格式正确的主机！")
+		os.Exit(0)
 	}
 }
