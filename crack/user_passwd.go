@@ -8,9 +8,10 @@ var (
 	df_pgsqluser     = []string{"postgres", "root"}                                          //pgsql模式下默认用户
 	df_sqlserveruser = []string{"sa", "administrator"}                                       //sqlserver模式下默认用户
 	df_ftpuser       = []string{"ftp", "admin"}                                              //ftp模式下默认用户
-	df_smbuser       = []string{"admin", "gys"}                                              //smb模式下默认用户
+	df_smbuser       = []string{"admin", "root"}                                             //smb模式下默认用户
+	df_telnetuser    = []string{"admin", "root"}                                             //telnet模式下默认用户
 	passwdlist       = []string{                                                             //默认密码
-		"",
+		"qwer1234",
 		"root",
 		"admin",
 		"admin123",

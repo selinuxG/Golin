@@ -7,68 +7,75 @@ import (
 
 var expCmd = &cobra.Command{
 	Use:   "crack",
-	Short: "暴力破解功能,目前支持：ssh、mysql、redis、postgresql、sqlserver、ftp",
+	Short: "弱口令检测功能,目前支持：ssh、mysql、redis、postgresql、sqlserver、ftp",
 }
 
 // 破解 ssh
 var ssh = &cobra.Command{
 	Use:   "ssh",
-	Short: "ssh暴力破解",
+	Short: "ssh弱口令检测",
 	Run:   crack.Run,
 }
 
 // 破解 mysql
 var mysql = &cobra.Command{
 	Use:   "mysql",
-	Short: "mysql暴力破解",
+	Short: "mysql弱口令检测",
 	Run:   crack.Run,
 }
 
 // 破解 redis
 var redis = &cobra.Command{
 	Use:   "redis",
-	Short: "redis暴力破解",
+	Short: "redis弱口令检测",
 	Run:   crack.Run,
 }
 
 // 破解 pgsql
 var pgsql = &cobra.Command{
 	Use:   "pgsql",
-	Short: "pgsql暴力破解",
+	Short: "pgsql弱口令检测",
 	Run:   crack.Run,
 }
 
 // 破解 sqlserver
 var sqlserver = &cobra.Command{
 	Use:   "sqlserver",
-	Short: "sqlserver暴力破解",
+	Short: "sqlserver弱口令检测",
 	Run:   crack.Run,
 }
 
 // 破解 ftp
 var ftp = &cobra.Command{
 	Use:   "ftp",
-	Short: "ftp暴力破解",
+	Short: "ftp弱口令检测",
 	Run:   crack.Run,
 }
 
 // 破解 rdp
 var rdp = &cobra.Command{
 	Use:   "rdp",
-	Short: "rdp",
+	Short: "rdp弱口令检测",
 	Run:   crack.Run,
 }
 
 // 破解 smb
 var smb = &cobra.Command{
 	Use:   "smb",
-	Short: "smb",
+	Short: "smb弱口令检测",
+	Run:   crack.Run,
+}
+
+// 破解 telnet
+var telnet = &cobra.Command{
+	Use:   "telnet",
+	Short: "telnet弱口令检测",
 	Run:   crack.Run,
 }
 
 func init() {
 	rootCmd.AddCommand(expCmd)
-	commands := []*cobra.Command{ssh, mysql, redis, pgsql, sqlserver, ftp, rdp, smb}
+	commands := []*cobra.Command{ssh, mysql, redis, pgsql, sqlserver, ftp, rdp, smb, telnet}
 	for _, cmd := range commands {
 		expCmd.AddCommand(cmd)
 		cmd.Flags().StringP("ip", "i", "", "此参数是指定验证的IP")

@@ -12,6 +12,7 @@ require (
 	github.com/stacktitan/smb v0.0.0-20190531122847-da9a425dceb8
 	github.com/tomatome/grdp v0.1.0
 	github.com/xuri/excelize/v2 v2.7.1
+	github.com/ziutek/telnet v0.0.0-20180329124119-c3b780dc415b
 	go.uber.org/zap v1.24.0
 	golang.org/x/crypto v0.8.0
 	golang.org/x/sys v0.7.0

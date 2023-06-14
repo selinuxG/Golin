@@ -127,6 +127,7 @@ var defaule_port = map[string]int{
 	"ftp":       21,
 	"rdp":       3389,
 	"smb":       445,
+	"telnet":    23,
 }
 
 // checkMode 基于模式设置默认端口以及用户列表
@@ -156,6 +157,9 @@ func checkMode(mode string) {
 	case "smb":
 		port = defaule_port[mode]
 		userlist = append(userlist, df_smbuser...)
+	case "telnet":
+		port = defaule_port[mode]
+		userlist = append(userlist, df_telnetuser...)
 	}
 
 }

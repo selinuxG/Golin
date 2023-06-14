@@ -14,7 +14,7 @@
 ## 弱口令检测子命令
 ```
  Usage:
-    crack [ftp、mysql、pgsql、redis、sqlserver、ssh、rdp、smb]
+    crack [ftp、mysql、pgsql、redis、sqlserver、ssh、rdp、smb、telnet]
     
 Flags:
   -c, --chan int        并发数量 (default 30)
@@ -27,21 +27,22 @@ Flags:
   -u, --user string     此参数是指定用户文件
 ```
 ### 现阶段支持类型
-| 序号 |      类型       | 是否支持 |
-|:--:|:-------------:|:----:|
-| 1  |      SSH      |  √   |
-| 2  |      RDP      |  √   |
-| 3  |      FTP      |  √   |
-| 4  |     MySQL     |  √   |
-| 5  |  PostgreSQL   |  √   |
-| 6  |     Redis     |  √   |
-| 7  |     MSSQL     |  √   |
-| 8  |      SMB      |  √   |
-| 9  |    Tomcat     |      |
-| 10 |     SNMP      |      |
-| 11 |    MangoDB    |      |
-| 12 | Elasticsearch |      |
-| 13 |    Telnet     |      |
+| 序号 |      类型       |  是否支持  |
+|:--:|:-------------:|:------:|
+| 1  |      SSH      |   √    |
+| 2  |      RDP      |   √    |
+| 3  |      FTP      |   √    |
+| 4  |     MySQL     |   √    |
+| 5  |  PostgreSQL   |   √    |
+| 6  |     Redis     |   √    |
+| 7  |     MSSQL     |   √    |
+| 8  |      SMB      |   √    |
+| 10 |    Telnet     |   √    |
+| 11 |    Tomcat     |        |
+| 12 |     SNMP      |        |
+| 13 |    MangoDB    |        |
+| 14 | Elasticsearch |        |
+
 
 
 ### web
