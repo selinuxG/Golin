@@ -1,6 +1,7 @@
 package crack
 
 import (
+	"fmt"
 	"github.com/stacktitan/smb/smb"
 )
 
@@ -25,6 +26,8 @@ func smbcon(ip, user, passwd string, port, timeout int) {
 		if session.IsAuthenticated {
 			end(ip, user, passwd, port)
 		}
+	} else {
+		fmt.Println(err)
 	}
 	return
 }

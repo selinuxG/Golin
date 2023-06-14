@@ -28,21 +28,21 @@
 | 12 | Elasticsearch |      |            |
 
 ## 弱口令现阶段支持类型
-| 序号 |      类型       |  是否支持  |
-|:--:|:-------------:|:------:|
-| 1  |      SSH      |   √    |
-| 2  |      RDP      |   √    |
-| 3  |      FTP      |   √    |
-| 4  |     MySQL     |   √    |
-| 5  |  PostgreSQL   |   √    |
-| 6  |     Redis     |   √    |
-| 7  |     MSSQL     |   √    |
-| 8  |      SMB      |   √    |
-| 9  |    Telnet     |   √    |
-| 10 |    Tomcat     |        |
-| 11 |     SNMP      |        |
-| 12 |    MangoDB    |        |
-| 13 | Elasticsearch |        |
+| 序号 |      类型       | 是否支持 |       备注       |
+|:--:|:-------------:|:----:|:--------------:|
+| 1  |      SSH      |  √   |     支持协议识别     |
+| 2  |      RDP      |  √   | 只允许在Windows下运行 |
+| 3  |      FTP      |  √   |     支持协议识别     |
+| 4  |     MySQL     |  √   |                |
+| 5  |  PostgreSQL   |  √   |                |
+| 6  |     Redis     |  √   |                |
+| 7  |     MSSQL     |  √   |                |
+| 8  |      SMB      |  √   |   超时参数暂时不可用    |
+| 9  |    Telnet     |  √   |                |
+| 10 |    Tomcat     |      |                |
+| 11 |     SNMP      |      |                |
+| 12 |    MangoDB    |      |                |
+| 13 | Elasticsearch |      |                |
 
 ## 弱口令检测子命令
 ```
@@ -52,7 +52,7 @@
 Flags:
   -c, --chan int        并发数量 (default 30)
   -f, --fire string     此参数是指定主机列表，格式IP:Port 一行一个
-  -i, --ip string       此参数是指定暴力破解的IP
+  -i, --ip string       此参数是指定验证的IP 支持格式如下：192.168.0.1，或192.168.0.1/24，或192.168.0.1:22
       --noping          此参数是指定不运行ping监测
   -p, --passwd string   此参数是指定密码文件
   -P, --port int        此参数是指定暴力的端口

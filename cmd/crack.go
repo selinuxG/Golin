@@ -78,7 +78,7 @@ func init() {
 	commands := []*cobra.Command{ssh, mysql, redis, pgsql, sqlserver, ftp, rdp, smb, telnet}
 	for _, cmd := range commands {
 		expCmd.AddCommand(cmd)
-		cmd.Flags().StringP("ip", "i", "", "此参数是指定验证的IP")
+		cmd.Flags().StringP("ip", "i", "", "此参数是指定验证的IP 支持格式如下：192.168.0.1，或192.168.0.1/24，或192.168.0.1:22")
 		cmd.Flags().IntP("port", "P", 0, "此参数是指定验证的端口")
 		cmd.Flags().StringP("user", "u", "", "此参数是指定用户文件")
 		cmd.Flags().StringP("passwd", "p", "", "此参数是指定密码文件")

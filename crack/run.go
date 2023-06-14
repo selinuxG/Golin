@@ -4,6 +4,8 @@ import (
 	"context"
 	"fmt"
 	"github.com/spf13/cobra"
+	"os"
+	"runtime"
 	"sync"
 )
 
@@ -14,7 +16,8 @@ var (
 
 func Run(cmd *cobra.Command, args []string) {
 	info := parseFlags(cmd)
-	fmt.Printf("[*] 运行弱口令检测模式:%s,主机:%d个,尝试用户%d个,尝试密码%d个,主机需单独%d次尝试 超时等待:%d/s 线程数:%d \n", info.Mode, len(info.IP), len(info.User), len(info.Passwd), len(info.User)*len(info.Passwd), info.Timeout, info.Chan)
+	checkWindow(info)
+	fmt.Printf("[*] 运行弱口令检测模式:%s,主机:%d个,尝试用户%d个,尝试密码%d个,主机需单独%d次尝试,共计尝试%d次,超时等待:%d/s 线程数:%d \n", info.Mode, len(info.IP), len(info.User), len(info.Passwd), len(info.User)*len(info.Passwd), len(info.IP)*len(info.User)*len(info.Passwd), info.Timeout, info.Chan)
 	ch = make(chan struct{}, info.Chan)
 
 	newport := info.Prot
@@ -28,7 +31,7 @@ func Run(cmd *cobra.Command, args []string) {
 				clearLine(ip, "", "", newport, "warning")
 				continue
 			}
-			if !IsPortOpen(ip, info.Prot, info.Timeout) {
+			if !IsPortOpen(ip, info.Prot, info.Timeout, info.Mode) {
 				clearLine(ip, "", "", newport, "warning")
 				continue
 			}
@@ -84,6 +87,17 @@ func clearLine(host, user, passwd string, port int, mode string) {
 		fmt.Printf("\r[-] 开始尝试主机：%s 端口：%d 用户：%s 密码：%s\r", host, port, user, passwd)
 		return
 	}
-	fmt.Printf("[-] 探测主机：%s 网络/端口不可达：%d", host, port)
+	fmt.Printf("[-] 探测主机：%s:%d 网络｜端口不可达 or 端口运行协议与探测模式不匹配 跳过！\n", host, port)
+
+}
+
+// checkWindow 检查特定模式是否仅运行在特地系统下运行
+func checkWindow(info INFO) {
+	if info.Mode == "rdp" {
+		if runtime.GOOS != "windows" {
+			fmt.Printf("[-] 当前操作系统为%s,此模式仅允许运行在Windows操作系统下! 拜拜！\n", runtime.GOOS)
+			os.Exit(0)
+		}
+	}
 
 }

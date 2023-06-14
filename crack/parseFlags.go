@@ -1,6 +1,7 @@
 package crack
 
 import (
+	"bufio"
 	"fmt"
 	"github.com/spf13/cobra"
 	"golin/global"
@@ -48,13 +49,14 @@ func parseFlags(cmd *cobra.Command) INFO {
 		Readfile(ippath)
 	} else {
 		ip, _ := cmd.Flags().GetString("ip")
-		if strings.Count(ip, "/") == 0 { //单个IP地址
+		if strings.Count(ip, "/") == 0 && strings.Count(ip, ":") == 0 { //单个IP地址
 			if net.ParseIP(ip) == nil {
 				fmt.Printf(" [x] IP地址不正确，退出！\n")
 				os.Exit(1)
 			}
 			iplist = append(iplist, ip)
 		}
+
 		if strings.Count(ip, "/") == 1 { //范围IP地址
 			_, ipnet, _ := net.ParseCIDR(ip)
 			for ipl := ipnet.IP.Mask(ipnet.Mask); ipnet.Contains(ipl); incrementIP(ipl) {
@@ -67,6 +69,18 @@ func parseFlags(cmd *cobra.Command) INFO {
 				iplist = append(iplist, ipl.String())
 			}
 		}
+
+		if strings.Count(ip, ":") == 1 { //ip:port格式
+			newip := strings.Split(ip, ":")[0]
+			nPort := strings.Split(ip, ":")[1]
+			atoi, _ := strconv.Atoi(nPort)
+			port = atoi
+			if net.ParseIP(newip) == nil {
+				fmt.Printf(" [x] IP地址不正确，退出！\n")
+				os.Exit(1)
+			}
+			iplist = append(iplist, newip)
+		}
 	}
 
 	valueport, _ := cmd.Flags().GetInt("port") //端口
@@ -74,7 +88,9 @@ func parseFlags(cmd *cobra.Command) INFO {
 		if valueport > 65535 {
 			fmt.Printf(" [x] 端口范围不正确，按照默认端口进行！\n")
 		} else {
-			port = valueport
+			if port == 0 {
+				port = valueport
+			}
 		}
 	}
 
@@ -209,7 +225,7 @@ func incrementIP(ip net.IP) {
 }
 
 // IsPortOpen 检查给定主机和端口是否开放，并设置超时时间。
-func IsPortOpen(host string, port int, timeout int) bool {
+func IsPortOpen(host string, port int, timeout int, mode string) bool {
 	address := net.JoinHostPort(host, strconv.Itoa(port))
 	conn, err := net.DialTimeout("tcp", address, time.Duration(timeout)*time.Second)
 	if err != nil {
@@ -217,6 +233,31 @@ func IsPortOpen(host string, port int, timeout int) bool {
 			return false
 		}
 		return false
+	}
+
+	reader := bufio.NewReader(conn) //数据包返回值
+
+	switch mode {
+	case "ssh":
+		line, err := reader.ReadString('\n')
+		if err != nil {
+			return false
+		}
+		check := strings.HasPrefix(line, "SSH-") // SSH协议要求服务器在建立连接时发送一个类似于SSH-2.0-OpenSSH_7.4的协议标识符，通常位于第一行。
+		if check {
+			return true
+		}
+		return false
+
+	case "ftp":
+		response, err := reader.ReadString('\n')
+		if err != nil {
+			return false
+		}
+		if !strings.HasPrefix(response, "220") { // 检查是否以 220 开头，FTP 服务器应该以状态码 220 开头
+			return false
+		}
+
 	}
 	_ = conn.Close()
 	return true
