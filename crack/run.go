@@ -14,7 +14,7 @@ var (
 
 func Run(cmd *cobra.Command, args []string) {
 	info := parseFlags(cmd)
-	fmt.Printf("[*] 运行暴力破解模式:%s,主机:%d个,尝试用户%d个,尝试密码%d个,主机需单独%d次尝试 超时等待:%d/s 线程数:%d \n", info.Mode, len(info.IP), len(info.User), len(info.Passwd), len(info.User)*len(info.Passwd), info.Timeout, info.Chan)
+	fmt.Printf("[*] 运行弱口令检测模式:%s,主机:%d个,尝试用户%d个,尝试密码%d个,主机需单独%d次尝试 超时等待:%d/s 线程数:%d \n", info.Mode, len(info.IP), len(info.User), len(info.Passwd), len(info.User)*len(info.Passwd), info.Timeout, info.Chan)
 	ch = make(chan struct{}, info.Chan)
 
 	newport := info.Prot
@@ -55,6 +55,8 @@ func Run(cmd *cobra.Command, args []string) {
 					go sqlservercon(ctx, cancel, ip, user, passwd, newport, info.Timeout)
 				case "ftp":
 					go ftpcon(ip, user, passwd, newport, info.Timeout) //因为ftp匿名账户的问题，所以让字典跑完
+				case "rdp":
+					go rdpcon(ctx, cancel, ip, user, passwd, newport, info.Timeout)
 				}
 			}
 		}

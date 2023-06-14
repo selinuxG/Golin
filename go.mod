@@ -9,6 +9,7 @@ require (
 	github.com/mattn/go-colorable v0.1.13
 	github.com/sijms/go-ora/v2 v2.7.6
 	github.com/spf13/cobra v1.6.1
+	github.com/tomatome/grdp v0.1.0
 	github.com/xuri/excelize/v2 v2.7.1
 	go.uber.org/zap v1.24.0
 	golang.org/x/crypto v0.8.0
@@ -36,6 +37,8 @@ require (
 	github.com/golang-sql/sqlexp v0.1.0 // indirect
 	github.com/hashicorp/errwrap v1.0.0 // indirect
 	github.com/hashicorp/go-multierror v1.1.1 // indirect
+	github.com/huin/asn1ber v0.0.0-20120622192748-af09f62e6358 // indirect
+	github.com/icodeface/tls v0.0.0-20190904083142-17aec93c60e5 // indirect
 	github.com/inconshreveable/mousetrap v1.0.1 // indirect
 	github.com/jackc/pgpassfile v1.0.0 // indirect
 	github.com/jackc/pgservicefile v0.0.0-20221227161230-091c0ba34f0a // indirect
@@ -45,6 +48,7 @@ require (
 	github.com/json-iterator/go v1.1.12 // indirect
 	github.com/klauspost/cpuid/v2 v2.0.9 // indirect
 	github.com/leodido/go-urn v1.2.1 // indirect
+	github.com/lunixbochs/struc v0.0.0-20200707160740-784aaebc1d40 // indirect
 	github.com/mattn/go-isatty v0.0.17 // indirect
 	github.com/microsoft/go-mssqldb v0.21.0 // indirect
 	github.com/modern-go/concurrent v0.0.0-20180228061459-e0a39a4cb421 // indirect

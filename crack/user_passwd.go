@@ -1,20 +1,19 @@
 package crack
 
 var (
-	df_sshuser       = []string{"root", "admin", "Admin", "ROOT", "test", "system", "super", "www", "ceshi"} //ssh模式下默认用户
-	df_mysqluser     = []string{"root", "mysql"}                                                             //mysql模式下默认用户
-	df_redisuser     = []string{"", "redis", "root"}                                                         //redis模式下默认用户
-	df_pgsqluser     = []string{"postgres", "root"}                                                          //pgsql模式下默认用户
-	df_sqlserveruser = []string{"sa", "administrator"}                                                       //pgsql模式下默认用户
-	df_ftpuser       = []string{"ftp", "ftpadmin", "admin"}                                                  //ftp模式下默认用户
-	passwdlist       = []string{                                                                             //默认密码
+	df_sshuser       = []string{"root", "admin", "ROOT", "test", "system", "super", "ceshi"} //ssh模式下默认用户
+	df_rdpuser       = []string{"administrator", "gys"}                                      //rdp模式下默认用户
+	df_mysqluser     = []string{"root", "mysql"}                                             //mysql模式下默认用户
+	df_redisuser     = []string{"", "redis", "root"}                                         //redis模式下默认用户
+	df_pgsqluser     = []string{"postgres", "root"}                                          //pgsql模式下默认用户
+	df_sqlserveruser = []string{"sa", "administrator"}                                       //pgsql模式下默认用户
+	df_ftpuser       = []string{"ftp", "admin"}                                              //ftp模式下默认用户
+	passwdlist       = []string{                                                             //默认密码
 		"root",
 		"admin",
 		"admin123",
 		"pass123",
 		"default",
-		"Gys1015..",
-		"GYS1015..",
 		"antslq",
 		"daemon",
 		"jvbzd",
@@ -39,6 +38,8 @@ var (
 		"7ujMko0admin",
 		"sys123",
 		"manager",
+		"123.com",
+		"123@com",
 		"!1fw@2soc#3vpn",
 		"cyberaudit",
 		"safetybase",
@@ -165,9 +166,7 @@ var (
 		"admin12345678",
 		"root@123",
 		"administrator",
-		"admin1234567890",
 		"password1",
-		"admin1234567",
 		"admin123321",
 		"admin@1234",
 		"123456789a",
@@ -231,7 +230,6 @@ var (
 		"abcd4321",
 		"qwer4321",
 		"admin@1234",
-		"admin123456789a",
 		"admin8888",
 	}
 )

@@ -52,9 +52,16 @@ var ftp = &cobra.Command{
 	Run:   crack.Run,
 }
 
+// 破解 rdp
+var rdp = &cobra.Command{
+	Use:   "rdp",
+	Short: "rdp",
+	Run:   crack.Run,
+}
+
 func init() {
 	rootCmd.AddCommand(expCmd)
-	commands := []*cobra.Command{ssh, mysql, redis, pgsql, sqlserver, ftp}
+	commands := []*cobra.Command{ssh, mysql, redis, pgsql, sqlserver, ftp, rdp}
 	for _, cmd := range commands {
 		expCmd.AddCommand(cmd)
 		cmd.Flags().StringP("ip", "i", "", "此参数是指定暴力破解的IP")

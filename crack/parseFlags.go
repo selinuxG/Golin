@@ -125,6 +125,7 @@ var defaule_port = map[string]int{
 	"pgsql":     5432,
 	"sqlserver": 1433,
 	"ftp":       21,
+	"rdp":       3389,
 }
 
 // checkMode 基于模式设置默认端口以及用户列表
@@ -148,6 +149,9 @@ func checkMode(mode string) {
 	case "ftp":
 		port = defaule_port[mode]
 		userlist = append(userlist, df_ftpuser...)
+	case "rdp":
+		port = defaule_port[mode]
+		userlist = append(userlist, df_rdpuser...)
 	}
 
 }
