@@ -22,10 +22,10 @@
 | 6  |     MSSQL     |  √   |  远程或本地运行   |
 | 7  |      H3C      |  √   |   SSH远程    |
 | 8  |      华为       |  √   |   SSH远程    |
-| 12 |      AIX      |  √   | 可自定义命令未内置  |
-| 12 |    Ubuntu     |  √   | 可自定义命令未内置  |
-| 10 |    MongoDB    |      |            |
-| 11 | Elasticsearch |      |            |
+| 9  |      AIX      |  √   | 可自定义命令未内置  |
+| 10 |    Ubuntu     |  √   | 可自定义命令未内置  |
+| 11 |    MongoDB    |      |            |
+| 12 | Elasticsearch |      |            |
 
 ## 弱口令现阶段支持类型
 | 序号 |      类型       |  是否支持  |
@@ -38,11 +38,11 @@
 | 6  |     Redis     |   √    |
 | 7  |     MSSQL     |   √    |
 | 8  |      SMB      |   √    |
-| 10 |    Telnet     |   √    |
-| 11 |    Tomcat     |        |
-| 12 |     SNMP      |        |
-| 13 |    MangoDB    |        |
-| 14 | Elasticsearch |        |
+| 9  |    Telnet     |   √    |
+| 10 |    Tomcat     |        |
+| 11 |     SNMP      |        |
+| 12 |    MangoDB    |        |
+| 13 | Elasticsearch |        |
 
 ## 弱口令检测子命令
 ```
