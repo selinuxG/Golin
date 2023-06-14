@@ -11,22 +11,23 @@
 
 ![golin](https://github.com/withmeT/tucahung/blob/main/3.gif)
 
-## 弱口令检测子命令
-```
- Usage:
-    crack [ftp、mysql、pgsql、redis、sqlserver、ssh、rdp、smb、telnet]
-    
-Flags:
-  -c, --chan int        并发数量 (default 30)
-  -f, --fire string     此参数是指定主机列表，格式IP:Port 一行一个
-  -i, --ip string       此参数是指定暴力破解的IP
-      --noping          此参数是指定不运行ping监测
-  -p, --passwd string   此参数是指定密码文件
-  -P, --port int        此参数是指定暴力的端口
-  -t, --time int        超时等待时常/s (default 3)
-  -u, --user string     此参数是指定用户文件
-```
-### 现阶段支持类型
+## 自动化测评现阶段支持类型
+| 序号 |      类型       | 是否支持 |     备注     |
+|:--:|:-------------:|:----:|:----------:|
+| 1  |    Centos     |  √   | SSH远程或本地运行 |
+| 2  |    Windows    |  √   |    本地运行    |
+| 3  |     Redis     |  √   |  远程或本地运行   |
+| 4  |  PostgreSQL   |  √   |  远程或本地运行   |
+| 5  |    Oracle     |  √   |  远程或本地运行   |
+| 6  |     MSSQL     |  √   |  远程或本地运行   |
+| 7  |      H3C      |  √   |   SSH远程    |
+| 8  |      华为       |  √   |   SSH远程    |
+| 12 |      AIX      |  √   | 可自定义命令未内置  |
+| 12 |    Ubuntu     |  √   | 可自定义命令未内置  |
+| 10 |    MongoDB    |      |            |
+| 11 | Elasticsearch |      |            |
+
+## 弱口令现阶段支持类型
 | 序号 |      类型       |  是否支持  |
 |:--:|:-------------:|:------:|
 | 1  |      SSH      |   √    |
@@ -43,7 +44,21 @@ Flags:
 | 13 |    MangoDB    |        |
 | 14 | Elasticsearch |        |
 
-
+## 弱口令检测子命令
+```
+ Usage:
+    crack [ftp、mysql、pgsql、redis、sqlserver、ssh、rdp、smb、telnet]
+    
+Flags:
+  -c, --chan int        并发数量 (default 30)
+  -f, --fire string     此参数是指定主机列表，格式IP:Port 一行一个
+  -i, --ip string       此参数是指定暴力破解的IP
+      --noping          此参数是指定不运行ping监测
+  -p, --passwd string   此参数是指定密码文件
+  -P, --port int        此参数是指定暴力的端口
+  -t, --time int        超时等待时常/s (default 3)
+  -u, --user string     此参数是指定用户文件
+```
 
 ### web
 ```shell
