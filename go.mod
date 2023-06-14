@@ -9,6 +9,7 @@ require (
 	github.com/mattn/go-colorable v0.1.13
 	github.com/sijms/go-ora/v2 v2.7.6
 	github.com/spf13/cobra v1.6.1
+	github.com/stacktitan/smb v0.0.0-20190531122847-da9a425dceb8
 	github.com/tomatome/grdp v0.1.0
 	github.com/xuri/excelize/v2 v2.7.1
 	go.uber.org/zap v1.24.0

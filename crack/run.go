@@ -57,6 +57,8 @@ func Run(cmd *cobra.Command, args []string) {
 					go ftpcon(ip, user, passwd, newport, info.Timeout) //因为ftp匿名账户的问题，所以让字典跑完
 				case "rdp":
 					go rdpcon(ctx, cancel, ip, user, passwd, newport, info.Timeout)
+				case "smb":
+					go smbcon(ip, user, passwd, newport, info.Timeout) //因为smb匿名账户的问题，所以让字典跑完
 				}
 			}
 		}

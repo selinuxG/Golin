@@ -6,9 +6,11 @@ var (
 	df_mysqluser     = []string{"root", "mysql"}                                             //mysql模式下默认用户
 	df_redisuser     = []string{"", "redis", "root"}                                         //redis模式下默认用户
 	df_pgsqluser     = []string{"postgres", "root"}                                          //pgsql模式下默认用户
-	df_sqlserveruser = []string{"sa", "administrator"}                                       //pgsql模式下默认用户
+	df_sqlserveruser = []string{"sa", "administrator"}                                       //sqlserver模式下默认用户
 	df_ftpuser       = []string{"ftp", "admin"}                                              //ftp模式下默认用户
+	df_smbuser       = []string{"admin", "gys"}                                              //smb模式下默认用户
 	passwdlist       = []string{                                                             //默认密码
+		"",
 		"root",
 		"admin",
 		"admin123",
@@ -102,7 +104,6 @@ var (
 		"1234qwer",
 		"t0talc0ntr0l4!",
 		"12345",
-		"123456",
 		"oelinux123",
 		"in",
 		"reecam4de",
@@ -173,7 +174,6 @@ var (
 		"Admin",
 		"admin",
 		"password",
-		"123456",
 		"12345678",
 		"123456789",
 		"1234567890",

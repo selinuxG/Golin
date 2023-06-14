@@ -59,13 +59,20 @@ var rdp = &cobra.Command{
 	Run:   crack.Run,
 }
 
+// 破解 smb
+var smb = &cobra.Command{
+	Use:   "smb",
+	Short: "smb",
+	Run:   crack.Run,
+}
+
 func init() {
 	rootCmd.AddCommand(expCmd)
-	commands := []*cobra.Command{ssh, mysql, redis, pgsql, sqlserver, ftp, rdp}
+	commands := []*cobra.Command{ssh, mysql, redis, pgsql, sqlserver, ftp, rdp, smb}
 	for _, cmd := range commands {
 		expCmd.AddCommand(cmd)
-		cmd.Flags().StringP("ip", "i", "", "此参数是指定暴力破解的IP")
-		cmd.Flags().IntP("port", "P", 0, "此参数是指定暴力的端口")
+		cmd.Flags().StringP("ip", "i", "", "此参数是指定验证的IP")
+		cmd.Flags().IntP("port", "P", 0, "此参数是指定验证的端口")
 		cmd.Flags().StringP("user", "u", "", "此参数是指定用户文件")
 		cmd.Flags().StringP("passwd", "p", "", "此参数是指定密码文件")
 		cmd.Flags().StringP("fire", "f", "", "此参数是指定主机列表，格式IP:Port 一行一个")

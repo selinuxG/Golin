@@ -13,5 +13,5 @@ func main() {
 	//global.Checkactivation() 验证许可
 	cmd.Execute()
 	end := time.Now().Sub(start)
-	fmt.Printf("[*] 任务结束,耗时: %s\n", end)
+	fmt.Printf("\u001B[2K\r[*] 任务结束,耗时: %s\n", end)
 }

@@ -126,6 +126,7 @@ var defaule_port = map[string]int{
 	"sqlserver": 1433,
 	"ftp":       21,
 	"rdp":       3389,
+	"smb":       445,
 }
 
 // checkMode 基于模式设置默认端口以及用户列表
@@ -152,6 +153,9 @@ func checkMode(mode string) {
 	case "rdp":
 		port = defaule_port[mode]
 		userlist = append(userlist, df_rdpuser...)
+	case "smb":
+		port = defaule_port[mode]
+		userlist = append(userlist, df_smbuser...)
 	}
 
 }
