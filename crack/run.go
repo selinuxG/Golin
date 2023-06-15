@@ -64,6 +64,8 @@ func Run(cmd *cobra.Command, args []string) {
 					go smbcon(ip, user, passwd, newport, info.Timeout) //因为smb匿名账户的问题，所以让字典跑完
 				case "telnet":
 					go telnetcon(ctx, cancel, ip, user, passwd, newport, info.Timeout) //因为smb匿名账户的问题，所以让字典跑完
+				case "tomcat":
+					go tomcat(ctx, cancel, ip, user, passwd, newport, info.Timeout)
 				}
 			}
 		}

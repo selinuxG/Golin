@@ -39,7 +39,7 @@
 | 7  |     MSSQL     |  √   |                |
 | 8  |      SMB      |  √   |   超时参数暂时不可用    |
 | 9  |    Telnet     |  √   |                |
-| 10 |    Tomcat     |      |                |
+| 10 |    Tomcat     |  √   |    写死了http     |
 | 11 |     SNMP      |      |                |
 | 12 |    MangoDB    |      |                |
 | 13 | Elasticsearch |      |                |
@@ -47,7 +47,7 @@
 ## 弱口令检测子命令
 ```
  Usage:
-    crack [ftp、mysql、pgsql、redis、sqlserver、ssh、rdp、smb、telnet]
+    crack [ftp、mysql、pgsql、redis、sqlserver、ssh、rdp、smb、telnet、tomcat]
     
 Flags:
   -c, --chan int        并发数量 (default 30)

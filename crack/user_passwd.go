@@ -10,12 +10,12 @@ var (
 	df_ftpuser       = []string{"ftp", "admin"}                                     //ftp模式下默认用户
 	df_smbuser       = []string{"admin", "root"}                                    //smb模式下默认用户
 	df_telnetuser    = []string{"admin", "root"}                                    //telnet模式下默认用户
-	passwdlist       = []string{                                                    //默认密码
+	df_tomcatuser    = []string{"tomcat"}                                           //tomcat模式下默认用户
+	passwdlist       = []string{
 		"root",
 		"admin",
 		"admin123",
 		"pass123",
-		"Gys1015..",
 		"default",
 		"antslq",
 		"daemon",

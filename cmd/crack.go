@@ -73,9 +73,16 @@ var telnet = &cobra.Command{
 	Run:   crack.Run,
 }
 
+// 破解 tomcat
+var tomcat = &cobra.Command{
+	Use:   "tomcat",
+	Short: "tomcat弱口令检测",
+	Run:   crack.Run,
+}
+
 func init() {
 	rootCmd.AddCommand(expCmd)
-	commands := []*cobra.Command{ssh, mysql, redis, pgsql, sqlserver, ftp, rdp, smb, telnet}
+	commands := []*cobra.Command{ssh, mysql, redis, pgsql, sqlserver, ftp, rdp, smb, telnet, tomcat}
 	for _, cmd := range commands {
 		expCmd.AddCommand(cmd)
 		cmd.Flags().StringP("ip", "i", "", "此参数是指定验证的IP 支持格式如下：192.168.0.1，或192.168.0.1/24，或192.168.0.1:22")
@@ -85,6 +92,6 @@ func init() {
 		cmd.Flags().StringP("fire", "f", "", "此参数是指定主机列表，格式IP:Port 一行一个")
 		cmd.Flags().IntP("chan", "c", 30, "并发数量")
 		cmd.Flags().IntP("time", "t", 3, "超时等待时常/s")
-		cmd.Flags().Bool("noping", false, "此参数是指定不运行ping监测")
+		cmd.Flags().Bool("noping", false, "此参数是指定不运行网络监测")
 	}
 }
