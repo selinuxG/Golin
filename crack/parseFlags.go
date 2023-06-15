@@ -51,8 +51,12 @@ func parseFlags(cmd *cobra.Command) INFO {
 		ip, _ := cmd.Flags().GetString("ip")
 		if strings.Count(ip, "/") == 0 && strings.Count(ip, ":") == 0 { //单个IP地址
 			if net.ParseIP(ip) == nil {
-				fmt.Printf(" [x] IP地址不正确，退出！\n")
-				os.Exit(1)
+				_, err := net.ResolveIPAddr("ip", ip) //ip失败时判断是不是域名
+				if err != nil {
+					fmt.Printf(" [x] IP地址不正确，退出！\n")
+					os.Exit(1)
+				}
+				//ip = addr.String()
 			}
 			iplist = append(iplist, ip)
 		}
@@ -76,8 +80,12 @@ func parseFlags(cmd *cobra.Command) INFO {
 			atoi, _ := strconv.Atoi(nPort)
 			port = atoi
 			if net.ParseIP(newip) == nil {
-				fmt.Printf(" [x] IP地址不正确，退出！\n")
-				os.Exit(1)
+				_, err := net.ResolveIPAddr("ip", newip)
+				if err != nil {
+					fmt.Printf(" [x] IP地址不正确，退出！\n")
+					os.Exit(1)
+				}
+				//newip = addr.String()
 			}
 			iplist = append(iplist, newip)
 		}
@@ -280,13 +288,16 @@ func Readfile(name string) {
 			ip := strings.Split(s, ":")[0]
 			intport, err := strconv.Atoi(strings.Split(s, ":")[1])
 			if err != nil {
-				return
+				continue
 			}
 			if net.ParseIP(ip) == nil {
-				return
+				_, err := net.ResolveIPAddr("ip", ip)
+				if err != nil {
+					continue
+				}
 			}
 			if port != 0 && port > 65535 {
-				return
+				continue
 			}
 			iplist = append(iplist, ip)
 			fireip[ip] = intport

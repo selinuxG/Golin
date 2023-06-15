@@ -39,7 +39,7 @@
 | 7  |     MSSQL     |  √   |                |
 | 8  |      SMB      |  √   |   超时参数暂时不可用    |
 | 9  |    Telnet     |  √   |                |
-| 10 |    Tomcat     |  √   |    写死了http     |
+| 10 |    Tomcat     |  √   |                |
 | 11 |     SNMP      |      |                |
 | 12 |    MangoDB    |      |                |
 | 13 | Elasticsearch |      |                |
