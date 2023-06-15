@@ -17,7 +17,7 @@ var (
 func Run(cmd *cobra.Command, args []string) {
 	info := parseFlags(cmd)
 	checkWindow(info)
-	fmt.Printf("[*] 运行弱口令检测模式:%s,主机:%d个,尝试用户%d个,尝试密码%d个,主机需单独%d次尝试,共计尝试%d次,超时等待:%d/s 线程数:%d \n", info.Mode, len(info.IP), len(info.User), len(info.Passwd), len(info.User)*len(info.Passwd), len(info.IP)*len(info.User)*len(info.Passwd), info.Timeout, info.Chan)
+	fmt.Printf("[*] 运行弱口令检测模式:%s,主机:%d个,尝试用户%d个,尝试密码%d个,主机需单独%d次尝试,共计尝试%d次,超时等待:%d/s 线程数:%d 祝君好运:)\n", info.Mode, len(info.IP), len(info.User), len(info.Passwd), len(info.User)*len(info.Passwd), len(info.IP)*len(info.User)*len(info.Passwd), info.Timeout, info.Chan)
 	ch = make(chan struct{}, info.Chan)
 
 	newport := info.Prot

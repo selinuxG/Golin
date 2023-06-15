@@ -80,6 +80,13 @@ var tomcat = &cobra.Command{
 	Run:   crack.Run,
 }
 
+// 破解 xlsx
+var xlsx = &cobra.Command{
+	Use:   "xlsx",
+	Short: "xlsx口令检测",
+	Run:   crack.XlsxCheck,
+}
+
 func init() {
 	rootCmd.AddCommand(expCmd)
 	commands := []*cobra.Command{ssh, mysql, redis, pgsql, sqlserver, ftp, rdp, smb, telnet, tomcat}
@@ -94,4 +101,10 @@ func init() {
 		cmd.Flags().IntP("time", "t", 3, "超时等待时常/s")
 		cmd.Flags().Bool("noping", false, "此参数是指定不运行网络监测")
 	}
+	// xlsx
+	expCmd.AddCommand(xlsx)
+	xlsx.Flags().StringP("file", "f", "", "此参数是指定待破解的文件路径 注：xlsx 格式")
+	xlsx.Flags().StringP("passwdfile", "p", "", "此参数是指定待尝试的密码文件")
+	xlsx.Flags().IntP("chan", "c", 30, "并发数量")
+
 }

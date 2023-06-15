@@ -4,7 +4,7 @@
 
 
 # 使用场景
-> 弱口令检测、自动化运维、多线程Linux、MySql、Redis、PostgreSQL、网络设备批量执行命令、等级保护（网络安全等级保护）现场测评工具、基线核查工具、测试syslog等
+> 弱口令检测、自动化运维、Windows基线核查、多线程Linux、MySql、Redis、PostgreSQL、Oracle、网络设备批量执行命令、等级保护（网络安全等级保护）现场测评工具、基线核查工具、测试syslog等
 
 # 预览地址
 > https://148.100.78.184:1818/golin/gys
@@ -40,9 +40,11 @@
 | 8  |      SMB      |  √   |   超时参数暂时不可用    |
 | 9  |    Telnet     |  √   |                |
 | 10 |    Tomcat     |  √   |                |
-| 11 |     SNMP      |      |                |
-| 12 |    MangoDB    |      |                |
-| 13 | Elasticsearch |      |                |
+| 11 |     xlsx      |  √   |   仅允许xlsx格式    |
+| 12 |     SNMP      |      |                |
+| 13 |    MangoDB    |      |                |
+| 14 | Elasticsearch |      |                |
+
 
 ## 弱口令检测子命令
 ```
