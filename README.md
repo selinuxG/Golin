@@ -6,10 +6,13 @@
 # 使用场景
 > 弱口令检测、自动化运维、Windows基线核查、多线程Linux、MySql、Redis、PostgreSQL、Oracle、网络设备批量执行命令、等级保护（网络安全等级保护）现场测评工具、基线核查工具、测试syslog等
 
-# 预览地址
-> https://148.100.78.184:1818/golin/gys
+## crack功能预览
+![crack](images/crack.gif)
+## web功能预览
+![web](images/web.png)
+## Windows模式预览
+![Windows](images/windows.png)
 
-![golin](https://github.com/withmeT/tucahung/blob/main/3.gif)
 
 ## 自动化测评现阶段支持类型
 | 序号 |      类型       | 是否支持 |     备注     |
