@@ -6,10 +6,15 @@
 # 使用场景
 > 弱口令检测、自动化运维、Windows基线核查、多线程Linux、MySql、Redis、PostgreSQL、Oracle、网络设备批量执行命令、等级保护（网络安全等级保护）现场测评工具、基线核查工具、测试syslog等
 
-## crack功能预览
-![crack](images/crack.gif)
 ## web功能预览
 ![web](images/web.png)
+
+## crack功能预览
+![crack](images/crack.gif)
+
+## dirsearch功能预览
+![dirsearch功能](images/dirsearch.gif)
+
 ## Windows模式预览
 ![Windows](images/windows.png)
 
@@ -47,6 +52,28 @@
 | 12 |     SNMP      |      |                |
 | 13 |    MangoDB    |      |                |
 | 14 | Elasticsearch |      |                |
+
+## web目录扫描现阶段支持功能
+| 序号 |      功能       | 是否支持 |      备注      |
+|:--:|:-------------:|:----:|:------------:|
+| 1  |      多线程      |  √   |   默认为30并发    |
+| 2  |    自定义状态码     |  √   |    默认为200    |
+| 3  |    自定义状态码     |  √   |    默认为200    |
+| 4  |     代理模式      |  √   | http/s、socks |
+| 5  |    返回title    |  √   |              |
+| 6  |    超时等待时常     |  √   |    默认为3秒     |
+| 7  |     循环等待      |  √   |    默认为无限制    |
+| 8  |     内置url     |      |              |
+| 9  | 自定义User-Agent |      |              |
+| 10 |      重传       |      |              |
+| 11 |      递归       |      |              |
+| 12 |      爬虫       |      |              |
+
+
+
+
+
+
 
 
 ## 弱口令检测子命令
