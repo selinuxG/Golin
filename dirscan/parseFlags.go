@@ -38,8 +38,12 @@ func ParseFlags(cmd *cobra.Command, args []string) {
 	} else {
 		request = gorequest.New().Timeout(time.Duration(timeout) * time.Second)
 	}
-	//request.Set("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3")
-	file, _ = cmd.Flags().GetString("file")
+	Agent, _ := cmd.Flags().GetString("Agent") //如果Agent不为空则自定义User-Agent
+	if Agent != "" {
+		request.Set("User-Agent", Agent)
+	}
+
+	file, _ = cmd.Flags().GetString("file") //读取字典文件
 	if !global.PathExists(file) {
 		fmt.Printf("[-] url字典文件不存在！通过-f 指定！\n")
 		os.Exit(0)
@@ -55,9 +59,8 @@ func ParseFlags(cmd *cobra.Command, args []string) {
 			os.Exit(0)
 		}
 	}
-	waittime, _ := cmd.Flags().GetInt("wait")
-
-	codese, _ := cmd.Flags().GetString("code")
+	waittime, _ := cmd.Flags().GetInt("wait")      //循环超时
+	codese, _ := cmd.Flags().GetString("code")     //搜索的状态码
 	for _, s := range strings.Split(codese, ",") { //根据分隔符写入到状态切片
 		code = append(code, s)
 	}

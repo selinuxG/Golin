@@ -22,5 +22,5 @@ func init() {
 	dirsearch.Flags().StringP("file", "f", "", "此参数是指定读取的字典")
 	dirsearch.Flags().StringP("code", "", "200", "此参数是指定状态码,多个按照,分割")
 	dirsearch.Flags().IntP("wait", "", 0, "此参数是每次访问后等待多长时间")
-	dirsearch.Flags().Bool("cally", false, "此参数是运行爬虫")
+	dirsearch.Flags().StringP("Agent", "", "", "自定义User-Agent")
 }
