@@ -71,11 +71,6 @@
 
 
 
-
-
-
-
-
 ## 弱口令检测子命令
 ```
  Usage:
@@ -90,6 +85,22 @@ Flags:
   -P, --port int        此参数是指定暴力的端口
   -t, --time int        超时等待时常/s (default 3)
   -u, --user string     此参数是指定用户文件
+```
+
+## Web目录扫描检测子命令
+```
+Usage:
+  golin dirsearch [flags]
+
+Flags:
+  -c, --chan int       并发数量 (default 30)
+      --code string    此参数是指定状态码,多个按照,分割 (default "200")
+  -f, --file string    此参数是指定读取的字典
+  -h, --help           help for dirsearch
+  -p, --proxy string   指定代理
+  -t, --timeout int    超时等待时常/s (default 3)
+  -u, --url string     指定扫描url
+      --wait int       此参数是每次访问后等待多长时间
 ```
 
 ### web
