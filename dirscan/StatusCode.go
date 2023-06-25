@@ -3,7 +3,6 @@ package dirscan
 import (
 	"fmt"
 	"github.com/PuerkitoBio/goquery"
-	"io"
 	"strconv"
 	"sync"
 	"time"
@@ -34,18 +33,16 @@ func isStatusCodeOk(URL string) {
 		return
 	}
 	t1 := time.Now() // 记录发送请求前的时间
-	resp, _, errs := request.Get(URL).End()
-	t2 := time.Now() // 记录收到响应后的时间
-
+	//resp, _, errs := request.Get(URL).End()
+	req := request.Get(URL)
+	if req == nil {
+		return
+	}
+	resp, _, errs := req.End()
 	if len(errs) > 0 || resp == nil {
 		return
 	}
-	defer func(Body io.ReadCloser) {
-		err := Body.Close()
-		if err != nil {
-			return
-		}
-	}(resp.Body)
+	t2 := time.Now() // 记录收到响应后的时间
 
 	if statusCodeInRange(resp.StatusCode, code) {
 		fmt.Print("\033[2K") // 擦除整行
