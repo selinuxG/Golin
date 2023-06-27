@@ -51,6 +51,9 @@ func ParseFlags(cmd *cobra.Command, args []string) {
 		data, _ := os.ReadFile(file)
 		str := strings.ReplaceAll(string(data), "\r\n", "\n")
 		for _, u := range strings.Split(str, "\n") {
+			if len(u) == 0 {
+				continue
+			}
 			checkurl = append(checkurl, u)
 		}
 		countall = len(removeDuplicates(checkurl)) //去重
@@ -82,7 +85,7 @@ func ParseFlags(cmd *cobra.Command, args []string) {
 	wg.Wait()
 	time.Sleep(time.Second * 1) //等待1秒是因为并发问题，等待进度条。
 	percent()
-	fmt.Println()
+	fmt.Printf("\r")
 
 }
 
