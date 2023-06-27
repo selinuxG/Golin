@@ -189,7 +189,10 @@ func Pgsql(name, host, user, passwd, port string) {
 
 // sqlcon 执行sql命令
 func sqlcon(db *gorm.DB, sql string) string {
-	rows, _ := db.Raw(sql).Rows()
+	rows, err := db.Raw(sql).Rows()
+	if err != nil {
+		return ""
+	}
 	var sqlecho string
 	for rows.Next() {
 		rows.Scan(&sqlecho)
