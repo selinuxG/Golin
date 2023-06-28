@@ -84,7 +84,8 @@ func ParseFlags(cmd *cobra.Command, args []string) {
 	}
 	wg.Wait()
 	time.Sleep(time.Second * 1) //等待1秒是因为并发问题，等待进度条。
-	percent()
+	//percent()
+	fmt.Print("\033[2K") // 擦除整行
 	fmt.Printf("\r")
 
 }

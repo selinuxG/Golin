@@ -18,6 +18,9 @@ var (
 	wg           = sync.WaitGroup{}
 	file         = "" //读取的字典文件
 	countall     = 0
+	greenColor   = "\033[32m" // 设置文本颜色为绿色
+	resetColor   = "\033[0m"  // 重置文本颜色
+	redColor     = "\033[31m" // 设置文本颜色为红色
 )
 
 func ParseFlags(cmd *cobra.Command, args []string) {
@@ -44,13 +47,9 @@ func ParseFlags(cmd *cobra.Command, args []string) {
 
 	api, _ := cmd.Flags().GetBool("api") //读取字典文件
 	if api {
-		fmt.Printf("[*] 开始调用FOFA_API 目标域名:%s\n ", url)
-		fofa_Api(url)
-		fmt.Printf("\n")
-
+		apiStart(url)
 	}
-
-	fmt.Printf("[*] 开始运行DNS碰撞模式 目标域名%s 共计尝试次数:%d  并发数:%d\n ", url, countall, chcount)
+	_, _ = fmt.Fprintf(colorOutput, "\n%s[*] 开始运行DNS碰撞模式 共计尝试次数:%d  并发数:%d %s\n", greenColor, countall, chcount, resetColor)
 
 	for _, check := range removeDuplicates(domainList) {
 		if len(check) == 0 {
@@ -67,7 +66,8 @@ func ParseFlags(cmd *cobra.Command, args []string) {
 	}
 	wg.Wait()
 	time.Sleep(time.Second * 1) //等待1秒是因为并发问题，等待进度条。
-	percent()
+	//percent()
+	fmt.Print("\033[2K") // 擦除整行
 	fmt.Printf("\r")
 
 }

@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"github.com/mattn/go-colorable"
 	"net"
-	"strings"
 	"sync"
 )
 
@@ -21,10 +20,10 @@ func searchDomain(subdomain string) {
 		doSomething() //计数
 		percent()     //输出进度条
 	}()
-	host, err := net.LookupHost(subdomain)
+	_, err := net.LookupHost(subdomain)
 	if err == nil {
-		ip := strings.Join(host, " ")
-		fmt.Printf("\r[√] 发现域名：%s IP:%s\n", subdomain, ip)
+		//ip := strings.Join(host, " ")
+		fmt.Printf("\r[√] %s         \n ", subdomain)
 	}
 
 }
@@ -32,12 +31,7 @@ func searchDomain(subdomain string) {
 // percent 输出进度条
 func percent() {
 	percent := (float64(succeCount) / float64(countall)) * 100.00
-	// 设置文本颜色为红色
-	redColor := "\033[31m"
-	// 设置文本颜色为绿色
-	greenColor := "\033[32m"
-	// 重置文本颜色
-	resetColor := "\033[0m"
+
 	// 根据百分比值选择相应颜色
 	var colorCode string
 	if percent < 100 {
