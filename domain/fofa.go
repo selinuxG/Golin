@@ -24,7 +24,7 @@ type FoFA struct {
 }
 
 func fofa_Api(domain string) {
-	base64query := fmt.Sprintf("%s && is_domain=true", domain)
+	base64query := fmt.Sprintf("domain=%s && is_domain=true", domain)
 	size := os.Getenv("FOFA_SIZE")
 	if size == "" {
 		size = strconv.Itoa(100)
