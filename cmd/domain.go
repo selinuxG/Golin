@@ -17,4 +17,5 @@ func init() {
 	domainCmd.Flags().StringP("url", "u", "", "此参数是指定扫描域名")
 	domainCmd.Flags().StringP("file", "f", "", "此参数是指定字典文件")
 	domainCmd.Flags().IntP("chan", "c", 30, "并发数量")
+	domainCmd.Flags().BoolP("api", "a", false, "调用接口模式")
 }

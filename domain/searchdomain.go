@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/mattn/go-colorable"
 	"net"
+	"strings"
 	"sync"
 )
 
@@ -20,15 +21,10 @@ func searchDomain(subdomain string) {
 		doSomething() //计数
 		percent()     //输出进度条
 	}()
-	_, err := net.LookupHost(subdomain)
+	host, err := net.LookupHost(subdomain)
 	if err == nil {
-		// 设置文本颜色为绿色
-		greenColor := "\033[32m"
-		// 重置文本颜色
-		resetColor := "\033[0m"
-		_, _ = fmt.Fprintf(colorOutput, "\r[√] 发现域名：%s%s%s\n", greenColor, subdomain, resetColor)
-		greenColor = "\033[32m"
-
+		ip := strings.Join(host, " ")
+		fmt.Printf("\r[√] 发现域名：%s IP:%s\n", subdomain, ip)
 	}
 
 }

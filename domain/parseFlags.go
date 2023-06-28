@@ -42,6 +42,14 @@ func ParseFlags(cmd *cobra.Command, args []string) {
 		return
 	}
 
+	api, _ := cmd.Flags().GetBool("api") //读取字典文件
+	if api {
+		fmt.Printf("[*] 开始调用FOFA——API 目标域名%s\n ", url)
+		fofa_Api(url)
+		fmt.Printf("\n")
+
+	}
+
 	fmt.Printf("[*] 开始运行domain模式 目标域名%s 共计尝试次数:%d  并发数:%d\n ", url, countall, chcount)
 
 	for _, check := range removeDuplicates(domainList) {
