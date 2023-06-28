@@ -108,5 +108,10 @@ var (
 		"redirect",
 		"register",
 		"remote",
+		"vip",
+		"db",
+		"pan",
+		"log",
+		"crm",
 	}
 )

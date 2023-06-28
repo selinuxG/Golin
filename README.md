@@ -64,10 +64,17 @@
 | 10 |      爬虫       |      |                 |
 | 11 |     结果保存      |  √   | 保存到dirScan.json |
 
+## 子域名扫描现阶段支持功能
+| 序号 |   功能   | 是否支持 |                   备注                    |
+|:--:|:------:|:----:|:---------------------------------------:|
+| 1  |  多线程   |  √   |                 默认为30并发                 |
+| 2  | 内置常用域名 |  √   |                  100+                   |
+| 3  | 指定字典文件 |  √   |              可基于字典文件实现多层扫描              |
+| 4  | fofa调用 |  √   | 需在环境变量设置 FOFA_USER、FOFA_KEY、FOFA_SIZE参数 |
 
 
 
-## 弱口令检测子命令
+## 弱口令检测参数
 ```
  Usage:
     crack [ftp、mysql、pgsql、redis、sqlserver、ssh、rdp、smb、telnet、tomcat]
@@ -83,7 +90,7 @@ Flags:
   -u, --user string     此参数是指定用户文件
 ```
 
-## Web目录扫描检测子命令
+## Web目录扫描参数
 ```
 Usage:
   golin dirsearch [flags]
@@ -99,7 +106,20 @@ Flags:
       --wait int       此参数是每次访问后等待多长时间
 ```
 
-### web
+## 子域名扫描参数
+```
+Usage:
+  golin domain [flags]
+
+Flags:
+  -a, --api           调用接口模式
+  -c, --chan int      并发数量 (default 30)
+  -f, --file string   此参数是指定字典文件
+  -h, --help          help for domain
+  -u, --url string    此参数是指定扫描域名
+```
+
+### web运行参数
 ```shell
 Usage:
   golin web [flags]
