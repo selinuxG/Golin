@@ -56,6 +56,11 @@ func fofaApi(domain string) {
 		return
 	}
 
+	if len(domainList.Results) == 0 {
+		fmt.Printf("[-] FOFA 未收录此数据...\n")
+		return
+	}
+
 	var data [][]string
 	table := tablewriter.NewWriter(os.Stdout)
 	table.SetHeader([]string{"doamin", "ip", "port"})

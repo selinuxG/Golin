@@ -28,6 +28,11 @@ var (
 func ParseFlags(cmd *cobra.Command, args []string) {
 	url, _ := cmd.Flags().GetString("url")
 	url = strings.TrimSuffix(url, "/") // 删除最后的/
+
+	if !strings.HasPrefix(url, "http://") && !strings.HasPrefix(url, "https://") {
+		fmt.Printf("[-] URL需指定前缀！http or https！\n")
+		return
+	}
 	chcount, _ := cmd.Flags().GetInt("chan")
 	timeout, _ := cmd.Flags().GetInt("timeout")
 	ch = make(chan struct{}, chcount)

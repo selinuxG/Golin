@@ -56,6 +56,11 @@ func rapidDNS(domain string) {
 		return
 	}
 
+	if len(domainList.Data) == 0 {
+		fmt.Printf("[-] RapidDNS 未收录此数据...\n")
+		return
+	}
+
 	var data [][]string
 	table := tablewriter.NewWriter(os.Stdout)
 	table.SetHeader([]string{"doamin", "ip", "type", "date"})

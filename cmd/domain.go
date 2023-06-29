@@ -8,7 +8,7 @@ import (
 // domainCmd represents the domain command
 var domainCmd = &cobra.Command{
 	Use:   "domain",
-	Short: "基于DNS碰撞子域名",
+	Short: "基于DNS碰撞子域名，支持调用FOFA、RapidDNS数据",
 	Run:   domain.ParseFlags,
 }
 

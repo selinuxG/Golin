@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"github.com/PuerkitoBio/goquery"
 	"strconv"
+	"strings"
 	"sync"
-	"time"
 )
 
 var (
@@ -14,12 +14,12 @@ var (
 )
 
 type UrlStatus struct {
-	Url           string        //url地址
-	Code          int           //状态码
-	Title         string        //标题
-	ContentLength string        //大小
-	Time          time.Duration //响应时间
-	contentType   string        //媒体类型
+	Url           string //url地址
+	Code          int    //状态码
+	Title         string //标题
+	ContentLength string //大小
+	ContentType   string //媒体类型
+	Line          int    //行数
 }
 
 func isStatusCodeOk(URL string) {
@@ -33,17 +33,15 @@ func isStatusCodeOk(URL string) {
 	if request == nil {
 		return
 	}
-	t1 := time.Now() // 记录发送请求前的时间
 	//resp, _, errs := request.Get(URL).End()
 	req := request.Get(URL)
 	if req == nil {
 		return
 	}
-	resp, _, errs := req.End()
+	resp, body, errs := req.End()
 	if len(errs) > 0 || resp == nil {
 		return
 	}
-	t2 := time.Now() // 记录收到响应后的时间
 
 	if statusCodeInRange(resp.StatusCode, code) {
 		fmt.Print("\033[2K") // 擦除整行
@@ -53,16 +51,21 @@ func isStatusCodeOk(URL string) {
 		if err == nil {
 			title = doc.Find("title").Text()
 		}
+
+		line := strings.Count(body, "\n") //行数
+		contype := resp.Header.Get("Content-Type")
+		contype = strings.Split(contype, ";")[0]
+
 		yesurl := UrlStatus{
 			Url:           URL,
 			Code:          resp.StatusCode,
 			Title:         title,
 			ContentLength: FormatBytes(resp.ContentLength),
-			contentType:   resp.Header.Get("Content-Type"),
-			Time:          t2.Sub(t1),
+			ContentType:   contype,
+			Line:          line,
 		}
 		_ = AppendUrlStatusToFile(yesurl) //写入文件
-		fmt.Printf("\r[√] Url：「%s」 State:「%d」 Title:「%s」 Length:「%s」 Type: 「%s」 Speed:「%v」 \n", yesurl.Url, yesurl.Code, yesurl.Title, yesurl.ContentLength, yesurl.contentType, yesurl.Time)
+		fmt.Printf("\r[√] Url:「%s」 State:「%d」 Title:「%s」 Length:「%s」 Type: 「%s」 Line:「%d」 \n", yesurl.Url, yesurl.Code, yesurl.Title, yesurl.ContentLength, yesurl.ContentType, yesurl.Line)
 		return
 	}
 	return
