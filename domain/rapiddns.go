@@ -1,54 +1,72 @@
 package domain
 
 import (
+	"encoding/json"
 	"fmt"
-	"github.com/PuerkitoBio/goquery"
 	"github.com/olekukonko/tablewriter"
 	"github.com/parnurzeal/gorequest"
 	"os"
 	"strconv"
-	"strings"
 	"time"
 )
+
+type rapid struct {
+	Data []struct {
+		Date      string    `json:"date"`
+		Name      string    `json:"name"`
+		Timestamp time.Time `json:"timestamp"`
+		Type      string    `json:"type"`
+		Value     string    `json:"value"`
+	} `json:"data"`
+	Description string `json:"description"`
+	Maxpage     int    `json:"maxpage"`
+	Status      string `json:"status"`
+	Total       int    `json:"total"`
+}
 
 func rapidDNS(domain string) {
 
 	request := gorequest.New().Timeout(10 * time.Second)
 	if request == nil {
+		fmt.Printf("[-] 调用RapidDNS失败！\n")
 		return
 	}
-	domain = fmt.Sprintf("https://rapiddns.io/s/%s#result", domain)
+	domain = fmt.Sprintf("https://rapiddns.io/api/v1/%s?size=%d&page=1", domain, size)
 	req := request.Get(domain)
 	if req == nil {
+		fmt.Printf("[-] 调用RapidDNS失败！\n")
 		return
 	}
 
 	resp, body, errs := req.End()
 	if len(errs) > 0 {
+		fmt.Printf("[-] 调用RapidDNS失败！\n")
 		return
 	}
 	defer resp.Body.Close()
 
-	doc, err := goquery.NewDocumentFromReader(strings.NewReader(body))
+	domainList := &rapid{}
+	err := json.Unmarshal([]byte(body), domainList)
 	if err != nil {
+		fmt.Printf("[-] 调用RapidDNS失败！\n")
 		return
 	}
+	if domainList.Status != "200" {
+		fmt.Printf("[-] 调用RapidDNS失败！\n")
+		return
+	}
+
 	var data [][]string
 	table := tablewriter.NewWriter(os.Stdout)
-	table.SetHeader([]string{"", "doamin", "ip", "type", "date"})
+	table.SetHeader([]string{"doamin", "ip", "type", "date"})
 
-	doc.Find("tbody").Each(func(i int, s *goquery.Selection) {
-		s.Find("tr").Each(func(j int, row *goquery.Selection) {
-			var cells []string
-			row.Find("td, th").Each(func(k int, cell *goquery.Selection) {
-				cells = append(cells, strings.TrimSpace(cell.Text()))
-			})
-			rowdata := []string{cells[0], cells[1], cells[2], cells[3], cells[4]}
-			data = append(data, rowdata)
-		})
-	})
-	table.SetFooter([]string{"", "", "", "Total", strconv.Itoa(len(data))}) // Add Footer
-	table.AppendBulk(data)                                                  // Add Bulk Data
+	for _, da := range domainList.Data {
+		row := []string{da.Name, da.Value, da.Type, da.Date}
+		data = append(data, row)
+	}
+
+	table.SetFooter([]string{"", "", "Total", strconv.Itoa(len(domainList.Data))}) // Add Footer
+	table.AppendBulk(data)                                                         // Add Bulk Data
 	table.Render()
 
 }

@@ -21,6 +21,7 @@ var (
 	greenColor   = "\033[32m" // 设置文本颜色为绿色
 	resetColor   = "\033[0m"  // 重置文本颜色
 	redColor     = "\033[31m" // 设置文本颜色为红色
+	size         = 100
 )
 
 func ParseFlags(cmd *cobra.Command, args []string) {
@@ -29,7 +30,8 @@ func ParseFlags(cmd *cobra.Command, args []string) {
 		fmt.Printf(" [-] 域名为空！空过-u 指定！拜拜:)\n")
 		return
 	}
-	chcount, _ := cmd.Flags().GetInt("chan")
+	chcount, _ := cmd.Flags().GetInt("chan") //并发数
+	size, _ = cmd.Flags().GetInt("size")     //api调用的数据量
 	ch = make(chan struct{}, chcount)
 
 	file, _ = cmd.Flags().GetString("file") //读取字典文件
