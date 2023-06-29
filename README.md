@@ -1,14 +1,17 @@
 
 # 使用说明
-> 此版本初衷是只做CLI版本,压缩体积小、跨平台可用，随着功能越多、参数越多使用人记不住参数，增加了基于Python的简易Gui版本，可满足的等保模式的增加资产、运行不同模式，运行Cli指令，增加了基于Web的多主机、单主机模式以及模拟定级功能。注：完整使用功能建议使用Cli版本。（如弱口令扫描、目录扫描、syslog...）
+> 此版本初衷是只做CLI版本,压缩体积小、跨平台可用，随着功能越多、参数越多使用人记不住参数，增加了基于Python的简易Gui版本，可满足的等保模式的增加资产、运行不同模式，运行Cli指令，增加了基于Web的多主机、单主机模式以及模拟定级功能。注：完整使用功能建议使用Cli版本。（如弱口令扫描、目录扫描、子域名扫描、syslog...）
 
 ## web功能预览
 ![web](images/web.gif)
 
-## crack功能预览
+## 暴力破解功能预览
 ![crack](images/crack.gif)
 
-## dirsearch功能预览
+## 子域名扫描功能预览
+![domain功能](images/domain.gif)
+
+## 目录扫描功能预览
 ![dirsearch功能](images/dirsearch.gif)
 
 ## Windows模式预览
@@ -117,6 +120,7 @@ Flags:
   -c, --chan int      并发数量 (default 30)
   -f, --file string   此参数是指定字典文件
   -h, --help          help for domain
+  -s, --size int      api调用的数量 (default 100)
   -u, --url string    此参数是指定扫描域名
 ```
 
