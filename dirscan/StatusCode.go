@@ -19,6 +19,7 @@ type UrlStatus struct {
 	Title         string        //标题
 	ContentLength string        //大小
 	Time          time.Duration //响应时间
+	contentType   string        //媒体类型
 }
 
 func isStatusCodeOk(URL string) {
@@ -57,10 +58,11 @@ func isStatusCodeOk(URL string) {
 			Code:          resp.StatusCode,
 			Title:         title,
 			ContentLength: FormatBytes(resp.ContentLength),
+			contentType:   resp.Header.Get("Content-Type"),
 			Time:          t2.Sub(t1),
 		}
 		_ = AppendUrlStatusToFile(yesurl) //写入文件
-		fmt.Printf("\r[√] %s 发现url：「%s」 状态码:「%d」 Title:「%s」 大小:「%s」 响应时间:「%v」 \n", time.Now().Format(time.DateTime), yesurl.Url, yesurl.Code, yesurl.Title, yesurl.ContentLength, yesurl.Time)
+		fmt.Printf("\r[√] Url：「%s」 State:「%d」 Title:「%s」 Length:「%s」 Type: 「%s」 Speed:「%v」 \n", yesurl.Url, yesurl.Code, yesurl.Title, yesurl.ContentLength, yesurl.contentType, yesurl.Time)
 		return
 	}
 	return
