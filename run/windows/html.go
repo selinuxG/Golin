@@ -332,10 +332,10 @@ QuickScanStartTime: 快速扫描的开始时间。
 		<h2 id="network">联网测试</h2>
         <pre><code>联网测试结果</code></pre>
 
-		<h2 id="OptionalFeature">安装组件</h2>
+		<h2 id="OptionalFeature">系统默认可选功能及其状态</h2>
         <pre><code>安装组件结果</code></pre>
 
-		<h2 id="installer">安装程序</h2>
+		<h2 id="installer">第三方安装程序</h2>
         <pre><code>安装程序结果</code></pre>
 
 		<h2 id="set">环境变量</h2>
@@ -392,8 +392,8 @@ QuickScanStartTime: 快速扫描的开始时间。
             <li><a href="#netshare">共享资源</a></li>
             <li><a href="#systeminfo">系统信息</a></li>
             <li><a href="#tasklist">进程列表</a></li>
-            <li><a href="#installer">已安装程序</a></li>
-            <li><a href="#OptionalFeature">已安装组件</a></li>
+            <li><a href="#installer">第三方安装程序</a></li>
+            <li><a href="#OptionalFeature">系统默认可选功能及其状态</a></li>
             <li><a href="#set">环境变量</a></li>
             <li><a href="#Service">Service</a></li>
             <li><a href="#schtasks">定时任务</a></li>
