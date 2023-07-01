@@ -33,5 +33,5 @@ func init() {
 | |  _  | | | | | |     | | | |\   | 
 | |_| | | |_| | | |___  | | | | \  | 
 \_____/ \_____/ |_____| |_| |_|  \_| ` + "\nhttps://github.com/selinuxG/Golin-cli " + global.Version + ":" + global.Releasenotes)
-	fmt.Printf("\n")
+	//fmt.Printf("\n")
 }
