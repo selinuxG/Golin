@@ -6,6 +6,7 @@ import (
 	"golin/global"
 	"math/rand"
 	"net"
+	"os"
 	"sync"
 	"time"
 )
@@ -31,6 +32,10 @@ type INFO struct {
 
 func ParseFlags(cmd *cobra.Command, args []string) {
 	ip, _ := cmd.Flags().GetString("ip")
+	if ip == "" {
+		fmt.Printf("[-] 未指定扫描主机!通过 golin port -i 指定,支持：192.168.1.1,192.168.1.1/24,192.168.1.1-100\n")
+		os.Exit(1)
+	}
 	parseIP(ip)
 
 	port, _ := cmd.Flags().GetString("port")
@@ -65,6 +70,7 @@ var (
 func scanPort() {
 
 	//ping检测 true不进行检测 false检测
+
 	var filteredIPList []string
 	if !NoPing {
 		fmt.Printf("[-] 开始探测存活主机.....\n")
@@ -74,8 +80,15 @@ func scanPort() {
 			ip := ip
 			go func() {
 				defer pingwg.Done()
-				if !global.NetWorkStatus(ip) {
-					filteredIPList = append(filteredIPList, ip)
+				yesPing, pingOS := global.NetWorkStatus(ip)
+				if !yesPing {
+					outputMux.Lock()
+					filteredIPList = append(filteredIPList, ip) //ping不通放入待删除切片中不进行检测
+					outputMux.Unlock()
+				} else {
+					outputMux.Lock()
+					fmt.Printf("[*] 存活主机: %s 操作系统：%s \n", ip, pingOS)
+					outputMux.Unlock()
 				}
 			}()
 		}
@@ -112,9 +125,8 @@ func scanPort() {
 
 	}
 	wg.Wait()
-	time.Sleep(time.Second * 1) //等待线程结束
-	fmt.Printf("\r")
-	fmt.Println("+-----------------------------------------------------+")
+	time.Sleep(time.Second * 1) //等待1秒是为了正常显示进度条
+	fmt.Printf("\r+-----------------------------------------------------+\n")
 
 	if save {
 		saveXlsx(infolist)
