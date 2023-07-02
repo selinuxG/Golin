@@ -9,7 +9,7 @@
 ![crack](images/crack.gif)
 
 ## 端口功能预览
-![port](images/port.gif)
+![port](images/port.jpg)
 
 ## 子域名扫描功能预览
 ![domain功能](images/domain.gif)

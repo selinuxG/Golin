@@ -120,10 +120,9 @@ func scanPort() {
 			ch <- struct{}{}
 			wg.Add(1)
 			go IsPortOpen(ip, port)
-			continue
 		}
-
 	}
+
 	wg.Wait()
 	time.Sleep(time.Second * 1) //等待1秒是为了正常显示进度条
 	fmt.Printf("\r+-----------------------------------------------------+\n")
