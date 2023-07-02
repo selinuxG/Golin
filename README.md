@@ -67,6 +67,7 @@
 | 7  |   协议识别    |  √   | 目前支持常见协议:ssh、redis、https、https、MySQL、pgsql、ftp等 |
 | 8  |   超时时间    |  √   |                  默认3秒,可通过-t指定                   |
 | 9  |   识别web   |  √   |               目前支持识别server、title                |
+| 10 |   结果保存    |  √   |         默认不保存,可通过--save保存到portscan.xlsx         |
 
 
 ## web目录扫描现阶段支持功能

@@ -11,6 +11,7 @@ import (
 // IsRedisProtocol Redis 协议识别
 func IsRedisProtocol(conn net.Conn) bool {
 	_ = conn.SetReadDeadline(time.Now().Add(3 * time.Second))
+
 	// 发送一个 PING 命令
 	_, err := fmt.Fprintf(conn, "*1\r\n$4\r\nPING\r\n")
 	if err != nil {
@@ -20,9 +21,10 @@ func IsRedisProtocol(conn net.Conn) bool {
 	// 读取返回的数据
 	response, err := readResponse(conn)
 	if err == nil {
-		if strings.Count(response, "NOAUTH") > 0 || strings.Count(response, "PONG") > 0 {
+		if strings.Contains(response, "NOAUTH") || strings.Contains(response, "PONG") {
 			return true
 		}
+
 	}
 
 	return false

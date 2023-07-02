@@ -16,10 +16,18 @@ var (
 	NoPing    bool                      //是否禁止ping监测
 	ch        = make(chan struct{}, 30) //控制并发数
 	wg        = sync.WaitGroup{}
-	chancount int //并发数量
-	Timeout   int //超时等待时常
-	random    bool
+	chancount int    //并发数量
+	Timeout   int    //超时等待时常
+	random    bool   //打乱顺序
+	save      bool   //是否保存
+	infolist  []INFO //成功的主机列表
 )
+
+type INFO struct {
+	Host     string //主机
+	Port     string //开放端口
+	Protocol string //协议
+}
 
 func ParseFlags(cmd *cobra.Command, args []string) {
 	ip, _ := cmd.Flags().GetString("ip")
@@ -42,6 +50,7 @@ func ParseFlags(cmd *cobra.Command, args []string) {
 	}
 
 	random, _ = cmd.Flags().GetBool("random")
+	save, _ = cmd.Flags().GetBool("save")
 
 	scanPort()
 
@@ -107,6 +116,10 @@ func scanPort() {
 	fmt.Printf("\r")
 	fmt.Println("+-----------------------------------------------------+")
 
+	if save {
+		saveXlsx(infolist)
+	}
+
 }
 
 // IsPortOpen 判断端口是否开放
@@ -124,8 +137,9 @@ func IsPortOpen(host, port string) {
 
 	if err == nil {
 		outputMux.Lock()
-		//parseProtocol(conn)
-		fmt.Printf("\r| %-15s | %-5s | %-5s |%s \n", host, port, "open", parseProtocol(conn, host, port))
+		parseprotocol := parseProtocol(conn, host, port) //识别协议
+		fmt.Printf("\r| %-15s | %-5s | %-5s |%s \n", host, port, "open", parseprotocol)
+		infolist = append(infolist, INFO{host, port, parseprotocol})
 		outputMux.Unlock()
 
 	}

@@ -5,6 +5,7 @@ import (
 	"io"
 	"net"
 	"strings"
+	"time"
 )
 
 var (
@@ -12,12 +13,12 @@ var (
 )
 
 func IsTelnet(conn net.Conn) bool {
-	//_ = conn.SetReadDeadline(time.Now().Add(5 * time.Second))
+	_ = conn.SetReadDeadline(time.Now().Add(3 * time.Second))
 	reader := bufio.NewReader(conn)
 	data, _ := io.ReadAll(reader)
 
 	for _, v := range tel {
-		if strings.Count(strings.ToLower(string(data)), v) > 0 {
+		if strings.Contains(strings.ToLower(string(data)), v) {
 			return true
 		}
 	}
