@@ -2,7 +2,6 @@ package crack
 
 var (
 	df_sshuser       = []string{"root", "ROOT", "test", "system", "super", "ceshi"} //ssh模式下默认用户
-	df_rdpuser       = []string{"administrator", "gys"}                             //rdp模式下默认用户
 	df_mysqluser     = []string{"root", "mysql"}                                    //mysql模式下默认用户
 	df_redisuser     = []string{"", "redis", "root"}                                //redis模式下默认用户
 	df_pgsqluser     = []string{"postgres", "root"}                                 //pgsql模式下默认用户

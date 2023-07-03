@@ -52,13 +52,6 @@ var ftp = &cobra.Command{
 	Run:   crack.Run,
 }
 
-// 破解 rdp
-var rdp = &cobra.Command{
-	Use:   "rdp",
-	Short: "rdp弱口令检测",
-	Run:   crack.Run,
-}
-
 // 破解 smb
 var smb = &cobra.Command{
 	Use:   "smb",
@@ -89,7 +82,7 @@ var xlsx = &cobra.Command{
 
 func init() {
 	rootCmd.AddCommand(expCmd)
-	commands := []*cobra.Command{ssh, mysql, redis, pgsql, sqlserver, ftp, rdp, smb, telnet, tomcat}
+	commands := []*cobra.Command{ssh, mysql, redis, pgsql, sqlserver, ftp, smb, telnet, tomcat}
 	for _, cmd := range commands {
 		expCmd.AddCommand(cmd)
 		cmd.Flags().StringP("ip", "i", "", "此参数是指定验证的IP 支持格式如下：192.168.0.1，或192.168.0.1/24，或192.168.0.1:22")

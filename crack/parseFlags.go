@@ -149,7 +149,6 @@ var defaule_port = map[string]int{
 	"pgsql":     5432,
 	"sqlserver": 1433,
 	"ftp":       21,
-	"rdp":       3389,
 	"smb":       445,
 	"telnet":    23,
 	"tomcat":    8080,
@@ -176,9 +175,6 @@ func checkMode(mode string) {
 	case "ftp":
 		port = defaule_port[mode]
 		userlist = append(userlist, df_ftpuser...)
-	case "rdp":
-		port = defaule_port[mode]
-		userlist = append(userlist, df_rdpuser...)
 	case "smb":
 		port = defaule_port[mode]
 		userlist = append(userlist, df_smbuser...)
