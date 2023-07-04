@@ -128,7 +128,7 @@ func scanPort() {
 	fmt.Printf("\r+-----------------------------------------------------+\n")
 
 	if save {
-		saveXlsx(infolist)
+		saveXlsx(infolist, iplist)
 	}
 
 }
