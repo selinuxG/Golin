@@ -393,7 +393,7 @@ QuickScanStartTime: 快速扫描的开始时间。
             <li><a href="#systeminfo">系统信息</a></li>
             <li><a href="#tasklist">进程列表</a></li>
             <li><a href="#installer">第三方安装程序</a></li>
-            <li><a href="#OptionalFeature">系统默认可选功能及其状态</a></li>
+            <li><a href="#OptionalFeature">默认可选功能及状态</a></li>
             <li><a href="#set">环境变量</a></li>
             <li><a href="#Service">Service</a></li>
             <li><a href="#schtasks">定时任务</a></li>

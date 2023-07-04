@@ -90,7 +90,7 @@ func Windows() {
 		{"进程列表结果", `tasklist | sort`, false},
 		{"定时任务结果", `schtasks /query /fo LIST`, false},
 		{"安装组件结果", `Dism /online /Get-Features /format:table`, true},
-		{"安装程序结果", `wmic product get name, version`, false},
+		{"安装程序结果", `wmic product get name, version`, false}, //很耗时
 		{"Service结果", "Get-Service | Format-Table -AutoSize", true},
 		{"共享资源结果", "net share", false},
 		{"联网测试结果", "ping www.baidu.com", false},
@@ -132,6 +132,10 @@ func Windows() {
 func replaceAsync(html *string, cmd replaceCommand, wg *sync.WaitGroup) {
 	defer wg.Done()
 	defer func() { <-ch }()
+
+	// 因为等的有点久，所有增加一个输出
+	fmt.Printf("[*] 增在执行命令:%s 用于获取:%s powershell：%v\n", cmd.Command, cmd.Placeholder, cmd.Powershell)
+
 	var result string
 	if cmd.Powershell {
 		result = ExecCommandsPowershll(cmd.Command)
