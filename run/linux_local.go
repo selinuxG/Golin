@@ -5,7 +5,7 @@ import (
 	"go.uber.org/zap"
 	"golin/global"
 	"io/fs"
-	"io/ioutil"
+	"io"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -30,7 +30,7 @@ func LocalrunLinux(echo bool, cmd string) {
 			return
 		}
 		//读取所有输出
-		bytes, err := ioutil.ReadAll(stdout)
+		bytes, err := io.ReadAll(stdout)
 		if err != nil {
 			fmt.Println("ReadAll Stdout:", err.Error())
 			zlog.Warn("错误", zap.String("本机执行状态", "失败"))
@@ -50,7 +50,7 @@ func LocalrunLinux(echo bool, cmd string) {
 		}
 
 		fire := filepath.Join(pullfire, "local本机采集")
-		err = ioutil.WriteFile(fire, bytes, fs.FileMode(global.FilePer))
+		err = os.WriteFile(fire, bytes, fs.FileMode(global.FilePer))
 		if err != nil {
 			zlog.Warn("错误", zap.String("本机执行状态", "失败"))
 			return

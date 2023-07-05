@@ -9,7 +9,6 @@ import (
 	"golin/global"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
-	"io/ioutil"
 	"os"
 	"path/filepath"
 	"reflect"
@@ -282,7 +281,7 @@ func Byte2Str(b []byte) string {
 
 func echosqlfie(stratic bool, path string) {
 	if stratic {
-		content, err := ioutil.ReadFile(path)
+		content, err := os.ReadFile(path)
 		if err != nil {
 			panic(err)
 		}

@@ -7,7 +7,6 @@ import (
 	"go.uber.org/zap"
 	"golang.org/x/crypto/ssh"
 	"golin/global"
-	"io/ioutil"
 	"net"
 	"os"
 	"os/exec"
@@ -63,7 +62,7 @@ func Route(cmd *cobra.Command, args []string) {
 			zlog.Warn("自定义执行命令文件不存在！", zap.String("文件", cmdpath))
 			os.Exit(3)
 		}
-		fire, _ := ioutil.ReadFile(cmdpath)
+		fire, _ := os.ReadFile(cmdpath)
 		runcmd = string(fire)
 		for _, v := range strings.Split(string(fire), "\n") {
 			routecmd = append(routecmd, v)
@@ -117,7 +116,7 @@ func Route(cmd *cobra.Command, args []string) {
 }
 
 func Rourange(path string, spr string, cmd []string) {
-	fire, _ := ioutil.ReadFile(path)
+	fire, _ := os.ReadFile(path)
 	lines := strings.Split(string(fire), "\n")
 	for i := 0; i < len(lines); i++ {
 		//如果是空行则跳过线程减1

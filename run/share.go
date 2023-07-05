@@ -6,7 +6,6 @@ import (
 	"golin/config"
 	"golin/global"
 	"io/fs"
-	"io/ioutil"
 	"net"
 	"os"
 	"runtime"
@@ -31,7 +30,7 @@ var (
 
 // Rangefile 遍历文件并创建线程 path=模式目录 spr=按照什么分割 runtype运行类型
 func Rangefile(path string, spr string, runtype string) {
-	fire, _ := ioutil.ReadFile(path)
+	fire, _ := os.ReadFile(path)
 	lines := strings.Split(string(fire), "\n")
 	wg.Add(len(lines))
 	for i := 0; i < len(lines); i++ {
@@ -175,7 +174,7 @@ func Checkfile(name string, data string, pems int, path string) {
 	_, err := os.Stat(name)
 	if os.IsNotExist(err) {
 		datanew := []byte(string(data))
-		ioutil.WriteFile(path, datanew, fs.FileMode(pems))
+		os.WriteFile(path, datanew, fs.FileMode(pems))
 		config.Log.Warn("默认文件不存在", zap.String("默认文件", name))
 		config.Log.Info("已自动创建符合格式的默认文件，修改后再来吧！", zap.String("默认文件", name))
 		os.Exit(3)

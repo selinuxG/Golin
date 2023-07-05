@@ -6,7 +6,7 @@ import (
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
-	"io/ioutil"
+	"io"
 	"log"
 	"strings"
 )
@@ -30,7 +30,7 @@ func IsMySqlProtocol(host, port string) bool {
 
 // IsPgsqlProtocol 基于gorm的登录错误消息判断是否为MySQL
 func IsPgsqlProtocol(host, port string) bool {
-	log.SetOutput(ioutil.Discard)
+	log.SetOutput(io.Discard)
 	dsn := fmt.Sprintf("host=%s user=%s password=%s dbname=postgres port=%s sslmode=disable  TimeZone=Asia/Shanghai connect_timeout=%d", host, "postgres", "123456", port, 3)
 	_, err := gorm.Open(postgres.Open(dsn), &gorm.Config{
 		Logger: logger.Default.LogMode(logger.Silent), // 设置日志级别为 silent
