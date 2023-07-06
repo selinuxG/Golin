@@ -126,6 +126,8 @@ func Windows() {
 	if global.PathExists("windows.html") {
 		_ = ExecCommands("start windows.html")
 	}
+
+	return
 }
 
 // replaceAsync 执行命令或替换模板结果
@@ -134,7 +136,7 @@ func replaceAsync(html *string, cmd replaceCommand, wg *sync.WaitGroup) {
 	defer func() { <-ch }()
 
 	// 因为等的有点久，所有增加一个输出
-	fmt.Printf("[*] 增在执行命令:%s 用于获取:%s powershell：%v\n", cmd.Command, cmd.Placeholder, cmd.Powershell)
+	fmt.Printf("[*] 正在执行命令:%s 用于获取:%s powershell：%v\n", cmd.Command, cmd.Placeholder, cmd.Powershell)
 
 	var result string
 	if cmd.Powershell {

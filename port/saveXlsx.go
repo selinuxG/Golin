@@ -30,7 +30,7 @@ func saveXlsx(infoList []INFO, ipList []string) {
 	_ = f.SetCellValue("Sheet1", "A1", "序号")
 	_ = f.SetCellValue("Sheet1", "B1", "主机")
 	_ = f.SetCellValue("Sheet1", "C1", "端口")
-	_ = f.SetCellValue("Sheet1", "D1", "协议以组件")
+	_ = f.SetCellValue("Sheet1", "D1", "协议及组件")
 	// 设置工作簿的默认工作表
 	f.SetActiveSheet(index)
 	cell := 1

@@ -24,8 +24,12 @@ type FoFA struct {
 }
 
 func fofaApi(domain string) {
+	if os.Getenv("FOFA_EMAIL") == "" || os.Getenv("FOFA_KEY") == "" {
+		fmt.Printf("[-]	FOFA_EMAIL/FOFA_KEY环境变量为空,跳过！\n")
+		return
+	}
 	base64query := fmt.Sprintf("domain=%s && is_domain=true", domain)
-	domain = fmt.Sprintf("https://fofa.info/api/v1/search/all?email=%s&key=%s&size=%d&qbase64=%s", os.Getenv("FOFA_USER"), os.Getenv("FOFA_KEY"), size, base64.StdEncoding.EncodeToString([]byte(base64query)))
+	domain = fmt.Sprintf("https://fofa.info/api/v1/search/all?email=%s&key=%s&size=%d&qbase64=%s", os.Getenv("FOFA_EMAIL"), os.Getenv("FOFA_KEY"), size, base64.StdEncoding.EncodeToString([]byte(base64query)))
 	request := gorequest.New().Timeout(10 * time.Second)
 	if request == nil {
 		echoerr()
