@@ -12,9 +12,9 @@ import (
 func NetWorkStatus(ip string) (bool, string) {
 	var cmd *exec.Cmd
 	if runtime.GOOS == "windows" {
-		cmd = exec.Command("ping", "-n", "2", ip)
+		cmd = exec.Command("ping", "-n", "4", ip)
 	} else {
-		cmd = exec.Command("ping", "-c", "2", ip)
+		cmd = exec.Command("ping", "-c", "4", ip)
 	}
 
 	output, err := cmd.Output()

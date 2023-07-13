@@ -49,6 +49,7 @@ func parsePort(port string) {
 
 var (
 	default_port = []string{
+		"20",    //ftp
 		"22",    // SSH
 		"80",    // HTTP
 		"443",   // HTTPS
@@ -56,46 +57,40 @@ var (
 		"25",    // SMTP
 		"110",   // POP3
 		"143",   // IMAP
+		"465",   //SMTPS
+		"587",   //Submission
+		"993",   //IMAPS
+		"995",   //POP3S
+		"1080",  //SOCKS
+		"1194",  //开放VPN
+		"5900",  //VNC
 		"53",    // DNS
 		"3389",  // RDP
 		"23",    // Telnet
-		"115",   // SFTP
-		"179",   // BGP
 		"514",   //Syslog
 		"389",   // LDAP
-		"465",   // SMTPS
-		"636",   // LDAPS
-		"993",   // IMAPS
-		"995",   // POP3S
 		"1433",  // MSSQL
 		"1521",  // Oracle Database
 		"6379",  // Redis
 		"27017", // MongoDB
-		"11211", // Memcached
 		"8080",  // HTTP (Alternate)
 		"8443",  // HTTPS (Alternate)
 		"9000",  // PHP-FPM
-		"20",    // FTP (Data)
-		"69",    // TFTP
 		"161",   // SNMP Trap
 		"162",   // SNMP Trap
-		"636",   // LDAPS (Alternate)
 		"445",   // SMB
+		"137",   // NetBIOS
+		"138",   // NetBIOS
 		"139",   // NetBIOS
-		"1723",  // PPTP
-		"5060",  // SIP
-		"5061",  // SIPS
-		"5900",  // VNC
-		"5901",  // VNC (Alternate)
-		"1524",  // ingreslock
-		"2049",  // NFS
 		"1434",  // MSSQL (Alternate)
-		"2000",  // Cisco SCCP
 		"3306",  // MySQL (Alternate)
 		"5432",  // PostgreSQL (Alternate)
 		"6378",  // redis
 		"9200",  //es
 		"9300",  //es
 		"5601",  //kibana
+		"1080",  //sock
+		"1194",  //vpn
+		"5900",  //vnc
 	}
 )

@@ -8,7 +8,7 @@
 ## 暴力破解功能预览
 ![crack](images/crack.gif)
 
-## 端口功能预览
+## 端口扫描功能预览
 ![port](images/port.jpg)
 
 ## 子域名扫描功能预览

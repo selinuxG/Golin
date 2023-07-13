@@ -206,9 +206,9 @@ func removeDuplicates(slice []string) []string {
 func NetWorkStatus(ip string) bool {
 	var cmd *exec.Cmd
 	if runtime.GOOS == "windows" {
-		cmd = exec.Command("ping", "-n", "1", ip)
+		cmd = exec.Command("ping", "-n", "4", ip)
 	} else {
-		cmd = exec.Command("ping", "-c", "1", ip)
+		cmd = exec.Command("ping", "-c", "4", ip)
 	}
 
 	output, err := cmd.Output()
