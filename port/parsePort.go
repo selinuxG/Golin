@@ -94,5 +94,8 @@ var (
 		"3306",  // MySQL (Alternate)
 		"5432",  // PostgreSQL (Alternate)
 		"6378",  // redis
+		"9200",  //es
+		"9300",  //es
+		"5601",  //kibana
 	}
 )
