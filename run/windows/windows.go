@@ -22,6 +22,7 @@ var (
 	wg       = sync.WaitGroup{}
 	Policy   = make(map[string]string) //安全策略map
 	html     = Windowshtml()           //html字符串
+	mu       sync.Mutex                //加锁
 	auditmap = map[string]string{      //审计相关
 		"AuditSystemEvents":           "是否审核系统事件",
 		"AuditLogonEvents":            "是否审核登录事件",
@@ -144,8 +145,9 @@ func replaceAsync(html *string, cmd replaceCommand, wg *sync.WaitGroup) {
 	} else {
 		result = ExecCommands(cmd.Command)
 	}
-
+	mu.Lock()
 	*html = strings.ReplaceAll(*html, cmd.Placeholder, result)
+	mu.Unlock()
 }
 
 // ExecCommands 执行cmd命令

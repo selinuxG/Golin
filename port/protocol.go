@@ -55,6 +55,9 @@ func parseProtocol(conn net.Conn, host, port string) string {
 	case port == "1521":
 		return "Oracle"
 
+	case port == "9200" || port == "9300":
+		return "ElasticSearch"
+
 	case isWeb != "":
 		return isWeb
 
