@@ -101,11 +101,11 @@
 ```
 golin web (通过web方式启动,仅支持等保功能)
 golin port -i 192.168.1.1/24 (扫描c段端口)
-golin dirsearch -u https://test.com -f 字典.txt --code 200,406 (扫描状态码为200以及300的web目录)
+golin dirsearch -u https://test.com -f 字典.txt --code 200,404 (扫描状态码为200以及404的web目录)
 golin crack ssh -i 192.168.1.1 (基于内置鉴别信息进行扫描弱口令)
 golin domain -u baidu.com --api (扫描子域名,并且调用fofa、RapidDNS的API)
 golin update (检查是否可更新)
-golin windows (运行采集当前主机的安全配置生成报告,需管理员身份运行)
+golin windows (采集当前主机的安全配置生成报告)
 golin [linux、mysql、oracle、sqlserver、redis...] (按照3级等保要求核查各项安全配置)
 ```
 

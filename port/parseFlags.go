@@ -2,11 +2,13 @@ package port
 
 import (
 	"fmt"
+	"github.com/fatih/color"
 	"github.com/spf13/cobra"
 	"golin/global"
 	"math/rand"
 	"net"
 	"os"
+	"strings"
 	"sync"
 	"time"
 )
@@ -62,18 +64,18 @@ func ParseFlags(cmd *cobra.Command, args []string) {
 }
 
 var (
-	allcount  int
-	donecount int
-	outputMux sync.Mutex
+	allcount     int //IP*PORT的总数量
+	donecount    int //线程技术的数量
+	outputMux    sync.Mutex
+	linuxcount   int //linux 主机数量
+	windowscount int //windows 主机数量
 )
 
 func scanPort() {
 
-	//ping检测 true不进行检测 false检测
-
 	var filteredIPList []string
 	if !NoPing {
-		fmt.Printf("[-] 开始探测存活主机.....\n")
+		fmt.Printf("%v\n", color.GreenString("%s", "[*] 开始探测存活主机......"))
 		pingwg := sync.WaitGroup{}
 		for _, ip := range iplist {
 			pingwg.Add(1)
@@ -87,7 +89,13 @@ func scanPort() {
 					outputMux.Unlock()
 				} else {
 					outputMux.Lock()
-					fmt.Printf("[*] 存活主机: %s 操作系统：%s \n", ip, pingOS)
+					fmt.Printf("[-] 存活主机: %s 操作系统：%s \n", ip, pingOS)
+					switch pingOS {
+					case "Linux/Unix":
+						linuxcount += 1
+					case "Windows":
+						windowscount += 1
+					}
 					outputMux.Unlock()
 				}
 			}()
@@ -110,8 +118,16 @@ func scanPort() {
 			iplist[i], iplist[j] = iplist[j], iplist[i]
 		})
 	}
-
-	fmt.Printf("[-] 检测主机数量: %d 主机探测端口数量: %d 并发数: %d 端口连接超时:%d :)\n", len(iplist), len(removeDuplicates(portlist)), chancount, Timeout)
+	fmt.Println("+-----------------------------------------------------+")
+	fmt.Printf("[*] Linux设备:%v Windows设备:%v 未识别:%v 共计存活:%v\n[*] 开始扫描端口:%v 并发数:%v 端口连接超时:%v\n",
+		color.GreenString("%d", linuxcount),
+		color.GreenString("%d", windowscount),
+		color.RedString("%d", len(iplist)-linuxcount-windowscount),
+		color.GreenString("%d", len(iplist)),
+		color.GreenString("%d", len(portlist)),
+		color.GreenString("%d", chancount),
+		color.GreenString("%d", Timeout),
+	)
 
 	allcount = len(iplist) * len(portlist)
 
@@ -133,7 +149,14 @@ func scanPort() {
 		}
 	}
 
-	fmt.Printf("[*] 共计扫描存活主机：\033[32m%d\033[0m 存活端口：\u001B[32m%d\u001B[0m\n", len(iplist), len(infolist))
+	fmt.Printf("[*] 存活主机: %v 存活端口: %v 数据库: %v Web: %v SSH: %v RDP: %v \n",
+		color.GreenString("%d", len(iplist)),
+		color.GreenString("%d", len(infolist)),
+		color.GreenString("%d", countPortOccurrences("数据库")),
+		color.GreenString("%d", countPortOccurrences("Web应用")),
+		color.GreenString("%d", countPortOccurrences("SSH")),
+		color.GreenString("%d", countPortOccurrences("RDP")),
+	)
 
 }
 
@@ -158,4 +181,15 @@ func IsPortOpen(host, port string) {
 		outputMux.Unlock()
 
 	}
+}
+
+// countPortOccurrences 接受协议特征，返回共计数量
+func countPortOccurrences(protocol string) int {
+	count := 0
+	for _, info := range infolist {
+		if strings.Contains(info.Protocol, protocol) {
+			count += 1
+		}
+	}
+	return count
 }
