@@ -6,7 +6,6 @@ import (
 
 const (
 	XlsxTemplateName = "golin上传文件模板文件.xlsx"
-	Licensename      = "license.lic"
 )
 
 // 文件相关公共变量
@@ -67,9 +66,18 @@ func PathExists(path string) bool {
 	if err == nil {
 		return true
 	}
-	//fmt.Println(err)
 	if os.IsNotExist(err) {
 		return false
+	}
+	return false
+}
+
+// InSlice 判断字符串是否在 slice 中。
+func InSlice(items []string, item string) bool {
+	for _, eachItem := range items {
+		if eachItem == item {
+			return true
+		}
 	}
 	return false
 }

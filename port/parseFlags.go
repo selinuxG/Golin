@@ -128,8 +128,12 @@ func scanPort() {
 	fmt.Printf("\r+-----------------------------------------------------+\n")
 
 	if save {
-		saveXlsx(infolist, iplist)
+		if len(infolist) > 0 || len(iplist) > 0 {
+			saveXlsx(infolist, iplist)
+		}
 	}
+
+	fmt.Printf("[*] 共计扫描存活主机：\033[32m%d\033[0m 存活端口：\u001B[32m%d\u001B[0m\n", len(iplist), len(infolist))
 
 }
 

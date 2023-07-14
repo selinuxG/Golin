@@ -66,6 +66,6 @@ func saveXlsx(infoList []INFO, ipList []string) {
 		return
 	}
 
-	fmt.Printf("[*] 结果保存路径：portscan.xlsx\n")
+	fmt.Printf("[*] 结果保存路径：\033[32m%s\033[0m\n", "portscan.xlsx")
 
 }

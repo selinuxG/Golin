@@ -2,34 +2,64 @@ package Protocol
 
 import (
 	"fmt"
-	"gorm.io/driver/mysql"
+	"golin/global"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
 	"io"
 	"log"
+	"net"
 	"strings"
+	"time"
 )
 
-// IsMySqlProtocol 基于gorm的登录错误消息判断是否为MySQL
-func IsMySqlProtocol(host, port string) bool {
-
-	if !strings.Contains(port, "33") {
-		return false
+// IsMySqlProtocol 基于数据返回值确实是否未MySQL
+func IsMySqlProtocol(host, port string) (bool, string) {
+	//按照常理来说,端口号小于4位必然不是MySQL
+	if len(port) < 4 || global.InSlice(webport, port) {
+		return false, ""
 	}
 
-	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8mb4&parseTime=True&loc=Local&timeout=%ds", "root", "123456", host, port, "mysql", 3)
-	_, err := gorm.Open(mysql.Open(dsn), &gorm.Config{
-		Logger: logger.Default.LogMode(logger.Silent), // 设置日志级别为 silent
-	})
+	conn, err := net.Dial("tcp", fmt.Sprintf("%s:%s", host, port))
 	if err != nil {
-		if strings.Contains(err.Error(), "Access denied for user") || strings.Contains(err.Error(), "MySQL server") {
-			return true
-		}
-		return false
-	} else {
-		return true
+		return false, ""
 	}
+	defer conn.Close()
+
+	err = conn.SetReadDeadline(time.Now().Add(3 * time.Second))
+	if err != nil {
+		return false, ""
+	}
+	buf := make([]byte, 4)
+	_, err = conn.Read(buf)
+	if err != nil {
+		return false, ""
+	}
+
+	buf = make([]byte, 1)
+	_, err = conn.Read(buf)
+	if err != nil {
+		return false, ""
+	}
+
+	if buf[0] != 10 {
+		//fmt.Println("Not a MySQL server")
+		return false, ""
+	}
+
+	buf = make([]byte, 1)
+	version := ""
+	for {
+		_, err = conn.Read(buf)
+		if err != nil {
+			return false, ""
+		}
+		if buf[0] == 0 {
+			break
+		}
+		version += string(buf)
+	}
+	return true, version
 
 }
 

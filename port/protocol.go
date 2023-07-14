@@ -30,16 +30,18 @@ var portProtocols = map[string]string{
 	"1024":  "保留给操作系统的端口（通常用于动态或私有端口）",
 	"1080":  "SOCKS 代理",
 	"1194":  "开放VPN",
-	"1433":  "数据库:「SQL Server」",
+	"1433":  "数据库:「SQLServer」",
 	"1521":  "数据库:「Oracle」",
 	"2049":  "网络文件系统:「NFS」",
 	"3389":  "远程桌面协议:「RDP」",
 	"5601":  "ES数据库管理系统:「Kibana」",
 	"5900":  "虚拟网络计算:「VNC」",
+	"9000":  "数据库:「Hadoop」",
+	"5672":  "缓存数据库:「RabbitMq」",
 	"9200":  "数据库:「ElasticSearch」",
 	"9300":  "数据库:「ElasticSearch集群管理端口」",
 	"11211": "缓存服务:「Memcached」",
-	"27077": "数据库:「MondoDB」",
+	"27077": "缓存数据库:「MondoDB」",
 }
 
 // parseProtocol 协议/组件分析：有的基于默认端口去对应服务
@@ -70,13 +72,10 @@ func parseProtocol(conn net.Conn, host, port string) string {
 		return "文件传输协议（控制）:「FTP」"
 
 	case Protocol.IsRedisProtocol(conn):
-		return "数据库:「Redis」"
+		return "缓存数据库:「Redis」"
 
 	case Protocol.IsTelnet(conn):
 		return "Telnet"
-
-	case Protocol.IsMySqlProtocol(host, port):
-		return "数据库:「MySQL」"
 
 	case Protocol.IsPgsqlProtocol(host, port):
 		return "数据库:「PostgreSQL」"
@@ -86,6 +85,11 @@ func parseProtocol(conn net.Conn, host, port string) string {
 		if isWeb != "" {
 			return fmt.Sprintf("Web应用 %s", isWeb)
 		}
+	}
+
+	isMySQL, version := Protocol.IsMySqlProtocol(host, port)
+	if isMySQL {
+		return fmt.Sprintf("数据库:「MySQL:%s」", version)
 	}
 
 	return ""
