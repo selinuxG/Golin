@@ -2,15 +2,14 @@ package domain
 
 import (
 	"fmt"
-	"github.com/mattn/go-colorable"
+	"github.com/fatih/color"
 	"net"
 	"sync"
 )
 
 var (
-	succeCount  = 0
-	lock        sync.Mutex
-	colorOutput = colorable.NewColorableStdout()
+	succeCount = 0
+	lock       sync.Mutex
 )
 
 func searchDomain(subdomain string) {
@@ -22,7 +21,6 @@ func searchDomain(subdomain string) {
 	}()
 	_, err := net.LookupHost(subdomain)
 	if err == nil {
-		//ip := strings.Join(host, " ")
 		fmt.Printf("\r[√] %s         \n ", subdomain)
 	}
 
@@ -31,19 +29,15 @@ func searchDomain(subdomain string) {
 // percent 输出进度条
 func percent() {
 	percent := (float64(succeCount) / float64(countall)) * 100.00
-
-	// 根据百分比值选择相应颜色
-	var colorCode string
-	if percent < 100 {
-		colorCode = redColor
-	} else {
-		colorCode = greenColor
-	}
 	spinChar := rotateSpinner()
 	if percent == 100 {
 		spinChar = "√"
 	}
-	fmt.Fprintf(colorOutput, "\r[%s] 当前进度: %s%.2f%%%s", spinChar, colorCode, percent, resetColor)
+	percentStr := fmt.Sprintf("%.2f", percent) // 将百分比值格式化为字符串
+	fmt.Printf("\r[%s] 当前进度: %s",
+		spinChar,
+		color.RedString("%s", fmt.Sprintf("%s%%", percentStr)),
+	)
 }
 
 // 旋转进度条

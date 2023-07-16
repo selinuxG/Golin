@@ -2,6 +2,7 @@ package domain
 
 import (
 	"fmt"
+	"github.com/fatih/color"
 	"github.com/spf13/cobra"
 	"golin/global"
 	"os"
@@ -18,9 +19,6 @@ var (
 	wg           = sync.WaitGroup{}
 	file         = "" //读取的字典文件
 	countall     = 0
-	greenColor   = "\033[32m" // 设置文本颜色为绿色
-	resetColor   = "\033[0m"  // 重置文本颜色
-	redColor     = "\033[31m" // 设置文本颜色为红色
 	size         = 100
 )
 
@@ -51,7 +49,11 @@ func ParseFlags(cmd *cobra.Command, args []string) {
 	if api {
 		apiStart(url)
 	}
-	_, _ = fmt.Fprintf(colorOutput, "\n%s[*] 开始运行DNS碰撞模式 共计尝试次数:%d  并发数:%d %s\n", greenColor, countall, chcount, resetColor)
+
+	fmt.Printf("\n[*] 开始运行DNS碰撞模式 共计尝试次数:%s 并发数:%s\n",
+		color.GreenString("%d", countall),
+		color.GreenString("%d", chcount),
+	)
 
 	for _, check := range removeDuplicates(domainList) {
 		if len(check) == 0 {

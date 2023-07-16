@@ -89,7 +89,11 @@ func scanPort() {
 					outputMux.Unlock()
 				} else {
 					outputMux.Lock()
-					fmt.Printf("[-] 存活主机: %s 操作系统：%s \n", ip, pingOS)
+					//fmt.Printf("[-] 存活主机: %s 操作系统：%s 类别：%v\n", ip, pingOS, getNetworkClass(ip))
+					fmt.Printf("[-] 存活主机:%s 操作系统:%s\n",
+						color.BlueString("%s", ip),
+						color.BlueString("%s", pingOS),
+					)
 					switch pingOS {
 					case "Linux/Unix":
 						linuxcount += 1
@@ -118,14 +122,21 @@ func scanPort() {
 			iplist[i], iplist[j] = iplist[j], iplist[i]
 		})
 	}
+
+	if !NoPing && len(iplist) == 0 {
+		fmt.Printf("%s\n", color.RedString("%s", "[-] 通过尝试PING探测存活主机为0！可通过--noping跳过PING尝试"))
+		return
+	}
+
 	fmt.Println("+-----------------------------------------------------+")
-	fmt.Printf("[*] Linux设备:%v Windows设备:%v 未识别:%v 共计存活:%v\n[*] 开始扫描端口:%v 并发数:%v 端口连接超时:%v\n",
+	fmt.Printf("[*] Linux设备:%v Windows设备:%v 未识别:%v 共计存活:%v\n[*] 开始扫描端口:%v 并发数:%v 共计尝试:%v 端口连接超时:%v\n",
 		color.GreenString("%d", linuxcount),
 		color.GreenString("%d", windowscount),
 		color.RedString("%d", len(iplist)-linuxcount-windowscount),
 		color.GreenString("%d", len(iplist)),
 		color.GreenString("%d", len(portlist)),
 		color.GreenString("%d", chancount),
+		color.GreenString("%d", len(iplist)*len(portlist)),
 		color.GreenString("%d", Timeout),
 	)
 
@@ -176,7 +187,7 @@ func IsPortOpen(host, port string) {
 	if err == nil {
 		outputMux.Lock()
 		parseprotocol := parseProtocol(conn, host, port) //识别协议
-		fmt.Printf("\r| %-15s | %-5s | %-2s |%s \n", host, port, "✓", parseprotocol)
+		fmt.Printf("\r| %-15s | %-5s | %-2s |%s \n", host, port, fmt.Sprintf("%s", color.GreenString("%s", "✓")), parseprotocol)
 		infolist = append(infolist, INFO{host, port, parseprotocol})
 		outputMux.Unlock()
 

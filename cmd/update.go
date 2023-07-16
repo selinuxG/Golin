@@ -3,6 +3,7 @@ package cmd
 import (
 	"bufio"
 	"fmt"
+	"github.com/fatih/color"
 	"golin/global"
 	"io"
 	"net/http"
@@ -11,7 +12,6 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/mattn/go-colorable"
 	"github.com/spf13/cobra"
 )
 
@@ -127,27 +127,15 @@ func downloadFile(downurl, localPath, proxy string) error {
 		}
 		progressed += n
 		percentage := float64(progressed) / float64(fileSize) * 100
-		colorOutput := colorable.NewColorableStdout()
 
-		// 设置文本颜色为红色
-		redColor := "\033[31m"
-		// 设置文本颜色为绿色
-		greenColor := "\033[32m"
-		// 重置文本颜色
-		resetColor := "\033[0m"
-		// 根据百分比值选择相应颜色
-		var colorCode string
-		if percentage < 100 {
-			colorCode = redColor
-		} else {
-			colorCode = greenColor
-		}
+		percentStr := fmt.Sprintf("%.2f", percentage) // 将百分比值格式化为字符串
+		fmt.Printf("\r更新进度: %s",
+			color.RedString("%s", fmt.Sprintf("%s%%", percentStr)),
+		)
 
-		// 使用定义好的颜色打印进度
-		fmt.Fprintf(colorOutput, "\r更新进度: %s%.2f%%%s", colorCode, percentage, resetColor)
-
-		//fmt.Printf("\r更新进度: %s%.2f%%%s", colorCode, percentage, resetColor)
 	}
-
+	fmt.Printf("\r更新进度: %s\n",
+		color.GreenString("%s", fmt.Sprintf("%-7s", "100%")),
+	)
 	return nil
 }

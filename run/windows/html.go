@@ -406,38 +406,31 @@ QuickScanStartTime: 快速扫描的开始时间。
             <li><a href="#publicrlue">公共防火墙规则</a></li>
         </ul>
     </div>
-
-	<div class="watermark" style="top: 1%; left: 50%;">高业尚-SelinuxG</div>
-	<div class="watermark" style="top: 2%; left: 40%;">高业尚-SelinuxG</div>
-	<div class="watermark" style="top: 3%; left: 10%;">高业尚-SelinuxG</div>
-	<div class="watermark" style="top: 4%; left: 65%;">高业尚-SelinuxG</div>
-	<div class="watermark" style="top: 5%; left: 20%;">高业尚-SelinuxG</div>
-	<div class="watermark" style="top: 6%; left: 20%;">高业尚-SelinuxG</div>
-	<div class="watermark" style="top: 7%; left: 20%;">高业尚-SelinuxG</div>
-	<div class="watermark" style="top: 8%; left: 20%;">高业尚-SelinuxG</div>
-	<div class="watermark" style="top: 9%; left: 20%;">高业尚-SelinuxG</div>
-	<div class="watermark" style="top: 21%; left: 50%;">高业尚-SelinuxG</div>
-	<div class="watermark" style="top: 22%; left: 40%;">高业尚-SelinuxG</div>
-	<div class="watermark" style="top: 23%; left: 10%;">高业尚-SelinuxG</div>
-	<div class="watermark" style="top: 24%; left: 65%;">高业尚-SelinuxG</div>
-	<div class="watermark" style="top: 25%; left: 20%;">高业尚-SelinuxG</div>
-	<div class="watermark" style="top: 26%; left: 20%;">高业尚-SelinuxG</div>
-	<div class="watermark" style="top: 27%; left: 20%;">高业尚-SelinuxG</div>
-	<div class="watermark" style="top: 28%; left: 20%;">高业尚-SelinuxG</div>
-	<div class="watermark" style="top: 29%; left: 20%;">高业尚-SelinuxG</div>
-	<div class="watermark" style="top: 50%; left: 50%;">高业尚-SelinuxG</div>
-	<div class="watermark" style="top: 51%; left: 40%;">高业尚-SelinuxG</div>
-	<div class="watermark" style="top: 52; left: 10%;">高业尚-SelinuxG</div>
-	<div class="watermark" style="top: 54%; left: 65%;">高业尚-SelinuxG</div>
-	<div class="watermark" style="top: 55%; left: 20%;">高业尚-SelinuxG</div>
-	<div class="watermark" style="top: 56%; left: 20%;">高业尚-SelinuxG</div>
-	<div class="watermark" style="top: 57%; left: 20%;">高业尚-SelinuxG</div>
-	<div class="watermark" style="top: 58%; left: 20%;">高业尚-SelinuxG</div>
-	<div class="watermark" style="top: 59%; left: 20%;">高业尚-SelinuxG</div>
-
-
+	<div id="watermark"></div>
 </body>
 
 </html>
+<script>
+    const watermarkNum = 199 // 生成水印数量
+    build()
+
+    function build(){
+        for(var i = 0; i < watermarkNum; i++){
+            addWatermark(i);
+        }
+    }
+
+    function addWatermark(i){
+        var watermark = document.getElementById("watermark");
+        const top = i
+        const left = random();
+        const  html = '<div class="watermark" style="top: '+(top/watermarkNum)*100+'%; left: '+left+'%;">高业尚-SelinuxG</div>'
+        watermark.insertAdjacentHTML('afterend',html);
+    }
+
+    function random(){
+       return Math.floor(Math.random() * 70) ;
+    }
+</script>
 `
 }

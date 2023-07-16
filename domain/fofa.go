@@ -25,7 +25,7 @@ type FoFA struct {
 
 func fofaApi(domain string) {
 	if os.Getenv("FOFA_EMAIL") == "" || os.Getenv("FOFA_KEY") == "" {
-		fmt.Printf("[-]	FOFA_EMAIL/FOFA_KEY环境变量为空,跳过！\n")
+		fmt.Printf("[-]FOFA_EMAIL/FOFA_KEY环境变量为空,跳过！\n")
 		return
 	}
 	base64query := fmt.Sprintf("domain=%s && is_domain=true", domain)
