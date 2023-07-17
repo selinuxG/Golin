@@ -26,11 +26,12 @@ func NetWorkStatus(ip string) (bool, string) {
 		// Extract TTL value
 		re := regexp.MustCompile(`ttl=(\d+)`)
 		ttlStr := re.FindStringSubmatch(outttl)
+
 		if len(ttlStr) > 1 {
 			ttl, _ := strconv.Atoi(ttlStr[1])
 			switch {
 			case ttl <= 64:
-				return true, "Linux/Unix"
+				return true, "linux"
 			case ttl <= 128:
 				return true, "Windows"
 			default:

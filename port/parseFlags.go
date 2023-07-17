@@ -75,27 +75,30 @@ func scanPort() {
 
 	var filteredIPList []string
 	if !NoPing {
-		fmt.Printf("%v\n", color.GreenString("%s", "[*] 开始探测存活主机......"))
+		fmt.Printf("%s\n", "开始探测存活主机......\n+------------------------------+")
 		pingwg := sync.WaitGroup{}
 		for _, ip := range iplist {
 			pingwg.Add(1)
 			ip := ip
 			go func() {
 				defer pingwg.Done()
-				yesPing, pingOS := global.NetWorkStatus(ip)
+
+				yesPing, pingOS := global.NetWorkStatus(ip) //是否ping通、ttl值
+
 				if !yesPing {
 					outputMux.Lock()
 					filteredIPList = append(filteredIPList, ip) //ping不通放入待删除切片中不进行检测
 					outputMux.Unlock()
 				} else {
 					outputMux.Lock()
-					//fmt.Printf("[-] 存活主机: %s 操作系统：%s 类别：%v\n", ip, pingOS, getNetworkClass(ip))
-					fmt.Printf("[-] 存活主机:%s 操作系统:%s\n",
-						color.BlueString("%s", ip),
-						color.BlueString("%s", pingOS),
-					)
+					fmt.Printf("| %-15s|%-5s\n", ip, pingOS)
+					//fmt.Printf("| %s_%s_%s\n",
+					//	color.MagentaString("%s", ip),
+					//	color.MagentaString("%s", pingOS),
+					//	color.MagentaString("%s", network),
+					//)
 					switch pingOS {
-					case "Linux/Unix":
+					case "linux":
 						linuxcount += 1
 					case "Windows":
 						windowscount += 1
@@ -128,7 +131,7 @@ func scanPort() {
 		return
 	}
 
-	fmt.Println("+-----------------------------------------------------+")
+	fmt.Println("+------------------------------+")
 	fmt.Printf("[*] Linux设备:%v Windows设备:%v 未识别:%v 共计存活:%v\n[*] 开始扫描端口:%v 并发数:%v 共计尝试:%v 端口连接超时:%v\n",
 		color.GreenString("%d", linuxcount),
 		color.GreenString("%d", windowscount),

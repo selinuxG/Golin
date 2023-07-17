@@ -18,7 +18,7 @@ import (
 )
 
 var (
-	ch       = make(chan struct{}, 20) //并发数量
+	ch       = make(chan struct{}, 3) //并发数量
 	wg       = sync.WaitGroup{}
 	Policy   = make(map[string]string) //安全策略map
 	html     = Windowshtml()           //html字符串
@@ -91,7 +91,7 @@ func Windows() {
 		{"进程列表结果", `tasklist | sort`, false},
 		{"定时任务结果", `schtasks /query /fo LIST`, false},
 		{"安装组件结果", `Dism /online /Get-Features /format:table`, true},
-		{"安装程序结果", `wmic product get name, version`, false}, //很耗时
+		{"安装程序结果", `Get-ItemProperty HKLM:\Software\Wow6432Node\Microsoft\Windows\CurrentVersion\Uninstall\*, HKLM:\Software\Microsoft\Windows\CurrentVersion\Uninstall\*, HKCU:\Software\Microsoft\Windows\CurrentVersion\Uninstall\* | Select-Object DisplayName, DisplayVersion, Publisher, InstallDate | Where-Object { $_.DisplayName -ne $null } | Sort-Object DisplayName -Unique | Format-Table –AutoSize`, true},
 		{"Service结果", "Get-Service | Format-Table -AutoSize", true},
 		{"共享资源结果", "net share", false},
 		{"联网测试结果", "ping www.baidu.com", false},

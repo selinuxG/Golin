@@ -25,6 +25,15 @@ type VariablGlobal struct {
 	Value string `gorm:"column:Value"`
 }
 
+// Plugins 安装的插件
+type Plugins struct {
+	Name    string `gorm:"column:Name"`
+	Status  string `gorm:"column:Status"`
+	Type    string `gorm:"column:Type"`
+	Library string `gorm:"column:Library"`
+	License string `gorm:"column:License"`
+}
+
 type Userslist struct {
 	User                  string
 	Host                  string
@@ -235,6 +244,14 @@ func RunMysql(myname string, myuser string, mypasswd string, myhost string, mypo
 	db.Raw(`show variables like 'log_output'`).Scan(&variables)
 	if len(variables) == 1 {
 		write.WriteString(variables[0].Key + ": " + variables[0].Value + "	(查询日志存放方式：FILE为文件（默认）TABLE为数据表)\n")
+	}
+
+	//插件
+	write.WriteString("\n------------------------------安装插件:\n")
+	var plugs []Plugins
+	db.Raw(`show plugins`).Scan(&plugs)
+	for _, plug := range plugs {
+		write.WriteString(fmt.Sprintf("插件名称:%s 状态:%s 类型:%s 插件库文件名:%s 许可类型:%s\n\n", plug.Name, plug.Status, plug.Type, plug.Library, plug.License))
 	}
 
 	//最后写入文件
