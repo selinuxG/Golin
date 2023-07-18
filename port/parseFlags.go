@@ -24,6 +24,9 @@ var (
 	random    bool   //打乱顺序
 	save      bool   //是否保存
 	infolist  []INFO //成功的主机列表
+	allcount  int    //IP*PORT的总数量
+	donecount int    //线程技术的数量
+	outputMux sync.Mutex
 )
 
 type INFO struct {
@@ -63,52 +66,11 @@ func ParseFlags(cmd *cobra.Command, args []string) {
 
 }
 
-var (
-	allcount     int //IP*PORT的总数量
-	donecount    int //线程技术的数量
-	outputMux    sync.Mutex
-	linuxcount   int //linux 主机数量
-	windowscount int //windows 主机数量
-)
-
 func scanPort() {
-
-	var filteredIPList []string
 	if !NoPing {
-		fmt.Printf("%s\n", "开始探测存活主机......\n+------------------------------+")
-		pingwg := sync.WaitGroup{}
-		for _, ip := range iplist {
-			pingwg.Add(1)
-			ip := ip
-			go func() {
-				defer pingwg.Done()
-
-				yesPing, pingOS := global.NetWorkStatus(ip) //是否ping通、ttl值
-
-				if !yesPing {
-					outputMux.Lock()
-					filteredIPList = append(filteredIPList, ip) //ping不通放入待删除切片中不进行检测
-					outputMux.Unlock()
-				} else {
-					outputMux.Lock()
-					fmt.Printf("| %-15s|%-5s\n", ip, pingOS)
-					//fmt.Printf("| %s_%s_%s\n",
-					//	color.MagentaString("%s", ip),
-					//	color.MagentaString("%s", pingOS),
-					//	color.MagentaString("%s", network),
-					//)
-					switch pingOS {
-					case "linux":
-						linuxcount += 1
-					case "Windows":
-						windowscount += 1
-					}
-					outputMux.Unlock()
-				}
-			}()
-		}
+		SanPing()
 		pingwg.Wait()
-		// Remove filteredIPList elements from iplist
+		// 删除ping失败的主机
 		for _, ip := range filteredIPList {
 			for i := 0; i < len(iplist); i++ {
 				if iplist[i] == ip {
@@ -142,6 +104,7 @@ func scanPort() {
 		color.GreenString("%d", len(iplist)*len(portlist)),
 		color.GreenString("%d", Timeout),
 	)
+	fmt.Println("+------------------------------+")
 
 	allcount = len(iplist) * len(portlist)
 
@@ -149,13 +112,15 @@ func scanPort() {
 		for _, port := range portlist {
 			ch <- struct{}{}
 			wg.Add(1)
+			outputMux.Lock()
 			go IsPortOpen(ip, port)
+			outputMux.Unlock()
 		}
 	}
 
 	wg.Wait()
 	time.Sleep(time.Second * 1) //等待1秒是为了正常显示进度条
-	fmt.Printf("\r+-----------------------------------------------------+\n")
+	fmt.Printf("\r+------------------------------+\n")
 
 	if save {
 		if len(infolist) > 0 || len(iplist) > 0 {
@@ -163,7 +128,7 @@ func scanPort() {
 		}
 	}
 
-	fmt.Printf("[*] 存活主机: %v 存活端口: %v 数据库: %v Web: %v SSH: %v RDP: %v \n",
+	fmt.Printf("[*] 扫描主机: %v 存活端口: %v 数据库: %v Web: %v SSH: %v RDP: %v \n",
 		color.GreenString("%d", len(iplist)),
 		color.GreenString("%d", len(infolist)),
 		color.GreenString("%d", countPortOccurrences("数据库")),
@@ -190,7 +155,7 @@ func IsPortOpen(host, port string) {
 	if err == nil {
 		outputMux.Lock()
 		parseprotocol := parseProtocol(conn, host, port) //识别协议
-		fmt.Printf("\r| %-15s | %-5s | %-2s |%s \n", host, port, fmt.Sprintf("%s", color.GreenString("%s", "✓")), parseprotocol)
+		fmt.Printf("\r| %-2s | %-15s | %-4s |%s \n", fmt.Sprintf("%s", color.GreenString("%s", "✓")), host, port, parseprotocol)
 		infolist = append(infolist, INFO{host, port, parseprotocol})
 		outputMux.Unlock()
 

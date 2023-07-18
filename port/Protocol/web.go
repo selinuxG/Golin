@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/PuerkitoBio/goquery"
 	"net/http"
+	"strings"
 	"time"
 )
 
@@ -50,6 +51,7 @@ func IsWeb(host, port string) string {
 					title = doc.Find("title").Text()
 					if title != "" {
 						title = fmt.Sprintf("Title:「%s」", title)
+						title = strings.ReplaceAll(title, "\n", "")
 					}
 				}
 			}
@@ -60,6 +62,9 @@ func IsWeb(host, port string) string {
 			return fmt.Sprintf("%s  %s  %s 状态码:「%d」", htype, serverType, title, resp.StatusCode)
 		}
 
+	}
+	if port == "443" {
+		return "https"
 	}
 	return ""
 }

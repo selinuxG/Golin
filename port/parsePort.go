@@ -83,6 +83,7 @@ var (
 		"138",   // NetBIOS
 		"139",   // NetBIOS
 		"1434",  // MSSQL (Alternate)
+		"1723",  //PPTP
 		"3306",  // MySQL (Alternate)
 		"5432",  // PostgreSQL (Alternate)
 		"6378",  // redis
@@ -92,7 +93,10 @@ var (
 		"1080",  //sock
 		"1194",  //vpn
 		"5900",  //vnc
+		"5901",  //vnc
 		"5672",  //RabbitMq
+		"6000",  //x11
+		"6443",  //K8S
 		"9000",  //Hadoop
 	}
 )
