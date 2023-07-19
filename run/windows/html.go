@@ -11,6 +11,7 @@ func Windowshtml() string {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Windows安全策略核查</title>
+	<link rel="icon" href="https://s1.ax1x.com/2023/07/19/pC7B5sx.jpg" sizes="16x16">
     <style>
         body {
             display: grid;
@@ -21,10 +22,12 @@ func Windowshtml() string {
         }
 
         table {
-            border-collapse: collapse;
-            margin-bottom: 20px;
-            width: 100%;
-            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+    		border-collapse: collapse;
+   		 	margin-bottom: 20px;
+    		width: 100%;
+    		box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+    		table-layout: fixed;
+    		word-wrap: break-word;
         }
 
         th,

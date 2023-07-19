@@ -107,7 +107,7 @@ func RunMysql(myname string, myuser string, mypasswd string, myhost string, mypo
 	if sqlcmd != "" {
 		fire = filepath.Join(fullPath, fmt.Sprintf("%s_%s(%s).log", myname, myhost, sqlcmd))
 	} else {
-		fire = filepath.Join(fullPath, fmt.Sprintf("%s_%s.log", myname, myhost))
+		fire = filepath.Join(fullPath, fmt.Sprintf("%s_%s.html", myname, myhost))
 	}
 	defer echosqlfie(echo, fire)
 	//先删除之前的同名记录文件
@@ -125,8 +125,6 @@ func RunMysql(myname string, myuser string, mypasswd string, myhost string, mypo
 	if sqlcmd != "" {
 		rows, _ := db.Raw(sqlcmd).Rows()
 		write.WriteString("----------------" + myhost + "执行sql命令：" + sqlcmd + "\n\n")
-		//fmt.Println()
-
 		for _, v := range scanRows2map(rows) {
 			for k, vv := range v {
 				write.WriteString(k + ":	" + vv + "\n")
@@ -136,42 +134,30 @@ func RunMysql(myname string, myuser string, mypasswd string, myhost string, mypo
 		write.Flush()
 		return
 	}
+	html := mysqlhtml()
+	echoinfo := ""
 
 	//版本信息
-	write.WriteString("版本信息:")
 	rows, _ := db.Raw("select version()").Rows()
 	var version string
 	for rows.Next() {
 		rows.Scan(&version)
 	}
-	write.WriteString(version + "  ")
+	echoinfo += fmt.Sprintf("<tr><td>%s</td>", version)
 	//此次连接ID可与查询日志关联
-	write.WriteString("本次连接ID:")
 	rows, _ = db.Raw("select connection_id()").Rows()
 	var CONNECTION_ID string
 	for rows.Next() {
 		rows.Scan(&CONNECTION_ID)
 	}
-	write.WriteString(CONNECTION_ID + "  (MySQL服务器会为每个客户端连接分配一个唯一的连接ID，在执行SQL查询、更新、删除等操作时，可以使用该连接ID来标识当前的连接。如果开启general_log后可基于次ID查询记录。)\n\n")
+	echoinfo += fmt.Sprintf("<td>%s</td></tr>", CONNECTION_ID)
+	html = strings.ReplaceAll(html, "版本详细信息", echoinfo)
+
 	//用户信息
-	write.WriteString("------------------------------查询用户相关：身份鉴别、访问控制基本都基于以下内容\n")
+	echoinfo = ""
 	var userlist []Userslist //用户列表信息
 	db.Raw(`select user,host,authentication_string,plugin,ssl_type,account_locked,password_lifetime,password_expired,password_last_changed from mysql.user`).Scan(&userlist)
 	for _, v := range userlist {
-		//是否为默认账户
-		if checkdefultuser(v.User) {
-			write.WriteString("------------------------------用户: " + v.User + "(此账号为默认账户)\n")
-		} else {
-			write.WriteString("------------------------------用户: " + v.User + "\n")
-		}
-		write.WriteString("连接方式：" + v.Host + "\n")
-		write.WriteString("密码信息：" + v.AuthenticationString + "\n")
-		write.WriteString("密码加密插件：" + v.Plugin + "	(mysql_native_password采用SHA1+盐值机制；caching_sha2_password采用SHA256+加盐机制)\n")
-		write.WriteString("加密连接类型：" + v.Ssl_type + "\n")
-		write.WriteString("是否锁定：" + v.Account_locked + "\n")
-		write.WriteString("过期时间：" + v.Password_lifetime + "\n")
-		write.WriteString("是否过期：" + v.Password_expired + "\n")
-		write.WriteString("上次修改密码时间：" + v.Password_last_changed + "\n")
 		//查询权限
 		usergrant := fmt.Sprintf("SHOW GRANTS FOR '%s'@'%s'", v.User, v.Host)
 		rows, _ := db.Raw(usergrant).Rows()
@@ -180,87 +166,103 @@ func RunMysql(myname string, myuser string, mypasswd string, myhost string, mypo
 			rows.Scan(&grant)
 			grantdata = grantdata + grant + "、"
 		}
-		write.WriteString("权限相关：" + grantdata + "\n")
-		if strings.Contains(grantdata, "GRANT ALL PRIVILEGES ON *.*") || strings.Contains(grantdata, "GRANT SUPER") {
-			write.WriteString("账户类别：超级管理员(人工基于上述权限自己判断,仅供参考)\n")
-		} else {
-			write.WriteString("账户类别：业务账户(人工基于上述权限自己判断,仅供参考)\n")
+		if strings.Count(grantdata, "、") == 1 {
+			grantdata = strings.ReplaceAll(grantdata, "、", "")
 		}
-		write.WriteString("\n\n")
+
+		//是否为默认账户
+		if checkdefultuser(v.User) {
+			v.User = v.User + "(此账号为默认账户)"
+		}
+		super := "业务账户"
+		if strings.Contains(grantdata, "GRANT ALL PRIVILEGES ON *.*") || strings.Contains(grantdata, "GRANT SUPER") {
+			super = "超级管理员"
+		}
+		echoinfo += fmt.Sprintf("<tr><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td></tr>",
+			v.User, v.Host, v.AuthenticationString, v.Plugin, v.Ssl_type, v.Account_locked, v.Password_lifetime, v.Password_expired, v.Password_last_changed, super, grantdata)
 	}
+	html = strings.ReplaceAll(html, "用户详细信息", echoinfo)
 
 	//全局密码复杂度
 	var variables []VariablGlobal
 	db.Raw(`show global variables like "validate_password%"`).Scan(&variables)
-	write.WriteString("------------------------------全局密码复策略：\n")
+	echoinfo = ""
 	if len(variables) == 7 {
-		write.WriteString(variables[0].Key + ": " + variables[0].Value + "	(是否允许密码与账户同名)\n")
-		write.WriteString(variables[2].Key + ": " + variables[2].Value + "	(密码长度要求)\n")
-		write.WriteString(variables[3].Key + ": " + variables[3].Value + "	(大写字符长度要求)\n")
-		write.WriteString(variables[4].Key + ": " + variables[4].Value + "	(数字字符长度要求)\n")
-		write.WriteString(variables[6].Key + ": " + variables[6].Value + "	(特殊字符长度要求)\n")
-		write.WriteString(variables[5].Key + ": " + variables[5].Value + "	(0/LOW：只检查长度。1/MEDIUM：检查长度、数字、大小写、特殊字符。2/STRONG：检查长度、数字、大小写、特殊字符、字典文件。)\n")
+		echoinfo += fmt.Sprintf("<tr><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td></tr>", variables[0].Value, variables[2].Value, variables[3].Value, variables[4].Value, variables[6].Value, variables[5].Value)
+	} else {
+		echoinfo += fmt.Sprintf("<tr><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td></tr>", "", "", "", "", "", "")
 	}
+	html = strings.ReplaceAll(html, "密码复杂度详细信息", echoinfo)
 
 	//全局密码过期时间
-	write.WriteString("\n------------------------------密码过期时间：此变量定义全局自动密码过期策略，默认值为 0，即禁用自动密码过期。如果的值为正整数N，则表示允许的密码生存期，必须M天更改密码。密码期限是从其最近一次密码更改的日期和时间开始评估的。）\n")
+	echoinfo = ""
 	db.Raw(`show variables like 'default_password_lifetime'`).Scan(&variables)
 	if len(variables) == 1 {
-		write.WriteString(variables[0].Key + ": " + variables[0].Value + "	(过期天数)\n")
+		html = strings.ReplaceAll(html, "密码过期时间结果", variables[0].Value)
 	}
 	//查询失败锁定次数
+	echoinfo = ""
 	write.WriteString("\n------------------------------失败锁定策略:\n")
 	db.Raw(`show variables like '%connection_control%'`).Scan(&variables)
 	if len(variables) == 3 {
-		write.WriteString(variables[0].Key + ": " + variables[0].Value + "	(在服务器为后续连接尝试添加延迟之前允许帐户连续失败的连接尝试次数)\n")
-		write.WriteString(variables[1].Key + ": " + variables[1].Value + "	(超过阈值的连接失败的最大延迟,以毫秒为单位)\n")
-		write.WriteString(variables[1].Key + ": " + variables[1].Value + "	(超过阈值的连接失败的最小延迟,以毫秒为单位)\n")
+		echoinfo += fmt.Sprintf("<tr><td>%s</td><td>%s</td><td>%s</td></tr>", variables[0].Value, variables[1].Value, variables[2].Value)
 	}
+	html = strings.ReplaceAll(html, "密码过期时间详细信息", echoinfo)
 
 	//查询超时功能，不生效，默认不符合
-	write.WriteString("\n------------------------------超时策略(即使在存在超时情况下会提示重新连接然后正常执行命令返回结果，无法达到用户退出。):\n")
+	echoinfo = ""
 	db.Raw(`show global variables like 'connect_timeout'`).Scan(&variables)
 	if len(variables) == 1 {
-		write.WriteString(variables[0].Key + ": " + variables[0].Value + "	(登录时连接超时，单位为秒，配置后不生效，联盟也提出此问题。默认不符合)\n")
+		echoinfo += fmt.Sprintf("<tr><td>%s</td>", variables[0].Value)
 	}
 	db.Raw(`show global variables like 'wait_timeout'`).Scan(&variables)
 	if len(variables) == 1 {
-		write.WriteString(variables[0].Key + ": " + variables[0].Value + "	(登录后连接超时，单位为秒，配置后不生效，联盟也提出此问题。默认不符合)\n")
+		echoinfo += fmt.Sprintf("<td>%s</td></tr>", variables[0].Value)
 	}
+	html = strings.ReplaceAll(html, "超时策略详细信息", echoinfo)
 
 	//日志相关
-	write.WriteString("\n------------------------------日志相关\n")
-	write.WriteString("错误日志:\n")
+	echoinfo = ""
 	db.Raw(`show variables like 'log_error'`).Scan(&variables)
 	if len(variables) == 1 {
-		write.WriteString(variables[0].Key + ": " + variables[0].Value + "	(错误日志路径)\n")
+		echoinfo += fmt.Sprintf("<tr><td>%s</td>", variables[0].Value)
 	}
-	write.WriteString("\n查询日志:\n")
 	db.Raw(`show variables like 'general_log%'`).Scan(&variables)
 	if len(variables) == 2 {
-		write.WriteString(variables[0].Key + ": " + variables[0].Value + "	(查询日志开启状态)\n")
-		write.WriteString(variables[1].Key + ": " + variables[1].Value + "	(查询日志存储路径)\n")
+		echoinfo += fmt.Sprintf("<td>%s</td>", variables[0].Value)
 	}
 	db.Raw(`show variables like 'log_output'`).Scan(&variables)
 	if len(variables) == 1 {
-		write.WriteString(variables[0].Key + ": " + variables[0].Value + "	(查询日志存放方式：FILE为文件（默认）TABLE为数据表)\n")
+		echoinfo += fmt.Sprintf("<td>%s</td></tr>", variables[0].Value)
 	}
+	html = strings.ReplaceAll(html, "日志相关详细信息", echoinfo)
 
 	//插件
-	write.WriteString("\n------------------------------安装插件:\n")
+	echoinfo = ""
 	var plugs []Plugins
 	db.Raw(`show plugins`).Scan(&plugs)
 	for _, plug := range plugs {
-		write.WriteString(fmt.Sprintf("插件名称:%s 状态:%s 类型:%s 插件库文件名:%s 许可类型:%s\n\n", plug.Name, plug.Status, plug.Type, plug.Library, plug.License))
+		echoinfo += fmt.Sprintf("<tr><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td></tr>", plug.Name, plug.Status, plug.Type, plug.Library, plug.License)
+	}
+	html = strings.ReplaceAll(html, "插件信息详细信息", echoinfo)
+
+	//所有系统变量
+	echoinfo = ""
+	db.Raw(`show global variables`).Scan(&variables)
+	for i := 0; i < len(variables); i++ {
+		echoinfo += fmt.Sprintf("<tr><td>%s</td><td>%s</td></tr>", variables[i].Key, variables[i].Value)
 	}
 
-	//最后写入文件
-	err = write.Flush()
+	html = strings.ReplaceAll(html, "系统变量详细信息", echoinfo)
+	html = strings.ReplaceAll(html, "替换名称", myhost)
+
+	err = os.WriteFile(fire, []byte(html), os.FileMode(global.FilePer))
 	if err != nil {
 		zlog.Warn("记录保存结果失败！", zap.String("IP：", myhost))
 		errhost = append(errhost, myhost)
 		return
 	}
+
 }
 
 // scanRows2map 执行自定义命令

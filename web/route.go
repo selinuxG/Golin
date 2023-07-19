@@ -79,6 +79,9 @@ func GolinSubmitFile(c *gin.Context) {
 			allserver = append(allserver, Service{Name: namesplit[0], User: namesplit[2], Ip: namesplit[1], Port: namesplit[4], Time: time.Now().Format(time.DateTime), Type: mode, Status: Failed})
 			//增加保存的文件路径名称到切片中
 			apendname := filepath.Join(global.Succpath, mode, fmt.Sprintf("%s_%s.log", namesplit[0], namesplit[1]))
+			if mode == "MySQL" {
+				apendname = strings.ReplaceAll(apendname, ".log", ".html")
+			}
 			//如果是网络设备：拼接目录时需要更改为Route
 			if mode == "h3c" || mode == "huawei" {
 				apendname = filepath.Join(global.Succpath, "Route", fmt.Sprintf("%s_%s.log", namesplit[0], namesplit[1]))
@@ -137,6 +140,10 @@ func GolinSubmit(c *gin.Context) {
 	if mode == "h3c" || mode == "huawei" {
 		successfile = filepath.Join(global.Succpath, "Route", savefilename) //网络设备模式下的完整路径
 	}
+	if mode == "MySQL" {
+		successfile = strings.ReplaceAll(successfile, ".log", ".html")
+	}
+
 	if global.PathExists(successfile) {
 		WriteJSONToHistory(Service{name, ip, user, port, mode, time.Now().Format(time.DateTime), Failed})
 		GolinErrorhtml("error", "保存的文件中有重名文件，更换一个吧客官~", c)
@@ -166,6 +173,9 @@ func GolinSubmit(c *gin.Context) {
 		if down == "down" {
 			c.Header("Content-Description", "File Transfer")
 			c.Header("Content-Disposition", "attachment; filename="+fmt.Sprintf(fmt.Sprintf("%s_%s(%s).log", name, ip, mode)))
+			if mode == "MySQL" {
+				c.Header("Content-Disposition", "attachment; filename="+fmt.Sprintf(fmt.Sprintf("%s_%s(%s).html", name, ip, mode)))
+			}
 			c.Header("Content-Type", "application/octet-stream")
 		}
 		//返回文件
