@@ -111,12 +111,27 @@ func mysqlhtml() string {
         <table>
             <thead>
                 <tr>
-                    <th>版本</th>
-                    <th>连接ID</th>
+                    <th>数据库版本</th>
+                    <th>当前连接ID</th>
                 </tr>
             </thead>
             <tbody>
                 版本详细信息
+            </tbody>
+        </table>
+
+
+        <h2 id="databases">数据库信息</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>数据库名称</th>
+                    <th>数据表数量</th>
+                    <th>数据库大小/MB</th>
+                </tr>
+            </thead>
+            <tbody>
+                数据库信息结果
             </tbody>
         </table>
 
@@ -233,7 +248,7 @@ func mysqlhtml() string {
             </tbody>
         </table>
 
-		<h2 id="variables">系统变量</h2>
+		<h2 id="variables">全局配置变量</h2>
 		<table>
             <thead>
                 <tr>
@@ -246,6 +261,19 @@ func mysqlhtml() string {
             </tbody>
         </table>
 
+		<h2 id="STATUS">全局状态变量</h2>
+		<table>
+            <thead>
+                <tr>
+                    <th>Key</th>
+                    <th>Value</th>
+                </tr>
+            </thead>
+            <tbody>
+                状态变量详细信息
+            </tbody>
+        </table>
+
 
     </div>
 
@@ -253,6 +281,7 @@ func mysqlhtml() string {
         <h3>目录</h3>
         <ul>
             <li><a href="#version">版本信息</a></li>
+            <li><a href="#databases">数据库信息</a></li>
             <li><a href="#userinfo">用户信息</a></li>
             <li><a href="#password">密码复杂度信息</a></li>
             <li><a href="#password-exp">密码过期时间</a></li>
@@ -260,7 +289,9 @@ func mysqlhtml() string {
             <li><a href="#timeout">登录连接超时策略</a></li>
             <li><a href="#log">日志信息</a></li>
             <li><a href="#plug">插件信息</a></li>
-            <li><a href="#variables">系统变量</a></li>
+            <li><a href="#variables">全局配置变量</a></li>
+            <li><a href="#STATUS">全局状态变量</a></li>
+
 
         </ul>
     </div>

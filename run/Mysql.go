@@ -20,6 +20,7 @@ import (
 // MySQL默认用户，来源官网：https://dev.mysql.com/doc/refman/8.0/en/reserved-accounts.html
 var defaultuser = []string{"root", "mysql.session", "mysql.sys", "mysql.infoschema"}
 
+// VariablGlobal 系统变量
 type VariablGlobal struct {
 	Key   string `gorm:"column:Variable_name"`
 	Value string `gorm:"column:Value"`
@@ -34,6 +35,7 @@ type Plugins struct {
 	License string `gorm:"column:License"`
 }
 
+// Userslist mysql.user表信息
 type Userslist struct {
 	User                  string
 	Host                  string
@@ -44,6 +46,13 @@ type Userslist struct {
 	Password_lifetime     string
 	Password_expired      string
 	Password_last_changed string
+}
+
+// Database 数据库信息
+type DatabaseSize struct {
+	Database   string `gorm:"column:Database"`
+	Size       string `gorm:"column:Size"`
+	TableCount string `gorm:"column:TableCount"`
 }
 
 var sqlcmd string //自定义sqlcmd命令
@@ -153,6 +162,15 @@ func RunMysql(myname string, myuser string, mypasswd string, myhost string, mypo
 	echoinfo += fmt.Sprintf("<td>%s</td></tr>", CONNECTION_ID)
 	html = strings.ReplaceAll(html, "版本详细信息", echoinfo)
 
+	//数据库信息
+	echoinfo = ""
+	var datas []DatabaseSize
+	db.Raw("SELECT TABLE_SCHEMA AS `Database`, COUNT(TABLE_NAME) AS `TableCount`, ROUND(SUM(DATA_LENGTH + INDEX_LENGTH) / 1024 / 1024, 2) AS `Size` FROM INFORMATION_SCHEMA.TABLES GROUP BY TABLE_SCHEMA").Scan(&datas)
+	for _, v := range datas {
+		echoinfo += fmt.Sprintf("<tr><td>%s</td><td>%s</td><td>%s</td></tr>", v.Database, v.TableCount, v.Size)
+	}
+	html = strings.ReplaceAll(html, "数据库信息结果", echoinfo)
+
 	//用户信息
 	echoinfo = ""
 	var userlist []Userslist //用户列表信息
@@ -246,14 +264,22 @@ func RunMysql(myname string, myuser string, mypasswd string, myhost string, mypo
 	}
 	html = strings.ReplaceAll(html, "插件信息详细信息", echoinfo)
 
-	//所有系统变量
+	//全局配置变量
 	echoinfo = ""
 	db.Raw(`show global variables`).Scan(&variables)
 	for i := 0; i < len(variables); i++ {
 		echoinfo += fmt.Sprintf("<tr><td>%s</td><td>%s</td></tr>", variables[i].Key, variables[i].Value)
 	}
-
 	html = strings.ReplaceAll(html, "系统变量详细信息", echoinfo)
+
+	//全局状态变量
+	echoinfo = ""
+	db.Raw(`show global status`).Scan(&variables)
+	for i := 0; i < len(variables); i++ {
+		echoinfo += fmt.Sprintf("<tr><td>%s</td><td>%s</td></tr>", variables[i].Key, variables[i].Value)
+	}
+	html = strings.ReplaceAll(html, "状态变量详细信息", echoinfo)
+
 	html = strings.ReplaceAll(html, "替换名称", myhost)
 
 	err = os.WriteFile(fire, []byte(html), os.FileMode(global.FilePer))
