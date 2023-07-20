@@ -11,6 +11,7 @@ func mysqlhtml() string {
     <title>MySQL安全策略核查</title>
 	<link rel="icon" href="https://s1.ax1x.com/2023/07/19/pC7B5sx.jpg" sizes="16x16">
     <style>
+
         body {
             display: grid;
             grid-template-columns: 1fr 200px;
@@ -100,6 +101,11 @@ func mysqlhtml() string {
 			white-space: pre-wrap;
 			word-break: break-word;
         }
+		.permissions {
+			width: 350px;
+			white-space: nowrap;
+			overflow-x: auto;
+		}
     </style>
 
 <body>
@@ -112,6 +118,7 @@ func mysqlhtml() string {
             <thead>
                 <tr>
                     <th>数据库版本</th>
+                    <th>数据存储目录</th>
                     <th>当前连接ID</th>
                 </tr>
             </thead>
@@ -149,7 +156,7 @@ func mysqlhtml() string {
                     <th>是否过期</th>
                     <th>上次修改密码时间</th>
                     <th>账户类别</th>
-                    <th>具体权限</th>
+                    <th class="permissions">具体权限</th>
                 </tr>
             </thead>
             <tbody>
@@ -224,7 +231,8 @@ func mysqlhtml() string {
                     <th>错误存放路径</th>
                     <th>查询日志开启状态</th>
                     <th>查询日志路径</th>
-                    <th>查询日志存放方式</th>
+                    <th>bin日志开启状态</th>
+                    <th>慢日志开启状态</th>
                 </tr>
             </thead>
             <tbody>

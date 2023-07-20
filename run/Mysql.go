@@ -18,7 +18,7 @@ import (
 )
 
 // MySQL默认用户，来源官网：https://dev.mysql.com/doc/refman/8.0/en/reserved-accounts.html
-var defaultuser = []string{"root", "mysql.session", "mysql.sys", "mysql.infoschema"}
+var defaultuser = []string{"root", "mysql.session", "mysql.sys", "mysql.infoschema", "debian-sys-maint"}
 
 // VariablGlobal 系统变量
 type VariablGlobal struct {
@@ -153,6 +153,12 @@ func RunMysql(myname string, myuser string, mypasswd string, myhost string, mypo
 		rows.Scan(&version)
 	}
 	echoinfo += fmt.Sprintf("<tr><td>%s</td>", version)
+
+	//数据存储目录
+	var variables []VariablGlobal
+	db.Raw(`SHOW VARIABLES LIKE 'datadir'`).Scan(&variables)
+	echoinfo += fmt.Sprintf("<td>%s</td>", variables[0].Value)
+
 	//此次连接ID可与查询日志关联
 	rows, _ = db.Raw("select connection_id()").Rows()
 	var CONNECTION_ID string
@@ -182,10 +188,10 @@ func RunMysql(myname string, myuser string, mypasswd string, myhost string, mypo
 		var grant, grantdata string
 		for rows.Next() {
 			rows.Scan(&grant)
-			grantdata = grantdata + grant + "、"
+			grantdata = grantdata + grant + "<br>"
 		}
-		if strings.Count(grantdata, "、") == 1 {
-			grantdata = strings.ReplaceAll(grantdata, "、", "")
+		if strings.Count(grantdata, "<br>") == 1 {
+			grantdata = strings.ReplaceAll(grantdata, "<br>", "")
 		}
 
 		//是否为默认账户
@@ -196,13 +202,15 @@ func RunMysql(myname string, myuser string, mypasswd string, myhost string, mypo
 		if strings.Contains(grantdata, "GRANT ALL PRIVILEGES ON *.*") || strings.Contains(grantdata, "GRANT SUPER") {
 			super = "超级管理员"
 		}
+		if v.User == "root(此账号为默认账户)" {
+			super = "超级管理员"
+		}
 		echoinfo += fmt.Sprintf("<tr><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td></tr>",
 			v.User, v.Host, v.AuthenticationString, v.Plugin, v.Ssl_type, v.Account_locked, v.Password_lifetime, v.Password_expired, v.Password_last_changed, super, grantdata)
 	}
 	html = strings.ReplaceAll(html, "用户详细信息", echoinfo)
 
 	//全局密码复杂度
-	var variables []VariablGlobal
 	db.Raw(`show global variables like "validate_password%"`).Scan(&variables)
 	echoinfo = ""
 	if len(variables) == 7 {
@@ -241,18 +249,38 @@ func RunMysql(myname string, myuser string, mypasswd string, myhost string, mypo
 
 	//日志相关
 	echoinfo = ""
+	//错误日志
 	db.Raw(`show variables like 'log_error'`).Scan(&variables)
 	if len(variables) == 1 {
 		echoinfo += fmt.Sprintf("<tr><td>%s</td>", variables[0].Value)
 	}
+	//查询日志
 	db.Raw(`show variables like 'general_log%'`).Scan(&variables)
 	if len(variables) == 2 {
 		echoinfo += fmt.Sprintf("<td>%s</td>", variables[0].Value)
 	}
-	db.Raw(`show variables like 'log_output'`).Scan(&variables)
+	//查询日志目录
+	db.Raw(`show variables like 'general_log_file'`).Scan(&variables)
+	if len(variables) == 1 {
+		echoinfo += fmt.Sprintf("<td>%s</td>", variables[0].Value)
+	} else {
+		echoinfo += "<td>%s</td>"
+	}
+	//二进制文件状态
+	db.Raw(`show variables like 'log_bin'`).Scan(&variables)
+	if len(variables) == 1 {
+		echoinfo += fmt.Sprintf("<td>%s</td>", variables[0].Value)
+	} else {
+		echoinfo += "<td>%s</td>"
+	}
+	//慢日志文件状态
+	db.Raw(`show variables like 'slow_query_log'`).Scan(&variables)
 	if len(variables) == 1 {
 		echoinfo += fmt.Sprintf("<td>%s</td></tr>", variables[0].Value)
+	} else {
+		echoinfo += "<td>%s</td></tr>"
 	}
+
 	html = strings.ReplaceAll(html, "日志相关详细信息", echoinfo)
 
 	//插件
