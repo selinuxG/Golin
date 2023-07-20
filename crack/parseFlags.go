@@ -208,7 +208,7 @@ func NetWorkStatus(ip string) bool {
 	if runtime.GOOS == "windows" {
 		cmd = exec.Command("ping", "-n", "1", "-w", "1", ip)
 	} else {
-		cmd = exec.Command("ping", "-c", "1", "-w", "1", ip)
+		cmd = exec.Command("ping", "-c", "1", "-W", "1", ip)
 	}
 
 	output, err := cmd.Output()

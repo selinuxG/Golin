@@ -5,7 +5,6 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/spf13/cobra"
 	"golin/global"
-	"html/template"
 	"os/exec"
 	"runtime"
 )
@@ -25,9 +24,13 @@ func Start(cmd *cobra.Command, args []string) {
 	r.NoRoute(func(c *gin.Context) {
 		GolinErrorhtml("404", "sorry~请求不存在哦!", c)
 	})
+	r.GET("/", func(c *gin.Context) {
+		c.Redirect(302, "/golin/gys")
+	})
+
 	golin := r.Group("/golin")
 	{
-		golin.GET("/gys", GolinHome)
+		golin.GET("/gys", GolinHome)               //首页
 		golin.GET("/index", GolinIndex)            //单主机index
 		golin.GET("/indexfile", GolinIndexFile)    //多主机index
 		golin.GET("/modefile", GolinMondeFileGet)  //返回模板文件
@@ -50,16 +53,5 @@ func Start(cmd *cobra.Command, args []string) {
 		}
 	}()
 	// 启动gin
-	//r.RunTLS(ip)//
 	r.RunTLS(ip+":"+port, "cert.pem", "key.pem")
-}
-
-// Template 返回包含模板内容的模板结构体
-func Template(html, indexname string) *template.Template {
-	tmpl, err := template.New(indexname).Parse(html)
-	if err != nil {
-		panic(err)
-	}
-	tmpl = tmpl.Lookup(indexname)
-	return tmpl
 }
