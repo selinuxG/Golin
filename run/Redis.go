@@ -1,7 +1,6 @@
 package run
 
 import (
-	"bufio"
 	"context"
 	"fmt"
 	"github.com/go-redis/redis/v8"
@@ -78,15 +77,16 @@ func Runredis(myname, myuser, myhost, mypasswd, myport1 string) {
 	if os.IsNotExist(err) {
 		os.MkdirAll(pullpath, os.FileMode(global.FilePer))
 	}
-	fire := filepath.Join(pullpath, fmt.Sprintf("%s_%s.log", myname, myhost))
+	fire := filepath.Join(pullpath, fmt.Sprintf("%s_%s.html", myname, myhost))
 	os.Remove(fire)
 	file, err := os.OpenFile(fire, os.O_CREATE|os.O_APPEND|os.O_RDWR, os.FileMode(global.FilePer))
 	if err != nil {
 		errhost = append(errhost, myhost)
 		return
 	}
+	html := redishtml()
+
 	defer file.Close()
-	write := bufio.NewWriter(file)
 
 	client.Get(ctx, "config").Val()
 	ipaddr := client.ConfigGet(ctx, "bind").Val()
@@ -100,33 +100,32 @@ func Runredis(myname, myuser, myhost, mypasswd, myport1 string) {
 	protocols := client.ConfigGet(ctx, "tls-protocols").Val()
 
 	//执行自定义命令,获取用户信息
-	write.WriteString("----------------------------用户信息\n")
-
 	users, err := client.Do(ctx, "ACL", "LIST").StringSlice()
 	if err == nil {
 		if len(users) > 0 {
-			write.WriteString(fmt.Sprintf("密码信息存储路径：%s\n", aclfile))
+			userechho := ""
+			userechho += fmt.Sprintf("aclfile存储路径:%s<br>", aclfile)
 			for _, user := range users {
-				write.WriteString(fmt.Sprintf("%s\n", user))
+				userechho += user + "<br>"
 			}
+			html = strings.ReplaceAll(html, "acluser信息详细信息", userechho)
 		}
 	}
 
-	write.WriteString("----------------------------基本信息\n")
-	write.WriteString(fmt.Sprintf("监听网卡地址为:%s\n", ipaddr[1]))
-	write.WriteString(fmt.Sprintf("日志存储为:%s  日志等级为:%s\n", lofile[1], loglevel[1]))
-	write.WriteString(fmt.Sprintf("密码信息为:%s\n", pass[1]))
-	write.WriteString(fmt.Sprintf("超时时间为:%s\n", redistimout[1]))
-	write.WriteString(fmt.Sprintf("redis非加密运行端口为:%s\n", redisport[1]))
-	write.WriteString(fmt.Sprintf("redis加密运行端口为:%s\n", redissslport))
-	write.WriteString(fmt.Sprintf("redis加密协议:%s (tls-protocols为设置服务端支持的TLS协议版本，如果为空则为默认支持TLSv1.2以及TLSv1.3)\n", protocols))
-	write.WriteString("----------------------------acl日志信息\n")
 	aclcount := client.ConfigGet(ctx, "acllog-max-len").Val()
-	write.WriteString(fmt.Sprintf("存储acl日志条数最大为：%s\n", aclcount))
-	log := client.Do(ctx, "ACL", "LOG").Val()
-	write.WriteString(fmt.Sprintf("ACL日志信息:\n%v", log))
+	//log := client.Do(ctx, "ACL", "LOG").Val()
+	html = strings.ReplaceAll(html, "基本信息详细信息", fmt.Sprintf("<tr><td>%s</td><td>%s</td><td>%s</td></tr>", ipaddr[1], pass[1], redistimout[1]))
+	// 端口信息
+	html = strings.ReplaceAll(html, "端口信息详细信息", fmt.Sprintf("<tr><td>%s</td><td>%s</td><td>%s</td></tr>", redisport[1], redissslport, protocols))
+	// 日志信息
+	html = strings.ReplaceAll(html, "日志信息详细信息", fmt.Sprintf("<tr><td>%s</td><td>%s</td><td>%s</td></tr>", lofile[1], loglevel[1], aclcount))
+	// 整体info信息
+	infoStr := client.Info(ctx).Val()
+	infoStr = strings.ReplaceAll(infoStr, "\r\n", "\n")
+	infoStr = strings.ReplaceAll(infoStr, "\n", "<br>")
+	html = strings.ReplaceAll(html, "info信息详细信息", fmt.Sprintf("<tr>%s</tr>", infoStr))
+	html = strings.ReplaceAll(html, "替换名称", adr)
 
-	write.WriteString("\n----------------------------info信息\n")
-	write.WriteString(client.Info(ctx).Val())
-	write.Flush()
+	os.WriteFile(fire, []byte(html), os.FileMode(global.FilePer))
+
 }
