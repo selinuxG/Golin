@@ -241,11 +241,12 @@ func mysqlhtml() string {
 		<table>
             <thead>
                 <tr>
-                    <th>错误存放路径</th>
+                    <th>错误日志存储路径</th>
                     <th>查询日志开启状态</th>
-                    <th>查询日志路径</th>
+                    <th>查询日志存储路径</th>
                     <th>bin日志开启状态</th>
                     <th>慢日志开启状态</th>
+                    <th>慢日志存储路径</th>
                 </tr>
             </thead>
             <tbody>

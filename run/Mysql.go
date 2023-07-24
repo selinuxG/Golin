@@ -296,6 +296,14 @@ func RunMysql(myname string, myuser string, mypasswd string, myhost string, mypo
 	//慢日志文件状态
 	db.Raw(`show variables like 'slow_query_log'`).Scan(&variables)
 	if len(variables) == 1 {
+		echoinfo += fmt.Sprintf("<td>%s</td>>", variables[0].Value)
+	} else {
+		echoinfo += "<td>%s</td>"
+	}
+
+	//慢日志存储路径
+	db.Raw(`show variables like 'slow_query_log_file'`).Scan(&variables)
+	if len(variables) == 1 {
 		echoinfo += fmt.Sprintf("<td>%s</td></tr>", variables[0].Value)
 	} else {
 		echoinfo += "<td>%s</td></tr>"
