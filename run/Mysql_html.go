@@ -102,7 +102,7 @@ func mysqlhtml() string {
 			word-break: break-word;
         }
 		.permissions {
-			width: 350px;
+			width: 250px;
 			white-space: nowrap;
 			overflow-x: auto;
 		}
@@ -163,12 +163,25 @@ func mysqlhtml() string {
                 用户详细信息
             </tbody>
         </table>
+
+        <h2 id="role">角色信息</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>用户</th>
+                    <th>角色</th>
+                </tr>
+            </thead>
+            <tbody>
+                角色详细信息
+            </tbody>
+        </table>
        
         <h2 id="password">密码复杂度策略</h2>
         <table>
             <thead>
                 <tr>
-                    <th>是否允许密码与账户同名</th>
+                    <th>检查口令不允许包含账户</th>
                     <th>密码长度要求</th>
                     <th>大写字符长度要求</th>
                     <th>数字字符长度要求</th>
@@ -291,6 +304,7 @@ func mysqlhtml() string {
             <li><a href="#version">版本信息</a></li>
             <li><a href="#databases">数据库信息</a></li>
             <li><a href="#userinfo">用户信息</a></li>
+            <li><a href="#role">角色信息</a></li>
             <li><a href="#password">密码复杂度信息</a></li>
             <li><a href="#password-exp">密码过期时间</a></li>
             <li><a href="#password-lock">失败锁定策略</a></li>

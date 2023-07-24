@@ -48,6 +48,12 @@ type Userslist struct {
 	Password_last_changed string
 }
 
+// Role 用户所属角色
+type Role struct {
+	User string `gorm:"column:USER"`
+	Role string `gorm:"column:DEFAULT_ROLE_USER"`
+}
+
 // Database 数据库信息
 type DatabaseSize struct {
 	Database   string `gorm:"column:Database"`
@@ -196,7 +202,7 @@ func RunMysql(myname string, myuser string, mypasswd string, myhost string, mypo
 
 		//是否为默认账户
 		if checkdefultuser(v.User) {
-			v.User = v.User + "(此账号为默认账户)"
+			v.User = v.User + "(默认账户)"
 		}
 		super := "业务账户"
 		if strings.Contains(grantdata, "GRANT ALL PRIVILEGES ON *.*") || strings.Contains(grantdata, "GRANT SUPER") {
@@ -209,6 +215,20 @@ func RunMysql(myname string, myuser string, mypasswd string, myhost string, mypo
 			v.User, v.Host, v.AuthenticationString, v.Plugin, v.Ssl_type, v.Account_locked, v.Password_lifetime, v.Password_expired, v.Password_last_changed, super, grantdata)
 	}
 	html = strings.ReplaceAll(html, "用户详细信息", echoinfo)
+
+	// 角色信息，只有8.0版本以上有结果
+	var rolelist []Role
+	db.Raw(`SELECT USER,DEFAULT_ROLE_USER FROM mysql.default_roles`).Scan(&rolelist)
+	if len(rolelist) == 0 {
+		html = strings.ReplaceAll(html, "角色详细信息", fmt.Sprintf("<tr><td></td><td></td></tr>"))
+	} else {
+		echoinfo = "<tr>"
+		for _, role := range rolelist {
+			echoinfo += fmt.Sprintf("<td>%s</td><td>%s</td>", role.User, role.Role)
+		}
+		echoinfo += "</tr>"
+		html = strings.ReplaceAll(html, "角色详细信息", echoinfo)
+	}
 
 	//全局密码复杂度
 	db.Raw(`show global variables like "validate_password%"`).Scan(&variables)

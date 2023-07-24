@@ -117,13 +117,26 @@ func redishtml() string {
         <table>
             <thead>
                 <tr>
-                    <th>监听网卡地址为</th>
+                    <th>版本信息</th>
+                    <th>监听网卡地址</th>
                     <th>配置文件中密码信息</th>
-                    <th>超时时间</th>
                 </tr>
             </thead>
             <tbody>
                 基本信息详细信息
+            </tbody>
+        </table>
+
+        <h2 id="timout">超时及锁定信息</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>超时时间</th>
+                    <th>失败锁定</th>
+                </tr>
+            </thead>
+            <tbody>
+                超时时间详细信息
             </tbody>
         </table>
 
@@ -148,7 +161,7 @@ func redishtml() string {
                 <tr>
                     <th>日志存储位置</th>
                     <th>日志等级</th>
-                    <th>Acl-log信息条数</th>
+                    <th>Acl-log最大存储信息条数</th>
                 </tr>
             </thead>
             <tbody>
@@ -171,6 +184,7 @@ func redishtml() string {
         <h3>目录</h3>
         <ul>
             <li><a href="#info">基本信息</a></li>
+            <li><a href="#timeout">超时及锁定信息</a></li>
             <li><a href="#port">端口信息</a></li>
             <li><a href="#log">日志信息</a></li>
             <li><a href="#acluser">acl用户信息</a></li>

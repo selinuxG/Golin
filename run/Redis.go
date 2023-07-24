@@ -8,6 +8,7 @@ import (
 	"golin/global"
 	"os"
 	"path/filepath"
+	"regexp"
 	"strings"
 	"time"
 )
@@ -79,14 +80,21 @@ func Runredis(myname, myuser, myhost, mypasswd, myport1 string) {
 	}
 	fire := filepath.Join(pullpath, fmt.Sprintf("%s_%s.html", myname, myhost))
 	os.Remove(fire)
-	file, err := os.OpenFile(fire, os.O_CREATE|os.O_APPEND|os.O_RDWR, os.FileMode(global.FilePer))
-	if err != nil {
-		errhost = append(errhost, myhost)
-		return
-	}
 	html := redishtml()
 
-	defer file.Close()
+	// 整体info信息
+	infoStr := client.Info(ctx).Val()
+	infoStr = strings.ReplaceAll(infoStr, "\r\n", "\n")
+	infoStr = strings.ReplaceAll(infoStr, "\n", "<br>")
+	html = strings.ReplaceAll(html, "info信息详细信息", fmt.Sprintf("<tr>%s</tr>", infoStr))
+
+	// 创建一个正则表达式对象，用来匹配redis_version
+	version := ""
+	re := regexp.MustCompile(`redis_version:([\d\.]+)`)
+	matches := re.FindStringSubmatch(infoStr)
+	if len(matches) > 1 {
+		version = matches[1]
+	}
 
 	client.Get(ctx, "config").Val()
 	ipaddr := client.ConfigGet(ctx, "bind").Val()
@@ -114,16 +122,23 @@ func Runredis(myname, myuser, myhost, mypasswd, myport1 string) {
 
 	aclcount := client.ConfigGet(ctx, "acllog-max-len").Val()
 	//log := client.Do(ctx, "ACL", "LOG").Val()
-	html = strings.ReplaceAll(html, "基本信息详细信息", fmt.Sprintf("<tr><td>%s</td><td>%s</td><td>%s</td></tr>", ipaddr[1], pass[1], redistimout[1]))
+	// 基本信息
+	html = strings.ReplaceAll(html, "基本信息详细信息", fmt.Sprintf("<tr><td>%s</td><td>%s</td><td>%s</td></tr>", version, ipaddr[1], pass[1]))
+	// 超时及失败信息
+	html = strings.ReplaceAll(html, "超时时间详细信息", fmt.Sprintf("<tr><td>%s</td><td>%s</td></tr>", redistimout[1], "默认无此功能"))
 	// 端口信息
-	html = strings.ReplaceAll(html, "端口信息详细信息", fmt.Sprintf("<tr><td>%s</td><td>%s</td><td>%s</td></tr>", redisport[1], redissslport, protocols))
+	if len(redissslport) == 2 {
+		html = strings.ReplaceAll(html, "端口信息详细信息", fmt.Sprintf("<tr><td>%s</td><td>%s</td><td>%s</td></tr>", redisport[1], redissslport[1], protocols[1]))
+	} else {
+		html = strings.ReplaceAll(html, "端口信息详细信息", fmt.Sprintf("<tr><td>%s</td><td>%s</td><td>%s</td></tr>", redisport[1], redissslport, protocols))
+	}
 	// 日志信息
-	html = strings.ReplaceAll(html, "日志信息详细信息", fmt.Sprintf("<tr><td>%s</td><td>%s</td><td>%s</td></tr>", lofile[1], loglevel[1], aclcount))
-	// 整体info信息
-	infoStr := client.Info(ctx).Val()
-	infoStr = strings.ReplaceAll(infoStr, "\r\n", "\n")
-	infoStr = strings.ReplaceAll(infoStr, "\n", "<br>")
-	html = strings.ReplaceAll(html, "info信息详细信息", fmt.Sprintf("<tr>%s</tr>", infoStr))
+	if len(aclcount) == 2 {
+		html = strings.ReplaceAll(html, "日志信息详细信息", fmt.Sprintf("<tr><td>%s</td><td>%s</td><td>%s</td></tr>", lofile[1], loglevel[1], aclcount[1]))
+	} else {
+		html = strings.ReplaceAll(html, "日志信息详细信息", fmt.Sprintf("<tr><td>%s</td><td>%s</td><td>%s</td></tr>", lofile[1], loglevel[1], aclcount))
+	}
+
 	html = strings.ReplaceAll(html, "替换名称", adr)
 
 	os.WriteFile(fire, []byte(html), os.FileMode(global.FilePer))
