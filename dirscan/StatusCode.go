@@ -1,6 +1,7 @@
 package dirscan
 
 import (
+	"bytes"
 	"fmt"
 	"github.com/PuerkitoBio/goquery"
 	"strconv"
@@ -27,32 +28,34 @@ func isStatusCodeOk(URL string) {
 		wg.Done()
 		<-ch
 		doSomething()
-		//succeCount += 1 //每次结束数量加一
+		// succeCount += 1 // 每次结束数量加一
 		percent()
 	}()
+
 	if request == nil {
 		return
 	}
-	//resp, _, errs := request.Get(URL).End()
-	req := request.Get(URL)
+
+	req := request.Clone().Get(URL) // 使用 Clone() 方法创建请求对象
 	if req == nil {
 		return
 	}
-	resp, body, errs := req.End()
+
+	resp, body, errs := req.EndBytes() // 使用 EndBytes() 方法获取响应和响应体
 	if len(errs) > 0 || resp == nil {
 		return
 	}
 
 	if statusCodeInRange(resp.StatusCode, code) {
 		fmt.Print("\033[2K") // 擦除整行
-		//查找title
+		// 查找 title
 		title := ""
-		doc, err := goquery.NewDocumentFromReader(resp.Body)
+		doc, err := goquery.NewDocumentFromReader(bytes.NewReader(body)) // 使用响应体创建文档对象
 		if err == nil {
 			title = doc.Find("title").Text()
 		}
 
-		line := strings.Count(body, "\n") //行数
+		line := bytes.Count(body, []byte("\n")) // 行数
 		contype := resp.Header.Get("Content-Type")
 		contype = strings.Split(contype, ";")[0]
 
@@ -64,11 +67,10 @@ func isStatusCodeOk(URL string) {
 			ContentType:   contype,
 			Line:          line,
 		}
-		_ = AppendUrlStatusToFile(yesurl) //写入文件
-		fmt.Printf("\r[√] Url:「%s」 State:「%d」 Title:「%s」 Length:「%s」 Type: 「%s」 Line:「%d」 \n", yesurl.Url, yesurl.Code, yesurl.Title, yesurl.ContentLength, yesurl.ContentType, yesurl.Line)
+		_ = AppendUrlStatusToFile(yesurl) // 写入文件
+		fmt.Printf("\r[√] 「%s」 State:「%d」 Title:「%s」 Length:「%s」 Type: 「%s」 Line:「%d」 \n", yesurl.Url, yesurl.Code, yesurl.Title, yesurl.ContentLength, yesurl.ContentType, yesurl.Line)
 		return
 	}
-	return
 }
 
 // statusCodeInRange 确认切片状态是否在搜索队列中

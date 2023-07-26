@@ -7,10 +7,8 @@ import (
 	"go.uber.org/zap"
 	"golang.org/x/crypto/ssh"
 	"golin/global"
-	"io/ioutil"
 	"net"
 	"os"
-	"os/exec"
 	"path/filepath"
 	"runtime"
 	"strconv"
@@ -20,8 +18,6 @@ import (
 
 var (
 	routecmd          []string                                                                                                            //执行的命令列表
-	python            bool                                                                                                                //python执行
-	Python_path       = global.PythonPath                                                                                                 //默认运行python路径
 	Defroutecmd       = []string{"display version", "disp curr", "disp interface brief", "disp cpu-usage"}                                //默认h3c命令
 	DefroutecmdHuawei = []string{"display local-user", "display local-aaa-user password policy access-user", "display aaa configuration"} //默认华为命令
 
@@ -63,7 +59,7 @@ func Route(cmd *cobra.Command, args []string) {
 			zlog.Warn("自定义执行命令文件不存在！", zap.String("文件", cmdpath))
 			os.Exit(3)
 		}
-		fire, _ := ioutil.ReadFile(cmdpath)
+		fire, _ := os.ReadFile(cmdpath)
 		runcmd = string(fire)
 		for _, v := range strings.Split(string(fire), "\n") {
 			routecmd = append(routecmd, v)
@@ -89,35 +85,15 @@ func Route(cmd *cobra.Command, args []string) {
 			routecmd = append(routecmd, cmdvalue)
 		}
 	}
-	//python调用
-	python, err = cmd.Flags().GetBool("python")
-	if err != nil {
-		fmt.Println("解析python失败", err)
-		return
-	}
-	//设置python的位置，第一个传参为路径
-	if python {
-		//传参>=1,第一个实参为python路径
-		if len(args) >= 1 {
-			if !global.PathExists(args[0]) {
-				zlog.Warn("python程序不存在!", zap.String("python-path", args[0]))
-				return
-			}
-			Python_path = args[0]
-		}
-	}
+
 	// 下面开始执行函数
 	fmt.Println("-------------------------------------> run type:route")
 	Rourange(ippath, spr, Defroutecmd)
-	//完成前最后写入文件 python模式下不写入
-	if python {
-		return
-	}
 	Deffile("Route", count, count-len(errhost), errhost)
 }
 
 func Rourange(path string, spr string, cmd []string) {
-	fire, _ := ioutil.ReadFile(path)
+	fire, _ := os.ReadFile(path)
 	lines := strings.Split(string(fire), "\n")
 	for i := 0; i < len(lines); i++ {
 		//如果是空行则跳过线程减1
@@ -172,51 +148,7 @@ func Rourange(path string, spr string, cmd []string) {
 		if err != nil {
 			os.MkdirAll(firepath, os.FileMode(global.FilePer))
 		}
-		//是否为python运行，优先级最高
-		if python {
-			if !global.PathExists(filepath.Join(global.PythonDir, global.PyHw)) {
-				zlog.Warn("python脚本不存在,跳过！", zap.String("path", filepath.Join(global.PythonDir, global.PyHw)))
-				return
-			}
-			//拼接当前绝对路径
-			pwdpath, _ := os.Getwd()
-			pwdpath = filepath.Join(pwdpath, firepath)
-			//拼接命令，用“;”分隔
-			cmd := strings.Join(routecmd, ";")
-			if cmd[0:1] == ";" {
-				cmd = strings.Replace(cmd, ";", "", 1) //去除第一个“;”
-			}
-			if cmd[len(cmd)-1:] == ";" {
-				cmd = strings.TrimRight(cmd, ";") //删除最后一个“;”
-			}
-			runcmd := exec.Command(Python_path, filepath.Join(global.PythonDir, global.PyHw), pwdpath, Name, Host, User, Passwrod, strconv.Itoa(Port), cmd)
-			_, err := runcmd.Output()
-			if err != nil {
-				fmt.Println("执行命令", err)
-				return
-			}
-			if echorun {
-				echofile := filepath.Join(pwdpath, Name+"_"+Host+".log")
-				if global.PathExists(echofile) {
-					//fmt.Println(echofile, "存在")
-					data, err := os.ReadFile(echofile)
-					if err != nil {
-						zlog.Warn("打开文件失败", zap.String("file:", echofile))
-						return
-					}
-					fmt.Println(string(data))
-				} else {
-					zlog.Warn("未正常执行！", zap.String("IP:", Host))
-				}
-			}
-			//联调完毕后使用下面不输出不获取结果的方式
-			//err := runcmd.Run()
-			//if err != nil {
-			//	fmt.Println(err)
-			//	//return
-			//}
-			continue
-		}
+
 		//拼接后的文件然后删除文件
 		filename := fmt.Sprintf("%s_%s.log", Name, Host)
 		filename = filepath.Join(firepath, filename)
@@ -234,7 +166,7 @@ func Rourange(path string, spr string, cmd []string) {
 // Routessh 连接一次执行一次命令。不确认是库本身的问题还是路由设备的问题，缓冲器有问题只能如此。
 func Routessh(filename, Host, User, Passwrod, Port, Cmd string) {
 	configssh := &ssh.ClientConfig{
-		Timeout:         time.Second * 5, // ssh连接timeout时间
+		Timeout:         time.Second * 3, // ssh连接timeout时间
 		User:            User,
 		HostKeyCallback: ssh.InsecureIgnoreHostKey(),
 	}
@@ -285,22 +217,3 @@ func Routessh(filename, Host, User, Passwrod, Port, Cmd string) {
 	}
 	global.AppendToFile(filename, "\n\n")
 }
-
-// 默认命令
-//func Defroutecmd() []string {
-//	cmd := `
-//display version
-//disp curr
-//disp interface brief
-//disp cpu-usage
-//disp acl all
-//disp password-control
-//display log
-//display users`
-//	var routecmd []string
-//	cmdlist := strings.Split(cmd, "\n")
-//	for i := 0; i < len(cmdlist); i++ {
-//		routecmd = append(routecmd, cmdlist[i])
-//	}
-//	return routecmd
-//}

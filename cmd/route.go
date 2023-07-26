@@ -22,5 +22,4 @@ func init() {
 	routeCmd.Flags().StringP("cmd", "c", "", "此参数是指定待自定义执行的命令文件")
 	routeCmd.Flags().StringP("spript", "s", global.Split, "此参数是指定IP文件中的分隔字符")
 	routeCmd.Flags().StringP("cmdvalue", "C", "", "此参数是自定义执行命令（比-c优先级高）")
-	routeCmd.Flags().BoolP("python", "p", false, "此参数是指定python位置，绝对路径，如'D:\\python3\\python.exe'")
 }

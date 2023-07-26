@@ -14,6 +14,7 @@ type releaseInfo struct {
 }
 type BrowserDown struct {
 	BrowserDownloadUrl string `json:"browser_download_url"`
+	Size               int64  `json:"size"`
 }
 
 // CheckForUpdate 检查更新

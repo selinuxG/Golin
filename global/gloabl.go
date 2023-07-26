@@ -20,18 +20,10 @@ var (
 	CmdsqlServerPath = "sqlserver.txt" //默认sqlserver模式多主机模式下读取的文件
 	CmdOraclePath    = "oracle.txt"    //默认oracle模式多主机模式下读取的文件
 
-	FilePer      = 0644                                                 //创建文件或目录时的默认权限，必须是0开头
+	FilePer      = 0744                                                 //创建文件或目录时的默认权限，必须是0开头
 	Succpath     = "采集完成目录"                                             //CLi模式成功主机写入日志的目录
 	Succwebpath  = "webhistory.json"                                    //Web模式运行记录
 	Denynametype = []string{"\\", "\\/", "*", "?", "\"", "<", ">", "|"} //windos下不允许创建名称的特殊符号。
-)
-
-// 各类python程序路径
-var (
-	PythonPath = "python" //默认运行python的环境变量
-	PythonDir  = "python" //承载各类python脚本的目录位置
-	PyHw       = "hw.py"  //python ssh hw
-	PyGui      = "Gui.py" //python gui 程序
 )
 
 // AppendToFile 创建追加写入函数

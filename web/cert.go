@@ -6,6 +6,7 @@ import (
 	"crypto/x509"
 	"crypto/x509/pkix"
 	"encoding/pem"
+	"golin/global"
 	"math/big"
 	"os"
 	"time"
@@ -44,7 +45,10 @@ func CreateCert() {
 		panic(err)
 	}
 
-	certOut, err := os.Create("cert.pem")
+	if !global.PathExists("cert") {
+		os.Mkdir("cert", os.FileMode(global.FilePer))
+	}
+	certOut, err := os.Create("cert/cert.pem")
 	if err != nil {
 		panic(err)
 	}
@@ -52,7 +56,7 @@ func CreateCert() {
 
 	pem.Encode(certOut, &pem.Block{Type: "CERTIFICATE", Bytes: derBytes})
 
-	keyOut, err := os.Create("key.pem")
+	keyOut, err := os.Create("cert/key.pem")
 	if err != nil {
 		panic(err)
 	}

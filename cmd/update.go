@@ -26,13 +26,17 @@ var updateCmd = &cobra.Command{
 			fmt.Println("更新失败:", err)
 			return
 		}
-		if global.Version == newrelease.TagName {
+
+		// 获取当前程序大小并对比远程仓库的大小
+		exePath, _ := os.Executable()
+		fileSize, _ := getFileSize(exePath)
+		if global.Version == newrelease.TagName && fileSize == newrelease.Assets[0].Size {
 			fmt.Println("当前版本已为最新版本,无需更新。")
 			return
 		}
-		fmt.Println(fmt.Sprintf("当前版本为:%s,最新版本为:%s,可更新..", global.Version, newrelease.TagName))
+		fmt.Println(fmt.Sprintf("当前版本为:%s 大小为:%v/KB  -> 最新版本为:%s 大小为:%v/KB", global.Version, fileSize, newrelease.TagName, newrelease.Assets[0].Size))
 		var input string
-		fmt.Print("是否更新？y 或 n: ")
+		fmt.Print("是否更新？y/n: ")
 		for {
 			_, err := fmt.Scanln(&input)
 			if err != nil {
@@ -62,6 +66,16 @@ var updateCmd = &cobra.Command{
 func init() {
 	rootCmd.AddCommand(updateCmd)
 	updateCmd.Flags().StringP("proxy", "p", "", "此参数是指定代理ip(仅允许http/https代理哦)")
+}
+
+// getFileSize 返回文件大小
+func getFileSize(path string) (int64, error) {
+	fileInfo, err := os.Stat(path)
+	if err != nil {
+		return 0, err
+	}
+
+	return fileInfo.Size(), nil
 }
 
 // downloadFile 下载更新

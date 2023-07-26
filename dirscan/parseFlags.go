@@ -1,6 +1,7 @@
 package dirscan
 
 import (
+	"embed"
 	"fmt"
 	"github.com/parnurzeal/gorequest"
 	"github.com/spf13/cobra"
@@ -24,6 +25,9 @@ var (
 	countall     = 0
 	request      *gorequest.SuperAgent
 )
+
+//go:embed url.txt
+var urlData embed.FS
 
 func ParseFlags(cmd *cobra.Command, args []string) {
 	url, _ := cmd.Flags().GetString("url")
@@ -50,8 +54,14 @@ func ParseFlags(cmd *cobra.Command, args []string) {
 
 	file, _ = cmd.Flags().GetString("file") //读取字典文件
 	if !global.PathExists(file) {
-		fmt.Printf("[-] url字典文件不存在！通过-f 指定！\n")
-		os.Exit(0)
+		fmt.Printf("[-] 使用内置字典进行扫描,可通过-f指定扫描字典！\n")
+		data, _ := urlData.ReadFile("url.txt")
+		for _, u := range strings.Split(string(data), "\n") {
+			if len(u) == 0 {
+				continue
+			}
+			checkurl = append(checkurl, u)
+		}
 	} else {
 		data, _ := os.ReadFile(file)
 		str := strings.ReplaceAll(string(data), "\r\n", "\n")
@@ -61,12 +71,10 @@ func ParseFlags(cmd *cobra.Command, args []string) {
 			}
 			checkurl = append(checkurl, u)
 		}
-		countall = len(removeDuplicates(checkurl)) //去重
-		if countall == 0 {
-			fmt.Printf("[-] url为空！\n")
-			os.Exit(0)
-		}
 	}
+
+	countall = len(removeDuplicates(checkurl)) //去重
+
 	waittime, _ := cmd.Flags().GetInt("wait")      //循环超时
 	codese, _ := cmd.Flags().GetString("code")     //搜索的状态码
 	for _, s := range strings.Split(codese, ",") { //根据分隔符写入到状态切片
@@ -74,7 +82,7 @@ func ParseFlags(cmd *cobra.Command, args []string) {
 	}
 	codestr := strings.Join(code, ", ")
 
-	fmt.Printf("[*] 开始运行dirsearch模式 字典位置%s 共计尝试:%d次 超时等待:%d/s 循环等待:%d/s 并发数:%d 寻找状态码:%s 代理地址:%s\n ", file, countall, timeout, waittime, chcount, codestr, proxyurl)
+	fmt.Printf("[*] 开始运行dirsearch模式 共计尝试:%d次 超时等待:%d/s 循环等待:%d/s 并发数:%d 寻找状态码:%s 代理地址:%s\n ", countall, timeout, waittime, chcount, codestr, proxyurl)
 	for _, checku := range removeDuplicates(checkurl) {
 		if checku[0] != '/' { //判断第一个字符是不是/不是的话则增加
 			checku = "/" + checku

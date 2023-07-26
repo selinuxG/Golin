@@ -209,7 +209,7 @@ func GolinErrorhtml(status, errbody string, c *gin.Context) {
 	c.String(http.StatusOK, errhtml)
 }
 
-// sendFile 发生文件
+// sendFile 发送文件
 func sendFile(name string, c *gin.Context) {
 	c.Header("Content-Description", "File Transfer")
 	c.Header("Content-Disposition", "attachment; filename="+name)

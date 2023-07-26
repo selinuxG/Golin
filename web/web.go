@@ -1,19 +1,24 @@
 package web
 
 import (
+	"embed"
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/spf13/cobra"
 	"golin/global"
+	"net/http"
 	"os/exec"
 	"runtime"
 )
 
 var save bool
 
+//go:embed favicon.ico
+var faviconFS embed.FS
+
 func Start(cmd *cobra.Command, args []string) {
 
-	if !global.PathExists("cert.pem") || !global.PathExists("cert.key") {
+	if !global.PathExists("cert/cert.pem") || !global.PathExists("cert/cert.key") {
 		CreateCert()
 	}
 
@@ -24,6 +29,7 @@ func Start(cmd *cobra.Command, args []string) {
 	r.NoRoute(func(c *gin.Context) {
 		GolinErrorhtml("404", "sorry~请求不存在哦!", c)
 	})
+	r.GET("/favicon.ico", faviconHandler) //路由图标
 	r.GET("/", func(c *gin.Context) {
 		c.Redirect(302, "/golin/gys")
 	})
@@ -42,7 +48,7 @@ func Start(cmd *cobra.Command, args []string) {
 		golin.POST("/djPost", GolinDjPost)         //提交定级结果
 
 	}
-	// Windows下在默认浏览器中打开网页
+	// Windows、Mac下在默认浏览器中打开网页
 	go func() {
 		if runtime.GOOS == "windows" {
 			cmd := exec.Command("cmd", "/C", fmt.Sprintf("start https://%s:%s/golin/gys", ip, port))
@@ -51,7 +57,18 @@ func Start(cmd *cobra.Command, args []string) {
 				fmt.Println("Error opening the browser:", err)
 			}
 		}
+		if runtime.GOOS == "darwin" {
+			cmd := exec.Command("open", fmt.Sprintf("https://%s:%s/golin/gys", ip, port))
+			err := cmd.Run()
+			if err != nil {
+				fmt.Println("Error opening the browser:", err)
+			}
+		}
 	}()
 	// 启动gin
-	r.RunTLS(ip+":"+port, "cert.pem", "key.pem")
+	r.RunTLS(ip+":"+port, "cert/cert.pem", "cert/key.pem")
+}
+
+func faviconHandler(c *gin.Context) {
+	c.FileFromFS("favicon.ico", http.FS(faviconFS))
 }
