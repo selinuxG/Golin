@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"fmt"
 	"github.com/PuerkitoBio/goquery"
+	"github.com/fatih/color"
 	"strconv"
 	"strings"
 	"sync"
@@ -31,7 +32,6 @@ func isStatusCodeOk(URL string) {
 		// succeCount += 1 // 每次结束数量加一
 		percent()
 	}()
-
 	if request == nil {
 		return
 	}
@@ -68,7 +68,16 @@ func isStatusCodeOk(URL string) {
 			Line:          line,
 		}
 		_ = AppendUrlStatusToFile(yesurl) // 写入文件
-		fmt.Printf("\r[√] 「%s」 State:「%d」 Title:「%s」 Length:「%s」 Type: 「%s」 Line:「%d」 \n", yesurl.Url, yesurl.Code, yesurl.Title, yesurl.ContentLength, yesurl.ContentType, yesurl.Line)
+		fmt.Printf("\r%s %-40s | code:%s | Title:%-30s | Length:%s | Type:%-5s | Line:%-5s \n",
+			color.GreenString("%s", "[√]"),
+			yesurl.Url,
+			color.GreenString("%d", yesurl.Code),
+			color.GreenString("%s", yesurl.Title),
+			color.GreenString("%s", yesurl.ContentLength),
+			color.GreenString("%s", yesurl.ContentType),
+			color.GreenString("%d", yesurl.Line),
+		)
+
 		return
 	}
 }

@@ -56,7 +56,8 @@ func ParseFlags(cmd *cobra.Command, args []string) {
 	if !global.PathExists(file) {
 		fmt.Printf("[-] 使用内置字典进行扫描,可通过-f指定扫描字典！\n")
 		data, _ := urlData.ReadFile("url.txt")
-		for _, u := range strings.Split(string(data), "\n") {
+		datastr := strings.ReplaceAll(string(data), "\r\n", "\n")
+		for _, u := range strings.Split(datastr, "\n") {
 			if len(u) == 0 {
 				continue
 			}
