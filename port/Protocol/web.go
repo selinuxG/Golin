@@ -1,10 +1,13 @@
 package Protocol
 
 import (
+	"bytes"
 	"crypto/tls"
 	"fmt"
 	"github.com/PuerkitoBio/goquery"
+	"io"
 	"net/http"
+	"regexp"
 	"strings"
 	"time"
 )
@@ -44,9 +47,11 @@ func IsWeb(host, port string) string {
 		if (resp.StatusCode >= 200 && resp.StatusCode < 300) || resp.StatusCode == 401 || resp.StatusCode == 403 || resp.StatusCode == 404 {
 
 			//查找title
-			title := ""
+			title, html := "", ""
 			if resp.StatusCode == 200 {
-				doc, err := goquery.NewDocumentFromReader(resp.Body)
+				body, _ := io.ReadAll(resp.Body)
+				html = string(body)
+				doc, err := goquery.NewDocumentFromReader(bytes.NewReader(body))
 				if err == nil {
 					title = doc.Find("title").Text()
 					if title != "" {
@@ -55,11 +60,20 @@ func IsWeb(host, port string) string {
 					}
 				}
 			}
+
 			serverType := resp.Header.Get("Server")
 			if serverType != "" {
 				serverType = fmt.Sprintf("server:「%s」", serverType)
 			}
-			return fmt.Sprintf("%s  %s  %s 状态码:「%d」", htype, serverType, title, resp.StatusCode)
+
+			// 匹配组件
+			app, checkapp := "", CheckApp(html, resp.Header, resp.Cookies())
+			if checkapp != "" {
+				app = fmt.Sprintf("APP:「%s」", checkapp)
+			}
+
+			return fmt.Sprintf("%-3s | %-3d | %s %s %s", htype, resp.StatusCode, app, serverType, title)
+
 		}
 
 	}
@@ -67,4 +81,37 @@ func IsWeb(host, port string) string {
 		return "https"
 	}
 	return ""
+}
+
+func CheckApp(body string, head map[string][]string, cookies []*http.Cookie) string {
+	for _, rule := range RuleDatas {
+		switch rule.Type {
+		case "body":
+			patterns, err := regexp.Compile(rule.Rule)
+			if err == nil && patterns.MatchString(body) {
+				return rule.Name
+			}
+
+		case "headers":
+			for _, values := range head {
+				for _, value := range values {
+					patterns, err := regexp.Compile(`(?i)` + rule.Rule) //不区分大小写
+					if err == nil && patterns.MatchString(value) {
+						return rule.Name
+					}
+				}
+			}
+
+		case "cookie":
+			for _, cookie := range cookies {
+				patterns, err := regexp.Compile(`(?i)` + rule.Rule) //不区分大小写
+				if err == nil && patterns.MatchString(cookie.Name) {
+					return rule.Name
+				}
+			}
+		}
+	}
+
+	return ""
+
 }

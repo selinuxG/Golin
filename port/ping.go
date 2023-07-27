@@ -56,10 +56,13 @@ func NetWorkPing(ip string) (bool, string) {
 	var cmd *exec.Cmd
 	if runtime.GOOS == "windows" {
 		cmd = exec.Command("ping", "-n", "2", "-w", "1", ip)
-	} else {
+	}
+	if runtime.GOOS == "darwin" {
+		cmd = exec.Command("ping", "-c", "2", "-t", "1", ip)
+	}
+	if runtime.GOOS == "linux" {
 		cmd = exec.Command("ping", "-c", "2", "-W", "1", ip)
 	}
-
 	output, err := cmd.Output()
 	if err != nil {
 		return false, ""
