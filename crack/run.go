@@ -84,7 +84,7 @@ func clearLine(host, user, passwd string, port int, mode string) {
 	fmt.Print("\033[2K") // 擦除整行
 	fmt.Print("\r")      // 光标移动到行首
 	if mode == "start" {
-		fmt.Printf("\r[-] 开始尝试主机：%s 端口：%d 用户：%s 密码：%s\r", host, port, user, passwd)
+		fmt.Printf("\r[-] 开始尝试主机:%s 端口:%d 用户：%s 密码:%s\r", host, port, user, passwd)
 		return
 	}
 	fmt.Printf("[-] 探测主机：%s:%d 网络｜端口不可达 or 端口运行协议与探测模式不匹配 跳过！\n", host, port)

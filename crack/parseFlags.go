@@ -2,6 +2,7 @@ package crack
 
 import (
 	"bufio"
+	"embed"
 	"fmt"
 	"github.com/spf13/cobra"
 	"golin/global"
@@ -39,6 +40,9 @@ var (
 	fireip      = map[string]int{} //读取文件中的主机列表
 	successlist []successip
 )
+
+//go:embed password.txt
+var passwd embed.FS
 
 func parseFlags(cmd *cobra.Command) INFO {
 	mode := cmd.Use
@@ -116,6 +120,12 @@ func parseFlags(cmd *cobra.Command) INFO {
 		passwdstr := strings.ReplaceAll(string(passwddata), "\r\n", "\n")
 		passwdlist = passwdlist[0:0] //清空默认密码
 		passwdlist = append(passwdlist, strings.Split(string(passwdstr), "\n")...)
+	} else {
+		data, _ := passwd.ReadFile("password.txt")
+		datastr := strings.ReplaceAll(string(data), "\r\n", "\n")
+		for _, u := range strings.Split(datastr, "\n") {
+			passwdlist = append(passwdlist, u)
+		}
 	}
 
 	ping, _ := cmd.Flags().GetBool("noping") //是否禁止ping

@@ -5,6 +5,7 @@ import (
 	"crypto/tls"
 	"fmt"
 	"github.com/PuerkitoBio/goquery"
+	"golin/global"
 	"io"
 	"net/http"
 	"regexp"
@@ -12,18 +13,17 @@ import (
 	"time"
 )
 
-func IsWeb(host, port string) string {
+func IsWeb(host, port string, timeout int) string {
 	transport := &http.Transport{
 		TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
 	}
 
 	client := &http.Client{
 		Transport: transport,
-		Timeout:   3 * time.Second,
+		Timeout:   time.Duration(timeout) * time.Second,
 	}
 	for _, v := range []string{"http", "https"} {
-		url := ""
-		htype := ""
+		url, htype := "", ""
 		switch port {
 		case "443":
 			url = fmt.Sprintf("https://%s", host)
@@ -45,19 +45,16 @@ func IsWeb(host, port string) string {
 		defer resp.Body.Close()
 
 		if (resp.StatusCode >= 200 && resp.StatusCode < 300) || resp.StatusCode == 401 || resp.StatusCode == 403 || resp.StatusCode == 404 {
-
-			//查找title
-			title, html := "", ""
-			if resp.StatusCode == 200 {
-				body, _ := io.ReadAll(resp.Body)
-				html = string(body)
-				doc, err := goquery.NewDocumentFromReader(bytes.NewReader(body))
-				if err == nil {
-					title = doc.Find("title").Text()
-					if title != "" {
-						title = fmt.Sprintf("Title:「%s」", title)
-						title = strings.ReplaceAll(title, "\n", "")
-					}
+			title, html := "", "" //查找title 以及整体网页内容
+			body, _ := io.ReadAll(resp.Body)
+			html = string(body)
+			doc, err := goquery.NewDocumentFromReader(bytes.NewReader(body))
+			if err == nil {
+				title = doc.Find("title").Text()
+				if title != "" {
+					title = fmt.Sprintf("Title:「%s」", title)
+					title = strings.ReplaceAll(title, "\n", "")
+					title = strings.ReplaceAll(title, " ", "")
 				}
 			}
 
@@ -71,7 +68,6 @@ func IsWeb(host, port string) string {
 			if checkapp != "" {
 				app = fmt.Sprintf("APP:「%s」", checkapp)
 			}
-
 			return fmt.Sprintf("%-3s | %-3d | %s %s %s", htype, resp.StatusCode, app, serverType, title)
 
 		}
@@ -84,12 +80,13 @@ func IsWeb(host, port string) string {
 }
 
 func CheckApp(body string, head map[string][]string, cookies []*http.Cookie) string {
+	var app []string
 	for _, rule := range RuleDatas {
 		switch rule.Type {
 		case "body":
 			patterns, err := regexp.Compile(rule.Rule)
 			if err == nil && patterns.MatchString(body) {
-				return rule.Name
+				app = append(app, rule.Name)
 			}
 
 		case "headers":
@@ -97,7 +94,7 @@ func CheckApp(body string, head map[string][]string, cookies []*http.Cookie) str
 				for _, value := range values {
 					patterns, err := regexp.Compile(`(?i)` + rule.Rule) //不区分大小写
 					if err == nil && patterns.MatchString(value) {
-						return rule.Name
+						app = append(app, rule.Name)
 					}
 				}
 			}
@@ -106,12 +103,12 @@ func CheckApp(body string, head map[string][]string, cookies []*http.Cookie) str
 			for _, cookie := range cookies {
 				patterns, err := regexp.Compile(`(?i)` + rule.Rule) //不区分大小写
 				if err == nil && patterns.MatchString(cookie.Name) {
-					return rule.Name
+					app = append(app, rule.Name)
 				}
 			}
 		}
 	}
 
-	return ""
+	return strings.Join(global.RemoveDuplicates(app), ",")
 
 }

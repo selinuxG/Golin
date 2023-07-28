@@ -2,6 +2,7 @@ package port
 
 import (
 	"fmt"
+	"github.com/fatih/color"
 	"os/exec"
 	"regexp"
 	"runtime"
@@ -19,7 +20,7 @@ var (
 )
 
 func SanPing() {
-	fmt.Printf("%s\n", "下发PING任务...\n+------------------------------+")
+	//fmt.Printf("%s\n", "下发PING任务...\n+------------------------------+")
 	pingch = make(chan struct{}, chancount)
 	for _, ip := range iplist {
 		pingch <- struct{}{}
@@ -37,7 +38,7 @@ func SanPing() {
 				outputMux.Unlock()
 			} else {
 				outputMux.Lock()
-				fmt.Printf("| %-15s|%-5s\n", ip, pingOS)
+				fmt.Printf("|%-5s| %-15s|%-5s\n", color.GreenString("%s", "存活主机"), ip, pingOS)
 				switch pingOS {
 				case "linux":
 					linuxcount += 1

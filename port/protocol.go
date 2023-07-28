@@ -85,7 +85,7 @@ func parseProtocol(conn net.Conn, host, port string) string {
 		return "数据库:「PostgreSQL」"
 
 	default:
-		isWeb := Protocol.IsWeb(host, port)
+		isWeb := Protocol.IsWeb(host, port, Timeout)
 		if isWeb != "" {
 			return fmt.Sprintf(" %-4s| %s", "WEB", isWeb)
 		}
