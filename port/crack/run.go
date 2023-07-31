@@ -14,13 +14,10 @@ var (
 )
 
 func Run(host, port string, Timeout, chanCount int, mode string) {
-
-	if chanCount <= 100 {
-		chanCount = 100
+	if chanCount < 350 {
+		chanCount = 350
 	}
 	ch = make(chan struct{}, chanCount)
-	Timeout = 1 //因为已经探测过存活了，所以设置成1/s 超时
-
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel() //确保所有的goroutine都已经退出
 	newport, _ := strconv.Atoi(port)
@@ -48,6 +45,9 @@ func Run(host, port string, Timeout, chanCount int, mode string) {
 				go telnetcon(ctx, cancel, host, user, passwd, newport, Timeout)
 			case "tomcat":
 				go tomcat(ctx, cancel, host, user, passwd, newport, Timeout)
+			default:
+				wg.Done()
+				<-ch
 			}
 		}
 	}
@@ -59,7 +59,7 @@ func end(host, user, passwd string, port int, mode string) {
 		fmt.Sprintf("%s", color.GreenString("%s", "✓")),
 		host,
 		port,
-		color.GreenString("%s", "弱口令"),
+		color.RedString("%s", "弱口令"),
 		mode,
 		fmt.Sprintf("%s	%s", user, passwd),
 	)

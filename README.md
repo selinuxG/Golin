@@ -5,9 +5,6 @@
 ## web功能预览
 ![web](images/web.gif)
 
-## 暴力破解功能预览
-![crack](images/crack.gif)
-
 ## 端口扫描功能预览
 ![port](images/port.jpg)
 
@@ -50,10 +47,10 @@
 | 8  |      SMB      |  √   |    超时参数暂时不可用    |
 | 9  |    Telnet     |  √   |                 |
 | 10 |    Tomcat     |  √   |                 |
-| 11 |     xlsx      |  √   |    仅允许xlsx格式    |
+| 11 |     xlsx      |  x   |       已移除       |
 | 12 |     SNMP      |      |                 |
 | 13 |    MangoDB    |      |                 |
-| 14 | Elasticsearch |      |                 |
+| 14 | Elasticsearch |  √   |     可识别未授权      |
 
 ## 端口扫描现阶段支持功能
 | 序号 |    功能     | 是否支持 |                       备注                        |
@@ -70,6 +67,7 @@
 | 10 |   结果保存    |  √   |         默认不保存,可通过--save保存到portscan.xlsx         |
 | 11 | 主机操作系统识别  |  √   |                      基于ttl                      |
 | 12 |   组件识别    |  √   |                    目前常用200+                     |
+| 13 |  自动扫描弱口令  |  √   |        ssh、redis、mysql、es、telnet、pgsql等         |
 
 
 
@@ -104,13 +102,12 @@
 # 常用启动参数
 ```
 golin web (通过web方式启动,仅支持等保功能)
-golin port -i 192.168.1.1/24 (扫描c段端口)
+golin port -i 192.168.1.1/24 (扫描c段端口以及弱口令)
+golin port -i 192.168.1.1/24 --noping --nocrack --random(扫描c段端口但不探测存活不扫描弱口令,并且打乱主机顺序扫描)
 golin dirsearch -u https://test.com -f 字典.txt --code 200,404 (扫描状态码为200以及404的web目录)
-golin crack ssh -i 192.168.1.1 (基于内置鉴别信息进行扫描弱口令)
 golin domain -u baidu.com --api (扫描子域名,并且调用fofa、RapidDNS的API)
+golin [linux、mysql、oracle、sqlserver、redis、windows...] (按照3级等保要求核查各项安全配置)
 golin update (检查是否可更新)
-golin windows (采集当前主机的安全配置生成报告)
-golin [linux、mysql、oracle、sqlserver、redis...] (按照3级等保要求核查各项安全配置)
 ```
 
 # 免责声明

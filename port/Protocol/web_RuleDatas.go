@@ -16,6 +16,7 @@ var RuleDatas = []RuleData{
 	{"安恒信息-明御运维审计与风险控制系统", "body", "(<title>(.*明御运维审计.*)</title>)"},
 	{"知道创宇-WEBSOC", "body", "(<title>\\s*登录\\s*-\\s*WebSOC知道网站立体监控系统\\s*-\\s*知道创宇\\s*</title>)"},
 	{"联软网络智能准入系统", "body", "(下载助手安装包|href=.*portal/resources/css/auth_login.css?)"},
+	{"联软IT安全运维管理系统", "body", "(/manager/Resource/Js/ajax.js)"},
 	{"phpPgAdmin", "body", "(<title>phpPgAdmin</title>)"},
 	{"ThinkPHP", "headers", "(ThinkPHP)"},
 	{"VisualSVN", "headers", "(VisualSVN Server)"},

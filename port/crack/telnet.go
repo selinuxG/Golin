@@ -6,6 +6,7 @@ import (
 	"github.com/ziutek/telnet"
 	"io"
 	"strings"
+	"time"
 )
 
 func telnetcon(ctx context.Context, cancel context.CancelFunc, ip, user, passwd string, port, timeout int) {
@@ -19,7 +20,7 @@ func telnetcon(ctx context.Context, cancel context.CancelFunc, ip, user, passwd 
 	default:
 	}
 
-	conn, err := telnet.DialTimeout("tcp", fmt.Sprintf("%s:%d", ip, port), 1)
+	conn, err := telnet.DialTimeout("tcp", fmt.Sprintf("%s:%d", ip, port), time.Duration(timeout))
 	if err != nil {
 		return
 	}

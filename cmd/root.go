@@ -13,9 +13,6 @@ var rootCmd = &cobra.Command{
 	Use:   "golin",
 	Short: "A brief description of your application",
 	Long:  `[-] 此工具是基于多线程模式开发，目的是进行快速准确的等保核查、端口扫描、组件识别、子域名扫描、目录扫描等功能;`,
-	//Run: func(cmd *cobra.Command, args []string) {
-	//	cmd.Help()
-	//},
 }
 
 func Execute() {

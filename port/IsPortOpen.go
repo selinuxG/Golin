@@ -30,7 +30,6 @@ func IsPortOpen(host, port string) {
 	parseprotocol := parseProtocol(conn, host, port) //识别协议
 	fmt.Printf("\r| %-2s | %-15s | %-4s |%s \n", fmt.Sprintf("%s", color.GreenString("%s", "✓")), host, port, parseprotocol)
 	infolist = append(infolist, INFO{host, port, parseprotocol})
-	outputMux.Unlock()
 
 	if Carck {
 		protocol := strings.ToLower(parseprotocol)
@@ -49,12 +48,12 @@ func IsPortOpen(host, port string) {
 			crack.Run(host, port, Timeout, chancount, "ftp")
 		case strings.Contains(protocol, "smb"):
 			crack.Run(host, port, Timeout, chancount, "smb")
-		case strings.Contains(protocol, "ftp"):
-			crack.Run(host, port, Timeout, chancount, "ftp")
 		case strings.Contains(protocol, "telnet"):
 			crack.Run(host, port, Timeout, chancount, "telnet")
 		case strings.Contains(protocol, "tomcat"):
 			crack.Run(host, port, Timeout, chancount, "tomcat")
 		}
 	}
+
+	outputMux.Unlock()
 }
