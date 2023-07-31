@@ -49,7 +49,6 @@ func parsePort(port string) {
 
 var (
 	default_port = []string{
-		"20",    //ftp
 		"22",    // SSH
 		"80",    // HTTP
 		"443",   // HTTPS
@@ -73,6 +72,7 @@ var (
 		"1521",  // Oracle Database
 		"6379",  // Redis
 		"27017", // MongoDB
+		"8000",  //web
 		"8080",  // HTTP (Alternate)
 		"8443",  // HTTPS (Alternate)
 		"9000",  // PHP-FPM

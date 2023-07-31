@@ -52,6 +52,8 @@ func IsPortOpen(host, port string) {
 			crack.Run(host, port, Timeout, chancount, "telnet")
 		case strings.Contains(protocol, "tomcat"):
 			crack.Run(host, port, Timeout, chancount, "tomcat")
+		case strings.Contains(protocol, "rdp"):
+			crack.Run(host, port, Timeout, chancount, "rdp")
 		}
 	}
 

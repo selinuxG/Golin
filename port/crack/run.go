@@ -14,8 +14,8 @@ var (
 )
 
 func Run(host, port string, Timeout, chanCount int, mode string) {
-	if chanCount < 350 {
-		chanCount = 350
+	if chanCount < 300 {
+		chanCount = 300
 	}
 	ch = make(chan struct{}, chanCount)
 	ctx, cancel := context.WithCancel(context.Background())
@@ -45,6 +45,8 @@ func Run(host, port string, Timeout, chanCount int, mode string) {
 				go telnetcon(ctx, cancel, host, user, passwd, newport, Timeout)
 			case "tomcat":
 				go tomcat(ctx, cancel, host, user, passwd, newport, Timeout)
+			case "rdp":
+				go rdpcon(ctx, cancel, host, user, passwd, newport, Timeout)
 			default:
 				wg.Done()
 				<-ch

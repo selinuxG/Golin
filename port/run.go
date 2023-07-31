@@ -3,25 +3,29 @@ package port
 import (
 	"fmt"
 	"github.com/spf13/cobra"
+	"golin/port/crack"
 	"os"
 	"sync"
 )
 
 var (
-	iplist    = []string{}              //扫描的端口
-	portlist  = []string{}              //扫描的端口
-	NoPing    bool                      //是否禁止ping监测
-	Carck     bool                      //是否进行弱口令扫描
-	ch        = make(chan struct{}, 30) //控制并发数
-	wg        = sync.WaitGroup{}
-	chancount int    //并发数量
-	Timeout   int    //超时等待时常
-	random    bool   //打乱顺序
-	save      bool   //是否保存
-	infolist  []INFO //成功的主机列表
-	allcount  int    //IP*PORT的总数量
-	donecount int    //线程技术的数量
-	outputMux sync.Mutex
+	iplist     = []string{}              //扫描的端口
+	portlist   = []string{}              //扫描的端口
+	NoPing     bool                      //是否禁止ping监测
+	Carck      bool                      //是否进行弱口令扫描
+	ch         = make(chan struct{}, 30) //控制并发数
+	wg         = sync.WaitGroup{}
+	chancount  int    //并发数量
+	Timeout    int    //超时等待时常
+	random     bool   //打乱顺序
+	save       bool   //是否保存
+	infolist   []INFO //成功的主机列表
+	allcount   int    //IP*PORT的总数量
+	donecount  int    //线程技术的数量
+	outputMux  sync.Mutex
+	userfile   string //user字典路径
+	passwdfile string //passwd字典路径
+
 )
 
 type INFO struct {
@@ -61,8 +65,13 @@ func ParseFlags(cmd *cobra.Command, args []string) {
 		Carck = true
 	}
 
-	random, _ = cmd.Flags().GetBool("random")
-	save, _ = cmd.Flags().GetBool("save")
+	random, _ = cmd.Flags().GetBool("random") //打乱顺序
+
+	save, _ = cmd.Flags().GetBool("save") //保存文件
+
+	userfile, _ = cmd.Flags().GetString("userfile")
+	passwdfile, _ = cmd.Flags().GetString("passwdfile")
+	crack.Checkdistfile(userfile, passwdfile) //先读取是否有自定义的字典文件
 
 	scanPort()
 
