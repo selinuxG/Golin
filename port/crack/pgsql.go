@@ -23,7 +23,7 @@ func pgsql(ctx context.Context, cancel context.CancelFunc, ip, user, passwd stri
 		Logger: logger.Default.LogMode(logger.Silent),
 	})
 	if err == nil {
-		end(ip, user, passwd, port)
+		end(ip, user, passwd, port, "PgSQL")
 		cancel()
 	}
 }

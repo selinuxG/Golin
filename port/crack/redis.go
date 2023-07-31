@@ -9,11 +9,17 @@ import (
 
 var ctx = context.Background()
 
-func rediscon(ip, user, passwd string, port, timeout int) {
+func rediscon(ctx context.Context, cancel context.CancelFunc, ip, user, passwd string, port, timeout int) {
 	defer func() {
 		wg.Done()
 		<-ch
 	}()
+	select {
+	case <-ctx.Done():
+		return
+	default:
+	}
+
 	client := redis.NewClient(&redis.Options{
 		Addr:            fmt.Sprintf("%s:%d", ip, port),
 		Username:        user,
@@ -25,6 +31,7 @@ func rediscon(ip, user, passwd string, port, timeout int) {
 	})
 	_, err := client.Ping(ctx).Result()
 	if err == nil {
-		end(ip, user, passwd, port)
+		end(ip, user, passwd, port, "Redis")
+		cancel()
 	}
 }

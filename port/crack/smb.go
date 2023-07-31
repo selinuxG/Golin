@@ -1,15 +1,20 @@
 package crack
 
 import (
-	"fmt"
+	"context"
 	"github.com/stacktitan/smb/smb"
 )
 
-func smbcon(ip, user, passwd string, port, timeout int) {
+func smbcon(ctx context.Context, cancel context.CancelFunc, ip, user, passwd string, port, timeout int) {
 	defer func() {
 		wg.Done()
 		<-ch
 	}()
+	select {
+	case <-ctx.Done():
+		return
+	default:
+	}
 
 	options := smb.Options{
 		Host:        ip,
@@ -24,10 +29,9 @@ func smbcon(ip, user, passwd string, port, timeout int) {
 	if err == nil {
 		defer session.Close()
 		if session.IsAuthenticated {
-			end(ip, user, passwd, port)
+			end(ip, user, passwd, port, "SMB")
+			cancel()
 		}
-	} else {
-		fmt.Println(err)
 	}
 	return
 }

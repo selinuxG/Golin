@@ -58,7 +58,7 @@ func tomcat(ctx context.Context, cancel context.CancelFunc, ip, user, passwd str
 		}
 
 		if strings.Contains(string(body), `action="/manager/html/deploy`) {
-			end(ip, user, passwd, port)
+			end(ip, user, passwd, port, "Tomcat")
 			cancel()
 		}
 	}

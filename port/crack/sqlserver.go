@@ -25,7 +25,7 @@ func sqlservercon(ctx context.Context, cancel context.CancelFunc, ip, user, pass
 	})
 
 	if err == nil {
-		end(ip, user, passwd, port)
+		end(ip, user, passwd, port, "MSSQL")
 		cancel()
 	}
 }

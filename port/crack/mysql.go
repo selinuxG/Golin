@@ -23,7 +23,7 @@ func mySql(ctx context.Context, cancel context.CancelFunc, ip, user, passwd stri
 		Logger: logger.Default.LogMode(logger.Silent), // 设置日志级别为 silent
 	})
 	if err == nil {
-		end(ip, user, passwd, port)
+		end(ip, user, passwd, port, "MySql")
 		cancel()
 	}
 }

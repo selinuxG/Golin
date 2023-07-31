@@ -30,8 +30,6 @@ func SSH(ctx context.Context, cancel context.CancelFunc, ip, user, passwd string
 		return
 	}
 	defer sshClient.Close()
-	if err == nil {
-		end(ip, user, passwd, port)
-		cancel()
-	}
+	end(ip, user, passwd, port, "SSH")
+	cancel()
 }

@@ -22,5 +22,6 @@ func init() {
 	portCmd.Flags().IntP("time", "t", 3, "超时等待时常/s")
 	portCmd.Flags().Bool("random", false, "打乱主机顺序")
 	portCmd.Flags().Bool("save", false, "保存结果")
+	portCmd.Flags().Bool("nocrack", false, "此参数是不进行弱口令扫描")
 
 }
