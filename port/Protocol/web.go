@@ -5,6 +5,7 @@ import (
 	"crypto/tls"
 	"fmt"
 	"github.com/PuerkitoBio/goquery"
+	"github.com/fatih/color"
 	"golin/global"
 	"io"
 	"net/http"
@@ -14,13 +15,11 @@ import (
 )
 
 type webinfo struct {
-	url           string
-	title         string
-	servertype    string
-	app           string
-	statuscode    int
-	ContentLength int64
-	ContentType   string
+	url         string
+	title       string
+	app         string
+	statuscode  int
+	ContentType string
 }
 
 func IsWeb(host, port string, timeout int) string {
@@ -52,7 +51,6 @@ func IsWeb(host, port string, timeout int) string {
 		if err != nil {
 			continue
 		}
-		info.ContentLength = resp.ContentLength
 		defer resp.Body.Close()
 
 		body, _ := io.ReadAll(resp.Body)
@@ -64,9 +62,7 @@ func IsWeb(host, port string, timeout int) string {
 			info.title = strings.ReplaceAll(info.title, "  ", "")
 
 		}
-		info.servertype = resp.Header.Get("Server")
 		info.statuscode = resp.StatusCode
-		info.ContentLength = resp.ContentLength
 		info.ContentType = resp.Header.Get("Content-Type")
 		info.app = CheckApp(string(body), resp.Header, resp.Cookies()) // 匹配组件
 
@@ -119,16 +115,13 @@ func chekwebinfo(info webinfo) string {
 	output := fmt.Sprintf("%s ", info.url)
 
 	if info.app != "" {
-		output += fmt.Sprintf(" APP:「%s」", info.app)
+		output += color.GreenString("%s", fmt.Sprintf(" APP:「%s」", info.app))
 	}
 	if info.title != "" {
-		output += fmt.Sprintf(" title:「%s」", info.title)
-	}
-	if info.servertype != "" {
-		output += fmt.Sprintf(" server:「%s」", info.servertype)
+		output += color.BlueString("%s", fmt.Sprintf(" title:「%s」", info.title))
 	}
 
-	output += fmt.Sprintf(" Code:「%d」 Length:「%d」 ContentType:「%s」", info.statuscode, info.ContentLength, info.ContentType)
+	output += fmt.Sprintf(" Code:「%d」 ContentType:「%s」", info.statuscode, info.ContentType)
 
 	return output
 }

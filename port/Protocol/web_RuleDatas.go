@@ -11,6 +11,7 @@ var RuleDatas = []RuleData{
 	{"启明防火墙", "body", "(/cgi-bin/webui?op=get_product_model)"},
 	{"数据库「ElasticSearch」(未授权)", "body", `(?s)"name"\s*:\s*"[^"]*".*?"cluster_name"\s*:\s*"[^"]*".*?"cluster_uuid"\s*:\s*"[^"]*".*?"number"\s*:\s*"[^"]*"`},
 	{"数据库「MongoDB」", "body", `(MongoDB)`},
+	{"Nginx", "headers", `(nginx)`},
 	{"ZABBIX-监控系统", "body", "(Zabbix SIA|<title>omni: Zabbix</title>)"},
 	{"IIS", "body", "(IIS Windows Server)"},
 	{"phpinfo", "body", "(<title>(.*phpinfo.*)</title>)"},

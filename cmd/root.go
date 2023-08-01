@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"fmt"
+	"github.com/fatih/color"
 	"golin/global"
 	"os"
 
@@ -23,12 +24,18 @@ func Execute() {
 }
 
 func init() {
-	fmt.Println(`
+	golin := fmt.Sprintf(`
  _____   _____   _       _   __   _  
 /  ___| /  _  \ | |     | | |  \ | | 
 | |     | | | | | |     | | |   \| | 
 | |  _  | | | | | |     | | | |\   | 
 | |_| | | |_| | | |___  | | | | \  | 
-\_____/ \_____/ |_____| |_| |_|  \_| ` + "\nhttps://github.com/selinuxG/Golin-cli " + global.Version + ":" + global.Releasenotes)
-	//fmt.Printf("\n")
+\_____/ \_____/ |_____| |_| |_|  \_| `)
+
+	fmt.Printf("%s\nVersion: %s\ngithub : %s\nauthor : %s\n\n",
+		color.RedString("%s", golin),
+		color.GreenString("%s %s", global.Version, global.Releasenotes),
+		color.BlueString("%s", "https://github.com/selinuxG/Golin"),
+		color.MagentaString("%s", "gaoyeshang"),
+	)
 }

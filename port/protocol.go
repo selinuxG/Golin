@@ -86,7 +86,7 @@ func parseProtocol(conn net.Conn, host, port string) string {
 	default:
 		isWeb := Protocol.IsWeb(host, port, Timeout)
 		if isWeb != "" {
-			return fmt.Sprintf(" %-6s| %s", "WEB应用", isWeb)
+			return fmt.Sprintf(" %-5s| %s", "WEB应用", isWeb)
 		}
 	}
 
