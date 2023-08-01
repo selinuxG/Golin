@@ -51,6 +51,9 @@ var (
 	default_port = []string{
 		"22",    // SSH
 		"80",    // HTTP
+		"80",    // HTTP
+		"81",    // HTTP
+		"88",    // HTTP
 		"443",   // HTTPS
 		"21",    // FTP
 		"25",    // SMTP

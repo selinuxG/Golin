@@ -35,22 +35,23 @@
 | 12 | Elasticsearch |      |            |
 
 ## 弱口令现阶段支持类型
-| 序号 |      类型       | 是否支持 |       备注        |
-|:--:|:-------------:|:----:|:---------------:|
-| 1  |      SSH      |  √   |     支持协议识别      |
-| 2  |      RDP      |  x   | 已移除,建议此需求使用Goby |
-| 3  |      FTP      |  √   |     支持协议识别      |
-| 4  |     MySQL     |  √   |                 |
-| 5  |  PostgreSQL   |  √   |                 |
-| 6  |     Redis     |  √   |                 |
-| 7  |     MSSQL     |  √   |                 |
-| 8  |      SMB      |  √   |    超时参数暂时不可用    |
-| 9  |    Telnet     |  √   |                 |
-| 10 |    Tomcat     |  √   |                 |
-| 11 |     xlsx      |  x   |       已移除       |
-| 12 |     SNMP      |      |                 |
-| 13 |    MangoDB    |      |                 |
-| 14 | Elasticsearch |  √   |     可识别未授权      |
+| 序号 |      类型       | 是否支持 |
+|:--:|:-------------:|:----:|
+| 1  |      SSH      |  √   |
+| 2  |      RDP      |  √   | 
+| 3  |      FTP      |  √   |
+| 4  |     MySQL     |  √   |
+| 5  |  PostgreSQL   |  √   |
+| 6  |     Redis     |  √   |
+| 7  |     MSSQL     |  √   |
+| 8  |      SMB      |  √   |
+| 9  |    Telnet     |  √   |
+| 10 |    Tomcat     |  √   |
+| 11 |     xlsx      |  x   |
+| 12 |     SNMP      |      |
+| 13 |    MangoDB    |      |
+| 14 | Elasticsearch |  √   |
+| 15 |    oracle     |  √   |
 
 ## 端口扫描现阶段支持功能
 | 序号 |    功能     | 是否支持 |                       备注                        |
@@ -67,7 +68,7 @@
 | 10 |   结果保存    |  √   |         默认不保存,可通过--save保存到portscan.xlsx         |
 | 11 | 主机操作系统识别  |  √   |                      基于ttl                      |
 | 12 |   组件识别    |  √   |                    目前常用200+                     |
-| 13 |  自动扫描弱口令  |  √   |        ssh、redis、mysql、es、telnet、pgsql等         |
+| 13 |  自动扫描弱口令  |  √   |   rdp、ssh、redis、mysql、oracle、es、telnet、pgsql等   |
 
 
 

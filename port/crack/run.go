@@ -13,6 +13,24 @@ var (
 	wg = sync.WaitGroup{}
 )
 
+// ConnectionFunc 定义一个函数类型
+type ConnectionFunc func(ctx context.Context, cancel context.CancelFunc, host, user, passwd string, newport, Timeout int)
+
+// connectionFuncs 创建一个映射，将字符串映射到对应的函数
+var connectionFuncs = map[string]ConnectionFunc{
+	"ssh":       SSH,
+	"mysql":     mySql,
+	"redis":     rediscon,
+	"pgsql":     pgsql,
+	"sqlserver": sqlservercon,
+	"ftp":       ftpcon,
+	"smb":       smbcon,
+	"telnet":    telnetcon,
+	"tomcat":    tomcat,
+	"rdp":       rdpcon,
+	"oracle":    oraclecon,
+}
+
 func Run(host, port string, Timeout, chanCount int, mode string) {
 	if chanCount < 300 {
 		chanCount = 300
@@ -26,28 +44,10 @@ func Run(host, port string, Timeout, chanCount int, mode string) {
 		for _, passwd := range Passwdlist() {
 			ch <- struct{}{}
 			wg.Add(1)
-			switch mode {
-			case "ssh":
-				go SSH(ctx, cancel, host, user, passwd, newport, Timeout)
-			case "mysql":
-				go mySql(ctx, cancel, host, user, passwd, newport, Timeout)
-			case "redis":
-				go rediscon(ctx, cancel, host, user, passwd, newport, Timeout)
-			case "pgsql":
-				go pgsql(ctx, cancel, host, user, passwd, newport, Timeout)
-			case "sqlserver":
-				go sqlservercon(ctx, cancel, host, user, passwd, newport, Timeout)
-			case "ftp":
-				go ftpcon(ctx, cancel, host, user, passwd, newport, Timeout)
-			case "smb":
-				go smbcon(ctx, cancel, host, user, passwd, newport, Timeout)
-			case "telnet":
-				go telnetcon(ctx, cancel, host, user, passwd, newport, Timeout)
-			case "tomcat":
-				go tomcat(ctx, cancel, host, user, passwd, newport, Timeout)
-			case "rdp":
-				go rdpcon(ctx, cancel, host, user, passwd, newport, Timeout)
-			default:
+			// 如果运行模式在connectionFuncs中有key值则进行弱口令扫描
+			if connFunc, ok := connectionFuncs[mode]; ok {
+				go connFunc(ctx, cancel, host, user, passwd, newport, Timeout)
+			} else {
 				wg.Done()
 				<-ch
 			}

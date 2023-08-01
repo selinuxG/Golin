@@ -13,6 +13,8 @@ import (
 	"time"
 )
 
+var title = ""
+
 func IsWeb(host, port string, timeout int) string {
 	transport := &http.Transport{
 		TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
@@ -44,35 +46,36 @@ func IsWeb(host, port string, timeout int) string {
 		}
 		defer resp.Body.Close()
 
-		if (resp.StatusCode >= 200 && resp.StatusCode < 300) || resp.StatusCode == 401 || resp.StatusCode == 403 || resp.StatusCode == 404 {
-			title, html := "", "" //查找title 以及整体网页内容
-			body, _ := io.ReadAll(resp.Body)
-			html = string(body)
-			doc, err := goquery.NewDocumentFromReader(bytes.NewReader(body))
-			if err == nil {
-				title = doc.Find("title").Text()
-				if title != "" {
-					title = fmt.Sprintf("Title:「%s」", title)
-					title = strings.ReplaceAll(title, "\n", "")
-					title = strings.ReplaceAll(title, " ", "")
-				}
+		body, _ := io.ReadAll(resp.Body)
+		doc, err := goquery.NewDocumentFromReader(bytes.NewReader(body))
+		if err == nil {
+			title = doc.Find("title").Text()
+			if title != "" {
+				title = strings.ReplaceAll(title, "\n", "")
+				title = strings.ReplaceAll(title, " ", "")
+				title = fmt.Sprintf("Title:「%s」", title)
 			}
-
-			serverType := resp.Header.Get("Server")
-			if serverType != "" {
-				serverType = fmt.Sprintf("server:「%s」", serverType)
-			}
-
-			// 匹配组件
-			app, checkapp := "", CheckApp(html, resp.Header, resp.Cookies())
-			if checkapp != "" {
-				app = fmt.Sprintf("APP:「%s」", checkapp)
-			}
-			return fmt.Sprintf("%-3s | %-3d | %s %s %s", htype, resp.StatusCode, app, serverType, title)
-
 		}
 
+		serverType := resp.Header.Get("Server")
+		if serverType != "" {
+			serverType = fmt.Sprintf("server:「%s」", serverType)
+		}
+
+		// 匹配组件
+		app, checkapp := "", CheckApp(string(body), resp.Header, resp.Cookies())
+		if checkapp != "" {
+			app = fmt.Sprintf("APP:「%s」", checkapp)
+		}
+		return fmt.Sprintf("%-3s | %-3d | %s %s %s",
+			htype,
+			resp.StatusCode,
+			app,
+			serverType,
+			title,
+		)
 	}
+
 	if port == "443" {
 		return "https"
 	}

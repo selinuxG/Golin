@@ -33,27 +33,14 @@ func IsPortOpen(host, port string) {
 
 	if Carck {
 		protocol := strings.ToLower(parseprotocol)
-		switch {
-		case strings.Contains(protocol, "ssh"):
-			crack.Run(host, port, Timeout, chancount, "ssh")
-		case strings.Contains(protocol, "mysql"):
-			crack.Run(host, port, Timeout, chancount, "mysql")
-		case strings.Contains(protocol, "redis"):
-			crack.Run(host, port, Timeout, chancount, "redis")
-		case strings.Contains(protocol, "pgsql"):
-			crack.Run(host, port, Timeout, chancount, "pgsql")
-		case strings.Contains(protocol, "sqlserver"):
-			crack.Run(host, port, Timeout, chancount, "sqlserver")
-		case strings.Contains(protocol, "ftp"):
-			crack.Run(host, port, Timeout, chancount, "ftp")
-		case strings.Contains(protocol, "smb"):
-			crack.Run(host, port, Timeout, chancount, "smb")
-		case strings.Contains(protocol, "telnet"):
-			crack.Run(host, port, Timeout, chancount, "telnet")
-		case strings.Contains(protocol, "tomcat"):
-			crack.Run(host, port, Timeout, chancount, "tomcat")
-		case strings.Contains(protocol, "rdp"):
-			crack.Run(host, port, Timeout, chancount, "rdp")
+		//支持扫描的类型
+		protocols := []string{"ssh", "mysql", "redis", "pgsql", "sqlserver", "ftp", "smb", "telnet", "tomcat", "rdp", "oracle"}
+
+		for _, proto := range protocols {
+			if strings.Contains(protocol, proto) { //不区分大小写
+				crack.Run(host, port, Timeout, chancount, proto)
+				break
+			}
 		}
 	}
 

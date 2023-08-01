@@ -8,9 +8,23 @@ import (
 )
 
 var (
-	passwdlist = []string{}
-	userlist   = []string{}
+	passwdlist []string
+	userlist   []string
 )
+
+var userMap = map[string][]string{
+	"ssh":       {"root", "admin"},
+	"mysql":     {"root", "mysql"},
+	"redis":     {"", "root"},
+	"pgsql":     {"postgres", "root", "admin"},
+	"sqlserver": {"sa", "administrator"},
+	"ftp":       {"ftp", "admin", "www", "web", "root", "db", "wwwroot", "data"},
+	"smb":       {"administrator", "admin", "guest"},
+	"telnet":    {"admin", "root"},
+	"tomcat":    {"tomcat", "manager", "admin"},
+	"rdp":       {"administrator", "admin", "guest"},
+	"oracle":    {"orcl", "sys", "system", "admin", "test"},
+}
 
 //go:embed password.txt
 var passwd embed.FS
@@ -51,27 +65,5 @@ func Userlist(mode string) []string {
 		return global.RemoveDuplicates(userlist)
 	}
 
-	switch mode {
-	case "ssh":
-		userlist = []string{"root", "admin"}
-	case "mysql":
-		userlist = []string{"root", "mysql"}
-	case "redis":
-		userlist = []string{"", "root"}
-	case "pgsql":
-		userlist = []string{"postgres", "root", "admin"}
-	case "sqlserver":
-		userlist = []string{"sa", "administrator"}
-	case "ftp":
-		userlist = []string{"ftp", "admin", "www", "web", "root", "db", "wwwroot", "data"}
-	case "smb":
-		userlist = []string{"administrator", "admin", "guest"}
-	case "telnet":
-		userlist = []string{"admin", "root"}
-	case "tomcat":
-		userlist = []string{"tomcat", "manager", "admin"}
-	case "rdp":
-		userlist = []string{"administrator", "admin", "guest"}
-	}
-	return userlist
+	return userMap[mode]
 }
