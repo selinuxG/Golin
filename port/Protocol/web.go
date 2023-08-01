@@ -72,7 +72,12 @@ func IsWeb(host, port string, timeout int) string {
 
 		return chekwebinfo(info)
 	}
-	return url
+
+	if port == "443" {
+		return url
+	}
+
+	return ""
 }
 
 // CheckApp 基于返回的body、headers、cookies判定组件信息

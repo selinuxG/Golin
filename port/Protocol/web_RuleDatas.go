@@ -12,6 +12,7 @@ var RuleDatas = []RuleData{
 	{"数据库「ElasticSearch」(未授权)", "body", `(?s)"name"\s*:\s*"[^"]*".*?"cluster_name"\s*:\s*"[^"]*".*?"cluster_uuid"\s*:\s*"[^"]*".*?"number"\s*:\s*"[^"]*"`},
 	{"数据库「MongoDB」", "body", `(MongoDB)`},
 	{"ZABBIX-监控系统", "body", "(Zabbix SIA|<title>omni: Zabbix</title>)"},
+	{"IIS", "body", "(IIS Windows Server)"},
 	{"phpinfo", "body", "(<title>(.*phpinfo.*)</title>)"},
 	{"Tomcat", "body", "(<title>(.*Tomcat.*)</title>|Manager App)"},
 	{"安恒信息-明御运维审计与风险控制系统", "body", "(<title>(.*明御运维审计.*)</title>)"},
