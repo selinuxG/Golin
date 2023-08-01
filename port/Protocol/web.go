@@ -13,75 +13,69 @@ import (
 	"time"
 )
 
-var title = ""
+type webinfo struct {
+	url           string
+	title         string
+	servertype    string
+	app           string
+	statuscode    int
+	ContentLength int64
+	ContentType   string
+}
 
 func IsWeb(host, port string, timeout int) string {
+	url := ""
+
 	transport := &http.Transport{
-		TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
-	}
+		TLSClientConfig: &tls.Config{
+			InsecureSkipVerify: true,
+		}}
 
 	client := &http.Client{
 		Transport: transport,
 		Timeout:   time.Duration(timeout) * time.Second,
 	}
+
 	for _, v := range []string{"http", "https"} {
-		url, htype := "", ""
+		info := webinfo{}
 		switch port {
 		case "443":
-			url = fmt.Sprintf("https://%s", host)
-			htype = "https"
-
+			info.url = fmt.Sprintf("https://%s", host)
 		case "80":
-			url = fmt.Sprintf("http://%s", host)
-			htype = "http"
-
+			info.url = fmt.Sprintf("http://%s", host)
 		default:
-			url = fmt.Sprintf("%s://%s:%s", v, host, port)
-			htype = v
+			info.url = fmt.Sprintf("%s://%s:%s", v, host, port)
 		}
+		url = info.url
 
-		resp, err := client.Get(url)
+		resp, err := client.Get(info.url)
 		if err != nil {
 			continue
 		}
+		info.ContentLength = resp.ContentLength
 		defer resp.Body.Close()
 
 		body, _ := io.ReadAll(resp.Body)
+
 		doc, err := goquery.NewDocumentFromReader(bytes.NewReader(body))
 		if err == nil {
-			title = doc.Find("title").Text()
-			if title != "" {
-				title = strings.ReplaceAll(title, "\n", "")
-				title = strings.ReplaceAll(title, " ", "")
-				title = fmt.Sprintf("Title:「%s」", title)
-			}
-		}
+			info.title = doc.Find("title").Text()
+			info.title = strings.ReplaceAll(info.title, "\n", "")
+			info.title = strings.ReplaceAll(info.title, "  ", "")
 
-		serverType := resp.Header.Get("Server")
-		if serverType != "" {
-			serverType = fmt.Sprintf("server:「%s」", serverType)
 		}
+		info.servertype = resp.Header.Get("Server")
+		info.statuscode = resp.StatusCode
+		info.ContentLength = resp.ContentLength
+		info.ContentType = resp.Header.Get("Content-Type")
+		info.app = CheckApp(string(body), resp.Header, resp.Cookies()) // 匹配组件
 
-		// 匹配组件
-		app, checkapp := "", CheckApp(string(body), resp.Header, resp.Cookies())
-		if checkapp != "" {
-			app = fmt.Sprintf("APP:「%s」", checkapp)
-		}
-		return fmt.Sprintf("%-3s | %-3d | %s %s %s",
-			htype,
-			resp.StatusCode,
-			app,
-			serverType,
-			title,
-		)
+		return chekwebinfo(info)
 	}
-
-	if port == "443" {
-		return "https"
-	}
-	return ""
+	return url
 }
 
+// CheckApp 基于返回的body、headers、cookies判定组件信息
 func CheckApp(body string, head map[string][]string, cookies []*http.Cookie) string {
 	var app []string
 	for _, rule := range RuleDatas {
@@ -112,6 +106,24 @@ func CheckApp(body string, head map[string][]string, cookies []*http.Cookie) str
 		}
 	}
 
-	return strings.Join(global.RemoveDuplicates(app), ",")
+	return strings.Join(global.RemoveDuplicates(app), "、")
 
+}
+
+func chekwebinfo(info webinfo) string {
+	output := fmt.Sprintf("%s ", info.url)
+
+	if info.app != "" {
+		output += fmt.Sprintf(" APP:「%s」", info.app)
+	}
+	if info.title != "" {
+		output += fmt.Sprintf(" title:「%s」", info.title)
+	}
+	if info.servertype != "" {
+		output += fmt.Sprintf(" server:「%s」", info.servertype)
+	}
+
+	output += fmt.Sprintf(" Code:「%d」 Length:「%d」 ContentType:「%s」", info.statuscode, info.ContentLength, info.ContentType)
+
+	return output
 }

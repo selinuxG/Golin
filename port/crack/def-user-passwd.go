@@ -24,6 +24,7 @@ var userMap = map[string][]string{
 	"tomcat":    {"tomcat", "manager", "admin"},
 	"rdp":       {"administrator", "admin", "guest"},
 	"oracle":    {"orcl", "sys", "system", "admin", "test"},
+	"mongodb":   {"", "root", "admin"},
 }
 
 //go:embed password.txt

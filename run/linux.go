@@ -43,7 +43,7 @@ func Linux(cmd *cobra.Command, args []string) {
 			zlog.Warn("自定义执行命令文件不存在！", zap.String("文件", cmdpath))
 			os.Exit(3)
 		}
-		fire, _ := ioutil.ReadFile(cmdpath)
+		fire, _ := os.ReadFile(cmdpath)
 		runcmd = string(fire)
 		//新增： 去掉文件中的换行符，最后一个不是；自动增加然后保存成一条命令
 		newcmd := ""

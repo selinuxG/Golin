@@ -9,7 +9,6 @@ import (
 	"golin/global"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
-	"io/ioutil"
 	"os"
 	"path/filepath"
 	"reflect"
@@ -296,7 +295,7 @@ func RunMysql(myname string, myuser string, mypasswd string, myhost string, mypo
 	//慢日志文件状态
 	db.Raw(`show variables like 'slow_query_log'`).Scan(&variables)
 	if len(variables) == 1 {
-		echoinfo += fmt.Sprintf("<td>%s</td>>", variables[0].Value)
+		echoinfo += fmt.Sprintf("<td>%s</td>", variables[0].Value)
 	} else {
 		echoinfo += "<td>%s</td>"
 	}
@@ -383,7 +382,7 @@ func Byte2Str(b []byte) string {
 
 func echosqlfie(stratic bool, path string) {
 	if stratic {
-		content, err := ioutil.ReadFile(path)
+		content, err := os.ReadFile(path)
 		if err != nil {
 			panic(err)
 		}

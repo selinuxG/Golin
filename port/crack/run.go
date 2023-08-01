@@ -29,6 +29,7 @@ var connectionFuncs = map[string]ConnectionFunc{
 	"tomcat":    tomcat,
 	"rdp":       rdpcon,
 	"oracle":    oraclecon,
+	"mongodb":   mongodbcon,
 }
 
 func Run(host, port string, Timeout, chanCount int, mode string) {

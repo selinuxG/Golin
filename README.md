@@ -47,11 +47,11 @@
 | 8  |      SMB      |  √   |
 | 9  |    Telnet     |  √   |
 | 10 |    Tomcat     |  √   |
-| 11 |     xlsx      |  x   |
-| 12 |     SNMP      |      |
-| 13 |    MangoDB    |      |
-| 14 | Elasticsearch |  √   |
-| 15 |    oracle     |  √   |
+| 11 |    MangoDB    |  √   |
+| 12 | Elasticsearch |  √   |
+| 13 |    oracle     |  √   |
+| 14 |     SNMP      |      |
+
 
 ## 端口扫描现阶段支持功能
 | 序号 |    功能     | 是否支持 |                       备注                        |

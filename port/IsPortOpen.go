@@ -34,7 +34,7 @@ func IsPortOpen(host, port string) {
 	if Carck {
 		protocol := strings.ToLower(parseprotocol)
 		//支持扫描的类型
-		protocols := []string{"ssh", "mysql", "redis", "pgsql", "sqlserver", "ftp", "smb", "telnet", "tomcat", "rdp", "oracle"}
+		protocols := []string{"ssh", "mysql", "redis", "pgsql", "sqlserver", "ftp", "smb", "telnet", "tomcat", "rdp", "oracle", "mongodb"}
 
 		for _, proto := range protocols {
 			if strings.Contains(protocol, proto) { //不区分大小写

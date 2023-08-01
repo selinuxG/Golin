@@ -31,7 +31,7 @@ var (
 
 // Rangefile 遍历文件并创建线程 path=模式目录 spr=按照什么分割 runtype运行类型
 func Rangefile(path string, spr string, runtype string) {
-	fire, _ := ioutil.ReadFile(path)
+	fire, _ := os.ReadFile(path)
 	lines := strings.Split(string(fire), "\n")
 	wg.Add(len(lines))
 	for i := 0; i < len(lines); i++ {
