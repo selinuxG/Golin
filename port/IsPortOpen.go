@@ -28,19 +28,23 @@ func IsPortOpen(host, port string) {
 
 	outputMux.Lock()
 	parseprotocol := parseProtocol(conn, host, port) //识别协议
-	fmt.Printf("\r| %-2s | %-15s | %-4s |%s \n", fmt.Sprintf("%s", color.GreenString("%s", "✓")), host, port, parseprotocol)
+	fmt.Printf("\r| %-2s | %-15s | %-5s |%s \n", fmt.Sprintf("%s", color.GreenString("%s", "✓")), host, port, parseprotocol)
 	infolist = append(infolist, INFO{host, port, parseprotocol})
 
 	if Carck {
 		protocol := strings.ToLower(parseprotocol)
-		//支持扫描的类型
-		protocols := []string{"ssh", "mysql", "redis", "pgsql", "sqlserver", "ftp", "smb", "telnet", "tomcat", "rdp", "oracle", "mongodb"}
-
+		//支持遍历字典扫描的类型
+		protocols := []string{"ssh", "mysql", "redis", "pgsql", "sqlserver", "ftp", "smb", "telnet", "tomcat", "rdp", "oracle"}
 		for _, proto := range protocols {
 			if strings.Contains(protocol, proto) { //不区分大小写
 				crack.Run(host, port, Timeout, chancount, proto)
 				break
 			}
+		}
+
+		//mongodb模式只进行验证未授权访问
+		if strings.Contains(protocol, "mongodb") {
+			crack.Mongodbcon(host, port)
 		}
 	}
 

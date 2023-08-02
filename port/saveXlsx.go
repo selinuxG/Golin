@@ -3,6 +3,7 @@ package port
 import (
 	"fmt"
 	"github.com/xuri/excelize/v2"
+	"regexp"
 )
 
 func saveXlsx(infoList []INFO, ipList []string) {
@@ -40,7 +41,10 @@ func saveXlsx(infoList []INFO, ipList []string) {
 		_ = f.SetCellValue("Sheet1", fmt.Sprintf("A%d", cell), cell-1)
 		_ = f.SetCellValue("Sheet1", fmt.Sprintf("B%d", cell), info.Host)
 		_ = f.SetCellValue("Sheet1", fmt.Sprintf("C%d", cell), info.Port)
-		_ = f.SetCellValue("Sheet1", fmt.Sprintf("D%d", cell), info.Protocol)
+		// 匹配 ANSI 颜色代码的正则表达式
+		re := regexp.MustCompile(`\x1b\[[0-9;]*m`)
+		Protocol := re.ReplaceAllString(info.Protocol, "")
+		_ = f.SetCellValue("Sheet1", fmt.Sprintf("D%d", cell), Protocol)
 	}
 
 	//存活的主机
