@@ -66,7 +66,6 @@ func IsWeb(host, port string, timeout int, xss bool) string {
 		info.statuscode = resp.StatusCode
 		info.ContentType = resp.Header.Get("Content-Type")
 		info.app = CheckApp(string(body), resp.Header, resp.Cookies()) // 匹配组件
-
 		if xss {
 			checkXSS, xssPayloads := CheckXss(url)
 			if checkXSS {

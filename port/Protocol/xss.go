@@ -8,12 +8,9 @@ import (
 	"strings"
 )
 
-var (
-	foundXSS = false
-	ply      = ""
-)
-
 func CheckXss(targetURL string) (bool, string) {
+	foundXSS := false
+	ply := ""
 	xssPayloads := []string{
 		`<sCrIpt>alert("GYS")</SCriPt>`,
 		`<img src=x onerror=alert("GYS")>`,
@@ -80,14 +77,32 @@ func CheckXss(targetURL string) (bool, string) {
 			}
 			response.Body.Close()
 
-			_, err = goquery.NewDocumentFromReader(strings.NewReader(string(body)))
+			respDoc, err := goquery.NewDocumentFromReader(strings.NewReader(string(body)))
 			if err != nil {
 				continue
 			}
 
-			if strings.Contains(string(body), "GYS") {
-				foundXSS = true
-				ply = payload
+			xssDetected := false
+			respDoc.Find("script, img, div").Each(func(i int, s *goquery.Selection) {
+				if s.Is("script") && strings.Contains(s.Text(), "GYS") {
+					xssDetected = true
+				} else {
+					for _, attr := range []string{"onerror", "onmouseover", "src"} {
+						attrValue, exists := s.Attr(attr)
+						if exists && strings.Contains(attrValue, "GYS") {
+							xssDetected = true
+							break
+						}
+					}
+				}
+				if xssDetected {
+					foundXSS = true
+					ply = payload
+					return
+				}
+			})
+
+			if xssDetected {
 				break
 			}
 		}
