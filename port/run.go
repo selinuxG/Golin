@@ -13,6 +13,7 @@ var (
 	portlist   = []string{}              //扫描的端口
 	NoPing     bool                      //是否禁止ping监测
 	Carck      bool                      //是否进行弱口令扫描
+	Xss        bool                      //是否进行xss扫描
 	ch         = make(chan struct{}, 30) //控制并发数
 	wg         = sync.WaitGroup{}
 	chancount  int    //并发数量
@@ -63,6 +64,13 @@ func ParseFlags(cmd *cobra.Command, args []string) {
 		Carck = false
 	} else {
 		Carck = true
+	}
+
+	noxss, _ := cmd.Flags().GetBool("noxss") //xss扫描
+	if noxss {
+		Xss = false
+	} else {
+		Xss = true
 	}
 
 	random, _ = cmd.Flags().GetBool("random") //打乱顺序

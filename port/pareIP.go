@@ -7,8 +7,13 @@ import (
 	"strings"
 )
 
-// parseIP解析IP地址范围 支持：192.168.1.1-100、192.168.1.1/24、192.168.1.1、baidu.com
+// parseIP解析IP地址范围 支持：192.168.1.1-100、192.168.1.1/24、192.168.1.1、baidu.com、http://www.baidu.com
 func parseIP(ip string) {
+	ip = strings.ReplaceAll(ip, "https://", "")
+	ip = strings.ReplaceAll(ip, "http://", "")
+	if len(ip) > 0 && ip[len(ip)-1] == '/' {
+		ip = ip[:len(ip)-1]
+	}
 
 	if strings.Count(ip, ",") == 0 {
 		ip = ip + ","

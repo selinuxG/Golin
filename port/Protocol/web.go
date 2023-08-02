@@ -20,9 +20,10 @@ type webinfo struct {
 	app         string
 	statuscode  int
 	ContentType string
+	xss         string
 }
 
-func IsWeb(host, port string, timeout int) string {
+func IsWeb(host, port string, timeout int, xss bool) string {
 	url := ""
 
 	transport := &http.Transport{
@@ -65,6 +66,13 @@ func IsWeb(host, port string, timeout int) string {
 		info.statuscode = resp.StatusCode
 		info.ContentType = resp.Header.Get("Content-Type")
 		info.app = CheckApp(string(body), resp.Header, resp.Cookies()) // 匹配组件
+
+		if xss {
+			checkXSS, xssPayloads := CheckXss(url)
+			if checkXSS {
+				info.xss = xssPayloads
+			}
+		}
 
 		return chekwebinfo(info)
 	}
@@ -113,6 +121,10 @@ func CheckApp(body string, head map[string][]string, cookies []*http.Cookie) str
 
 func chekwebinfo(info webinfo) string {
 	output := fmt.Sprintf("%s ", info.url)
+
+	if info.xss != "" {
+		output += color.RedString("%s", fmt.Sprintf(" XSS:「%s」", info.xss))
+	}
 
 	if info.app != "" {
 		output += color.GreenString("%s", fmt.Sprintf(" APP:「%s」", info.app))

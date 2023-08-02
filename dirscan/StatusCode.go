@@ -67,8 +67,18 @@ func isStatusCodeOk(URL string) {
 			ContentType:   contype,
 			Line:          line,
 		}
+		info := ""
+		if strings.Contains(strings.ToLower(title), "index of") {
+			info += " 目录浏览漏洞"
+		}
+		if contype == "application/zip" {
+			info += " 文件下载"
+		}
+		if contype == "text/xml" {
+			info += " 疑似敏感信息泄露"
+		}
 		_ = AppendUrlStatusToFile(yesurl) // 写入文件
-		fmt.Printf("\r%s %-40s | code:%s | Title:%-30s | Length:%s | Type:%-5s | Line:%-5s \n",
+		fmt.Printf("\r%s %-40s | code:%s | Title:%-30s | Length:%s | Type:%-5s | Line:%-5s |%s\n",
 			color.GreenString("%s", "[√]"),
 			yesurl.Url,
 			color.GreenString("%d", yesurl.Code),
@@ -76,6 +86,7 @@ func isStatusCodeOk(URL string) {
 			color.GreenString("%s", yesurl.ContentLength),
 			color.GreenString("%s", yesurl.ContentType),
 			color.GreenString("%d", yesurl.Line),
+			color.RedString("%s", info),
 		)
 
 		return

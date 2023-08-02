@@ -1,4 +1,8 @@
 /
+/crossdomain.xml
+/.idea/workspace.xml
+/.idea/modules.xml
+/index.bak
 /!.gitignore
 /!.htaccess
 /!.htpasswd
@@ -71,6 +75,9 @@
 /0admin/
 /0manager/
 /1
+/htaccess
+/iProber2.php/www/web/default/iProber2
+/
 /1.7z
 /1.htaccess
 /1.htpasswd
