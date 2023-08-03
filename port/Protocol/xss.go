@@ -1,6 +1,7 @@
 package Protocol
 
 import (
+	"bytes"
 	"github.com/PuerkitoBio/goquery"
 	"io"
 	"net/http"
@@ -8,7 +9,7 @@ import (
 	"strings"
 )
 
-func CheckXss(targetURL string) (bool, string) {
+func CheckXss(targetURL string, body []byte) (bool, string) {
 	foundXSS := false
 	ply := ""
 	xssPayloads := []string{
@@ -19,13 +20,7 @@ func CheckXss(targetURL string) (bool, string) {
 		`<IMG SRC="javascript:alert('GYS');">`,
 	}
 
-	resp, err := http.Get(targetURL)
-	if err != nil {
-		return false, ""
-	}
-	defer resp.Body.Close()
-
-	doc, err := goquery.NewDocumentFromReader(resp.Body)
+	doc, err := goquery.NewDocumentFromReader(bytes.NewReader(body))
 	if err != nil {
 		return false, ""
 	}

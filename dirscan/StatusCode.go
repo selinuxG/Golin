@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/PuerkitoBio/goquery"
 	"github.com/fatih/color"
+	"golin/port/Protocol"
 	"strconv"
 	"strings"
 	"sync"
@@ -16,12 +17,42 @@ var (
 )
 
 type UrlStatus struct {
-	Url           string //url地址
-	Code          int    //状态码
-	Title         string //标题
-	ContentLength string //大小
-	ContentType   string //媒体类型
-	Line          int    //行数
+	Url         string   //url地址
+	Code        int      //状态码
+	Title       string   //标题
+	ContentType string   //媒体类型
+	Line        int      //行数
+	App         string   //组件
+	info        []string //漏洞
+}
+
+var ContentType = map[string]string{
+	"application/zip":               "文件下载",
+	"application/octet-stream":      "文件下载",
+	"text/xml":                      "疑似敏感接口",
+	"application/xml":               "疑似敏感接口",
+	"application/json":              "疑似敏感接口",
+	"multipart/form-data":           "文件上传",
+	"video/avi":                     "文件下载",
+	"audio/x-wav":                   "文件下载",
+	"audio/x-ms-wma":                "文件下载",
+	"audio/mp3":                     "文件下载",
+	"video/mpeg4":                   "文件下载",
+	"application/javascript":        "JavaScript脚本文件",
+	"image/jpeg":                    "图片文件",
+	"image/png":                     "图片文件",
+	"application/pdf":               "PDF文件下载",
+	"application/msword":            "Word文档下载",
+	"application/vnd.ms-excel":      "Excel文档下载",
+	"image/gif":                     "图片文件",
+	"image/tiff":                    "图片文件",
+	"video/mp4":                     "视频文件下载",
+	"video/webm":                    "视频文件下载",
+	"audio/ogg":                     "音频文件下载",
+	"audio/mpeg":                    "音频文件下载",
+	"application/sql":               "数据库文件",
+	"application/rtf":               "RTF文件下载",
+	"application/x-shockwave-flash": "Flash文件下载",
 }
 
 func isStatusCodeOk(URL string) {
@@ -60,37 +91,55 @@ func isStatusCodeOk(URL string) {
 		contype = strings.Split(contype, ";")[0]
 
 		yesurl := UrlStatus{
-			Url:           URL,
-			Code:          resp.StatusCode,
-			Title:         title,
-			ContentLength: FormatBytes(resp.ContentLength),
-			ContentType:   contype,
-			Line:          line,
+			Url:         URL,
+			Code:        resp.StatusCode,
+			Title:       title,
+			ContentType: contype,
+			Line:        line,
 		}
-		info := ""
-		if strings.Contains(strings.ToLower(title), "index of") {
-			info += " 目录浏览漏洞"
-		}
-		if contype == "application/zip" {
-			info += " 文件下载"
-		}
-		if contype == "text/xml" {
-			info += " 疑似敏感信息泄露"
-		}
-		_ = AppendUrlStatusToFile(yesurl) // 写入文件
-		fmt.Printf("\r%s %-40s | code:%s | Title:%-30s | Length:%s | Type:%-5s | Line:%-5s |%s\n",
-			color.GreenString("%s", "[√]"),
-			yesurl.Url,
-			color.GreenString("%d", yesurl.Code),
-			color.GreenString("%s", yesurl.Title),
-			color.GreenString("%s", yesurl.ContentLength),
-			color.GreenString("%s", yesurl.ContentType),
-			color.GreenString("%d", yesurl.Line),
-			color.RedString("%s", info),
-		)
 
-		return
+		if strings.Contains(strings.ToLower(title), "index of") {
+			yesurl.info = append(yesurl.info, "目录浏览漏洞")
+		}
+
+		for k, v := range ContentType {
+			//fmt.Println(contype, k, v)
+			if strings.Contains(contype, k) {
+				yesurl.info = append(yesurl.info, v)
+			}
+		}
+
+		check, xss := Protocol.CheckXss(URL, body)
+		if check {
+			yesurl.info = append(yesurl.info, fmt.Sprintf("xss:%s", xss))
+		}
+		yesurl.App = Protocol.CheckApp(string(body), resp.Header, req.Cookies) // 匹配组件
+
+		_ = AppendUrlStatusToFile(yesurl) // 写入文件
+
+		fmt.Printf(echoinfo(yesurl, URL))
 	}
+}
+
+// echoinfo 输出详细信息
+func echoinfo(yesurl UrlStatus, URL string) string {
+	echo := ""
+	if yesurl.App != "" {
+		echo += color.GreenString("%s", fmt.Sprintf(" APP:「%s」", yesurl.App))
+	}
+
+	if len(yesurl.info) > 0 {
+		echo += fmt.Sprintf("%s", color.RedString("%s ", fmt.Sprintf("[%s]", strings.Join(yesurl.info, ","))))
+	}
+
+	if yesurl.Title != "" {
+		echo += fmt.Sprintf("%s", color.BlueString(" %s", fmt.Sprintf("title:「%s」 ", yesurl.Title)))
+	}
+	echo += fmt.Sprintf("%s", color.MagentaString("%s", fmt.Sprintf("ContentType:%s  ", yesurl.ContentType)))
+	echo += fmt.Sprintf("Code:%d  Line:%d", yesurl.Code, yesurl.Line)
+
+	return fmt.Sprintf("\r%-45s| %s \n", URL, echo)
+
 }
 
 // statusCodeInRange 确认切片状态是否在搜索队列中

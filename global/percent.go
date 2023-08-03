@@ -21,6 +21,7 @@ func Percent(mu *sync.Mutex, succeCount, countall int) {
 	}
 
 	percentStr := fmt.Sprintf("%.2f", percent) // 将百分比值格式化为字符串
+	fmt.Print("\033[2K")                       // 擦除整行
 	fmt.Printf("\r[%s] 当前进度: %s",
 		spinChar,
 		color.RedString("%s", fmt.Sprintf("%s%%", percentStr)),

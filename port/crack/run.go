@@ -44,26 +44,32 @@ func Run(host, port string, Timeout, chanCount int, mode string) {
 		for _, passwd := range Passwdlist() {
 			ch <- struct{}{}
 			wg.Add(1)
-			// 如果运行模式在connectionFuncs中有key值则进行弱口令扫描
+
+			fmt.Printf("\033[2K\r") // 擦除整行
+			fmt.Printf("\r%s", color.MagentaString("\r[...] 正在进行弱口令扫描 -> %s", fmt.Sprintf("%s://%s:%s?user=%s?passwd=%s", mode, host, port, user, passwd)))
+
 			if connFunc, ok := connectionFuncs[mode]; ok {
 				go connFunc(ctx, cancel, host, user, passwd, newport, Timeout)
 			} else {
 				wg.Done()
 				<-ch
 			}
+
 		}
 	}
 	wg.Wait()
 }
 
 func end(host, user, passwd string, port int, mode string) {
+	fmt.Printf("\033[2K\r") // 擦除整行
 	fmt.Printf("\r| %-2s | %-15s | %-4d |%-6s|%-4s|%s \n",
 		fmt.Sprintf("%s", color.GreenString("%s", "✓")),
 		host,
 		port,
 		color.RedString("%s", "弱口令"),
 		mode,
-		fmt.Sprintf("%s	%s", user, passwd),
+		fmt.Sprintf("%s", color.RedString(fmt.Sprintf("%s	%s", user, passwd))),
 	)
+	fmt.Printf("\033[2K\r") // 擦除整行
 
 }
