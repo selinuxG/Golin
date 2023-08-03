@@ -14,6 +14,7 @@ var (
 	NoPing     bool                      //是否禁止ping监测
 	Carck      bool                      //是否进行弱口令扫描
 	Xss        bool                      //是否进行xss扫描
+	Poc        bool                      //是否进行poc扫描
 	ch         = make(chan struct{}, 30) //控制并发数
 	wg         = sync.WaitGroup{}
 	chancount  int    //并发数量
@@ -71,6 +72,13 @@ func ParseFlags(cmd *cobra.Command, args []string) {
 		Xss = false
 	} else {
 		Xss = true
+	}
+
+	nopoc, _ := cmd.Flags().GetBool("nopoc") //poc扫描
+	if nopoc {
+		Poc = false
+	} else {
+		Poc = true
 	}
 
 	random, _ = cmd.Flags().GetBool("random") //打乱顺序

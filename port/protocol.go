@@ -45,7 +45,7 @@ var portProtocols = map[string]string{
 }
 
 // parseProtocol 协议/组件分析：有的基于默认端口去对应服务
-func parseProtocol(conn net.Conn, host, port string, xss bool) string {
+func parseProtocol(conn net.Conn, host, port string, xss, Poc bool) string {
 
 	if protocol, ok := portProtocols[port]; ok {
 		return protocol
@@ -81,7 +81,7 @@ func parseProtocol(conn net.Conn, host, port string, xss bool) string {
 		return "数据库|PostgreSQL"
 
 	default:
-		isWeb := Protocol.IsWeb(host, port, Timeout, xss)
+		isWeb := Protocol.IsWeb(host, port, Timeout, xss, Poc)
 		if isWeb != "" {
 			return fmt.Sprintf("%-5s| %s", "WEB应用", isWeb)
 		}

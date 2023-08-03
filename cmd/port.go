@@ -24,6 +24,7 @@ func init() {
 	portCmd.Flags().Bool("save", false, "保存结果")
 	portCmd.Flags().Bool("nocrack", false, "此参数是不进行弱口令扫描")
 	portCmd.Flags().Bool("noxss", false, "此参数是不进行xss扫描")
+	portCmd.Flags().Bool("nopoc", false, "此参数是不进行poc漏洞扫描")
 	portCmd.Flags().StringP("userfile", "", "", "此参数是自定义用户字典文件")
 	portCmd.Flags().StringP("passwdfile", "", "", "此参数是自定义密码字典文件")
 }

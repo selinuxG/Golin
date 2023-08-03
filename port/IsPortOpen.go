@@ -27,8 +27,8 @@ func IsPortOpen(host, port string) {
 	}
 
 	outputMux.Lock()
-	parseprotocol := parseProtocol(conn, host, port, Xss) //识别协议
-	fmt.Print("\033[2K")                                  // 擦除整行
+	parseprotocol := parseProtocol(conn, host, port, Xss, Poc) //识别协议、xss、poc扫描
+	fmt.Print("\033[2K")                                       // 擦除整行
 	fmt.Printf("\r| %-2s | %-15s | %-4s |%s \n", fmt.Sprintf("%s", color.GreenString("%s", "✓")), host, port, parseprotocol)
 	infolist = append(infolist, INFO{host, port, parseprotocol})
 

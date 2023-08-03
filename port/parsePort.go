@@ -49,13 +49,22 @@ func parsePort(port string) {
 
 var (
 	default_port = []string{
-		"22",    // SSH
-		"80",    // HTTP
-		"80",    // HTTP
-		"81",    // HTTP
-		"88",    // HTTP
-		"443",   // HTTPS
-		"21",    // FTP
+		"22",  // SSH
+		"80",  // HTTP
+		"81",  // HTTP
+		"82",  // HTTP
+		"88",  // HTTP
+		"443", // HTTPS
+		"21",  // FTP
+		"9999",
+		"9080",
+		"8989",
+		"808",
+		"8443",
+		"9080",
+		"8001",
+		"8034",
+		"10002",
 		"25",    // SMTP
 		"110",   // POP3
 		"143",   // IMAP

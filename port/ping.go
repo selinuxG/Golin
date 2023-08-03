@@ -3,6 +3,7 @@ package port
 import (
 	"fmt"
 	"github.com/fatih/color"
+	"net"
 	"os/exec"
 	"regexp"
 	"runtime"
@@ -31,14 +32,14 @@ func SanPing() {
 				pingwg.Done()
 				<-pingch
 			}()
-			yesPing, pingOS := NetWorkPing(ip) //是否ping通、ttl值
+			yesPing, pingOS, timems := NetWorkPing(ip) //是否ping通、ttl值
 			if !yesPing {
 				outputMux.Lock()
 				filteredIPList = append(filteredIPList, ip) //ping不通放入待删除切片中不进行检测
 				outputMux.Unlock()
 			} else {
 				outputMux.Lock()
-				fmt.Printf("|%-5s| %-15s|%-5s\n", color.GreenString("%s", "存活主机"), ip, pingOS)
+				fmt.Printf("|%-5s| %-15s|%-7s|%-4s|%sms\n", color.GreenString("%s", "存活主机"), ip, pingOS, isPublicIP(net.ParseIP(ip)), timems)
 				switch pingOS {
 				case "linux":
 					linuxcount += 1
@@ -53,7 +54,7 @@ func SanPing() {
 }
 
 // NetWorkPing 检查ping 返回是否可ping通以及操作系统
-func NetWorkPing(ip string) (bool, string) {
+func NetWorkPing(ip string) (bool, string, string) {
 	var cmd *exec.Cmd
 	if runtime.GOOS == "windows" {
 		cmd = exec.Command("ping", "-n", "2", "-w", "1", ip)
@@ -66,9 +67,23 @@ func NetWorkPing(ip string) (bool, string) {
 	}
 	output, err := cmd.Output()
 	if err != nil {
-		return false, ""
+		return false, "", ""
 	}
 	outttl := strings.ToLower(string(output)) //所有大写转换为小写
+
+	// time
+	re := regexp.MustCompile(`=(\d+)ms`)
+	timems := ""
+	timeStr := re.FindStringSubmatch(outttl)
+	if len(timeStr) > 1 {
+		inttime, _ := strconv.Atoi(timeStr[1])
+		if inttime > 10 {
+			timems = fmt.Sprintf("%s", color.RedString("%s", timeStr[1]))
+		} else {
+			timems = fmt.Sprintf("%s", color.GreenString("%s", timeStr[1]))
+		}
+	}
+
 	if strings.Contains(outttl, "ttl") {
 		// Extract TTL value
 		re := regexp.MustCompile(`ttl=(\d+)`)
@@ -78,13 +93,33 @@ func NetWorkPing(ip string) (bool, string) {
 			ttl, _ := strconv.Atoi(ttlStr[1])
 			switch {
 			case ttl <= 64:
-				return true, "linux"
+				return true, "linux", timems
 			case ttl <= 128:
-				return true, "Windows"
+				return true, "Windows", timems
 			default:
-				return true, "Unknown"
+				return true, "Unknown", timems
 			}
 		}
 	}
-	return false, ""
+	return false, "", ""
+}
+
+// isPublicIP 检查是局域网还是互联网
+func isPublicIP(IP net.IP) string {
+	private := "互联网"
+	// 定义私有网络的范围
+	privateNetworks := []string{
+		"10.0.0.0/8",     // 10.0.0.0 - 10.255.255.255
+		"172.16.0.0/12",  // 172.16.0.0 - 172.31.255.255
+		"192.168.0.0/16", // 192.168.0.0 - 192.168.255.255
+	}
+
+	for _, privateNet := range privateNetworks {
+		_, ipnet, _ := net.ParseCIDR(privateNet)
+		if ipnet.Contains(IP) {
+			private = "局域网"
+		}
+	}
+
+	return private
 }

@@ -7,6 +7,7 @@ import (
 	"github.com/PuerkitoBio/goquery"
 	"github.com/fatih/color"
 	"golin/global"
+	"golin/poc"
 	"io"
 	"net/http"
 	"regexp"
@@ -23,7 +24,7 @@ type webinfo struct {
 	xss         string
 }
 
-func IsWeb(host, port string, timeout int, xss bool) string {
+func IsWeb(host, port string, timeout int, xss, Poc bool) string {
 	url := ""
 
 	transport := &http.Transport{
@@ -66,11 +67,19 @@ func IsWeb(host, port string, timeout int, xss bool) string {
 		info.statuscode = resp.StatusCode
 		info.ContentType = resp.Header.Get("Content-Type")
 		info.app = CheckApp(string(body), resp.Header, resp.Cookies()) // 匹配组件
+
+		//xss扫描
 		if xss {
 			checkXSS, xssPayloads := CheckXss(url, body)
 			if checkXSS {
 				info.xss = xssPayloads
 			}
+		}
+
+		//poc扫描
+		if Poc {
+			poc.CheckPoc(info.url, info.app)
+
 		}
 
 		return chekwebinfo(info)
