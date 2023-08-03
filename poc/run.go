@@ -21,7 +21,9 @@ func CheckPoc(url, app string) {
 	app = strings.ToLower(app)
 	switch {
 	case strings.Contains(app, "spring"):
-		CVE_2022_22947(url, "pwd")
+		CVE_2022_22947(url, "pwd") //任意执行命令
+	case strings.Contains(app, "nps"):
+		nps_default_passwd(url) //默认用户密码
 	}
 
 }
@@ -29,7 +31,7 @@ func CheckPoc(url, app string) {
 func echoFlag(flag Flagcve) {
 	fmt.Printf("\033[2K\r") // 擦除整行
 	fmt.Printf("\r| %-2s | %-15s | %-15s |%s\n",
-		fmt.Sprintf("%s", color.RedString("%s", "√")),
+		fmt.Sprintf("%s", color.RedString("%s", "✓")),
 		fmt.Sprintf("%s", color.RedString("发现漏洞_%s", flag.cve)),
 		fmt.Sprintf("%s", color.RedString(flag.url)),
 		fmt.Sprintf("%s", color.RedString(flag.flag)),

@@ -3,49 +3,15 @@ package port
 import (
 	"fmt"
 	"github.com/fatih/color"
-	"math/rand"
+	"golin/global"
+	"golin/port/crack"
+	"net"
+	"strings"
 	"time"
 )
 
 func scanPort() {
-	if !NoPing {
-		SanPing()
-		pingwg.Wait()
-		// 删除ping失败的主机
-		for _, ip := range filteredIPList {
-			for i := 0; i < len(iplist); i++ {
-				if iplist[i] == ip {
-					iplist = append(iplist[:i], iplist[i+1:]...)
-					break
-				}
-			}
-		}
-	}
-
-	if random { //打乱主机顺序
-		r := rand.New(rand.NewSource(time.Now().UnixNano()))
-		r.Shuffle(len(iplist), func(i, j int) {
-			iplist[i], iplist[j] = iplist[j], iplist[i]
-		})
-	}
-
-	if !NoPing && len(iplist) == 0 {
-		fmt.Printf("%s\n", color.RedString("%s", "[-] 通过尝试PING探测存活主机为0！可通过--noping跳过PING尝试"))
-		return
-	}
-
-	fmt.Println("+------------------------------+")
-	fmt.Printf("[*] Linux设备:%v Windows设备:%v 未识别:%v 共计存活:%v\n[*] 开始扫描端口:%v 并发数:%v 共计尝试:%v 端口连接超时:%v\n",
-		color.GreenString("%d", linuxcount),
-		color.GreenString("%d", windowscount),
-		color.RedString("%d", len(iplist)-linuxcount-windowscount),
-		color.GreenString("%d", len(iplist)),
-		color.GreenString("%d", len(portlist)),
-		color.GreenString("%d", chancount),
-		color.GreenString("%d", len(iplist)*len(portlist)),
-		color.GreenString("%d", Timeout),
-	)
-	fmt.Println("+------------------------------+")
+	checkPing()
 
 	allcount = len(iplist) * len(portlist)
 
@@ -53,15 +19,22 @@ func scanPort() {
 		for _, port := range portlist {
 			ch <- struct{}{}
 			wg.Add(1)
-			outputMux.Lock()
-			go IsPortOpen(ip, port)
-			outputMux.Unlock()
+			go IsPortOpen(ip, port) //扫描端口是否存活
 		}
 	}
 
 	wg.Wait()
 	time.Sleep(time.Second * 1) //等待1秒是为了正常显示进度条
+
 	fmt.Printf("\r+------------------------------+\n")
+	fmt.Printf("[*] 存活主机:%v 存活端口:%v ssh:%v rdp:%v web服务:%v 数据库:%v \n",
+		color.GreenString("%d", len(iplist)),
+		color.GreenString("%d", len(infolist)),
+		color.GreenString("%d", protocolExistsAndCount("ssh")),
+		color.GreenString("%d", protocolExistsAndCount("rdp")),
+		color.GreenString("%d", protocolExistsAndCount("WEB应用")),
+		color.GreenString("%d", protocolExistsAndCount("数据库")),
+	)
 
 	if save {
 		if len(infolist) > 0 || len(iplist) > 0 {
@@ -69,9 +42,65 @@ func scanPort() {
 		}
 	}
 
-	fmt.Printf("[*] 扫描主机: %v 存活端口: %v \n",
-		color.GreenString("%d", len(iplist)),
-		color.GreenString("%d", len(infolist)),
-	)
+}
 
+// IsPortOpen 判断端口是否开放并进行xss、poc、弱口令扫描
+func IsPortOpen(host, port string) {
+
+	defer func() {
+		wg.Done()
+		<-ch
+		outputMux.Lock()
+		donecount += 1
+		outputMux.Unlock()
+		global.Percent(&outputMux, donecount, allcount)
+	}()
+
+	address := net.JoinHostPort(host, port)
+	conn, err := net.DialTimeout("tcp", address, time.Duration(Timeout)*time.Second)
+	if err != nil {
+		return
+	}
+
+	parseprotocol := parseProtocol(conn, host, port, Xss, Poc) //识别协议、xss、poc扫描
+
+	fmt.Print("\033[2K") // 擦除整行
+	fmt.Printf("\r| %-2s | %-15s | %-4s |%s \n",
+		fmt.Sprintf("%s", color.GreenString("%s", "✓")),
+		host,
+		port,
+		parseprotocol,
+	)
+	outputMux.Lock()
+	infolist = append(infolist, INFO{host, port, parseprotocol})
+	outputMux.Unlock()
+
+	if Carck {
+		protocol := strings.ToLower(parseprotocol)
+		//支持遍历字典扫描的类型
+		protocols := []string{"ssh", "mysql", "redis", "pgsql", "sqlserver", "ftp", "smb", "telnet", "tomcat", "rdp", "oracle"}
+		for _, proto := range protocols {
+			if strings.Contains(protocol, proto) { //不区分大小写
+				crack.Run(host, port, Timeout, chancount, proto)
+				break
+			}
+		}
+
+		//mongodb模式只进行验证未授权访问
+		if strings.Contains(protocol, "mongodb") {
+			crack.Mongodbcon(host, port)
+		}
+	}
+
+}
+
+// protocolExistsAndCount 接受一个协议特征返回总数
+func protocolExistsAndCount(protocol string) (count int) {
+	count = 0
+	for _, info := range infolist {
+		if strings.Contains(strings.ToLower(info.Protocol), strings.ToLower(protocol)) {
+			count++
+		}
+	}
+	return count
 }

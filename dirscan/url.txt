@@ -78,11 +78,13 @@
 /htaccess
 /iProber2.php/www/web/default/iProber2
 /
+/nacos/#/login
 /1.7z
 /1.htaccess
 /1.htpasswd
 /1.php
 /1.rar
+/debug/pprof
 /1.sql
 /1.tar
 /1.tar.bz2

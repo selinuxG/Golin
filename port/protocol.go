@@ -38,7 +38,6 @@ var portProtocols = map[string]string{
 	"5901":  "VNC",
 	"6000":  "X11",
 	"6443":  "Kubernetes",
-	"9000":  "Hadoop",
 	"5672":  "RabbitMq",
 	"9200":  "数据库|ES",
 	"27017": "数据库|MongoDB",

@@ -3,6 +3,7 @@ package port
 import (
 	"fmt"
 	"github.com/fatih/color"
+	"math/rand"
 	"net"
 	"os/exec"
 	"regexp"
@@ -10,6 +11,7 @@ import (
 	"strconv"
 	"strings"
 	"sync"
+	"time"
 )
 
 var (
@@ -19,6 +21,48 @@ var (
 	pingch         = make(chan struct{}, 50) //ping的缓冲区数量
 	filteredIPList []string                  //存放失败主机列表
 )
+
+func checkPing() {
+	if !NoPing {
+		SanPing()
+		pingwg.Wait()
+		// 删除ping失败的主机
+		for _, ip := range filteredIPList {
+			for i := 0; i < len(iplist); i++ {
+				if iplist[i] == ip {
+					iplist = append(iplist[:i], iplist[i+1:]...)
+					break
+				}
+			}
+		}
+	}
+
+	if random { //打乱主机顺序
+		r := rand.New(rand.NewSource(time.Now().UnixNano()))
+		r.Shuffle(len(iplist), func(i, j int) {
+			iplist[i], iplist[j] = iplist[j], iplist[i]
+		})
+	}
+
+	if !NoPing && len(iplist) == 0 {
+		fmt.Printf("%s\n", color.RedString("%s", "[-] 通过尝试PING探测存活主机为0！可通过--noping跳过PING尝试"))
+		return
+	}
+
+	fmt.Println("+------------------------------+")
+	fmt.Printf("[*] Linux设备:%v Windows设备:%v 未识别:%v 共计存活:%v\n[*] 开始扫描端口:%v 并发数:%v 共计尝试:%v 端口连接超时:%v\n",
+		color.GreenString("%d", linuxcount),
+		color.GreenString("%d", windowscount),
+		color.RedString("%d", len(iplist)-linuxcount-windowscount),
+		color.GreenString("%d", len(iplist)),
+		color.GreenString("%d", len(portlist)),
+		color.GreenString("%d", chancount),
+		color.GreenString("%d", len(iplist)*len(portlist)),
+		color.GreenString("%d", Timeout),
+	)
+	fmt.Println("+------------------------------+")
+
+}
 
 func SanPing() {
 	//fmt.Printf("%s\n", "下发PING任务...\n+------------------------------+")

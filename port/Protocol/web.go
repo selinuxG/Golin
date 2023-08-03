@@ -22,6 +22,7 @@ type webinfo struct {
 	statuscode  int
 	ContentType string
 	xss         string
+	server      string
 }
 
 func IsWeb(host, port string, timeout int, xss, Poc bool) string {
@@ -56,6 +57,7 @@ func IsWeb(host, port string, timeout int, xss, Poc bool) string {
 		defer resp.Body.Close()
 
 		body, _ := io.ReadAll(resp.Body)
+		//fmt.Println(string(body))
 
 		doc, err := goquery.NewDocumentFromReader(bytes.NewReader(body))
 		if err == nil {
@@ -78,9 +80,11 @@ func IsWeb(host, port string, timeout int, xss, Poc bool) string {
 
 		//poc扫描
 		if Poc {
-			poc.CheckPoc(info.url, info.app)
+			go poc.CheckPoc(info.url, info.app)
 
 		}
+
+		info.server = resp.Header.Get("Server")
 
 		return chekwebinfo(info)
 	}
@@ -128,7 +132,7 @@ func CheckApp(body string, head map[string][]string, cookies []*http.Cookie) str
 }
 
 func chekwebinfo(info webinfo) string {
-	output := fmt.Sprintf("%s ", info.url)
+	output := fmt.Sprintf("%-23s ", info.url)
 
 	if info.xss != "" {
 		output += color.RedString("%s", fmt.Sprintf(" XSS:「%s」", info.xss))
@@ -138,10 +142,18 @@ func chekwebinfo(info webinfo) string {
 		output += color.GreenString("%s", fmt.Sprintf(" APP:「%s」", info.app))
 	}
 	if info.title != "" {
+		info.title = strings.ReplaceAll(info.title, "  ", "")
 		output += color.BlueString("%s", fmt.Sprintf(" title:「%s」", info.title))
 	}
+	if info.server != "" {
+		output += fmt.Sprintf("%s", color.MagentaString("%s", fmt.Sprintf(" Server:「%s」", info.server)))
+	}
 
-	output += fmt.Sprintf(" Code:「%d」 ContentType:「%s」", info.statuscode, info.ContentType)
+	output += fmt.Sprintf(" Code:%d", info.statuscode)
+
+	if info.ContentType != "" {
+		output += fmt.Sprintf(" ContentType:%s", info.ContentType)
+	}
 
 	return output
 }
