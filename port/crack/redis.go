@@ -4,12 +4,13 @@ import (
 	"context"
 	"fmt"
 	"github.com/go-redis/redis/v8"
+	"sync"
 	"time"
 )
 
 var ctx = context.Background()
 
-func rediscon(ctx context.Context, cancel context.CancelFunc, ip, user, passwd string, port, timeout int) {
+func rediscon(ctx context.Context, cancel context.CancelFunc, ip, user, passwd string, port, timeout int, ch <-chan struct{}, wg *sync.WaitGroup) {
 	defer func() {
 		wg.Done()
 		<-ch

@@ -6,13 +6,11 @@ import (
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
+	"sync"
 )
 
-func pgsql(ctx context.Context, cancel context.CancelFunc, ip, user, passwd string, port, timeout int) {
-	defer func() {
-		wg.Done()
-		<-ch
-	}()
+func pgsql(ctx context.Context, cancel context.CancelFunc, ip, user, passwd string, port, timeout int, ch <-chan struct{}, wg *sync.WaitGroup) {
+	defer done(ch, wg)
 	select {
 	case <-ctx.Done():
 		return

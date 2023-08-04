@@ -7,10 +7,11 @@ import (
 	"io"
 	"net/http"
 	"strings"
+	"sync"
 	"time"
 )
 
-func tomcat(ctx context.Context, cancel context.CancelFunc, ip, user, passwd string, port, timeout int) {
+func tomcat(ctx context.Context, cancel context.CancelFunc, ip, user, passwd string, port, timeout int, ch <-chan struct{}, wg *sync.WaitGroup) {
 	defer func() {
 		wg.Done()
 		<-ch

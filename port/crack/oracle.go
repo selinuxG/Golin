@@ -5,10 +5,11 @@ import (
 	"database/sql"
 	"fmt"
 	_ "github.com/sijms/go-ora/v2"
+	"sync"
 	"time"
 )
 
-func oraclecon(ctx context.Context, cancel context.CancelFunc, ip, user, passwd string, port, timeout int) {
+func oraclecon(ctx context.Context, cancel context.CancelFunc, ip, user, passwd string, port, timeout int, ch <-chan struct{}, wg *sync.WaitGroup) {
 	defer func() {
 		wg.Done()
 		<-ch

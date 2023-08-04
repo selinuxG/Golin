@@ -103,7 +103,6 @@ func isStatusCodeOk(URL string) {
 		}
 
 		for k, v := range ContentType {
-			//fmt.Println(contype, k, v)
 			if strings.Contains(contype, k) {
 				yesurl.info = append(yesurl.info, v)
 			}

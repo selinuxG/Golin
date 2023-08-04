@@ -16,13 +16,14 @@ import (
 )
 
 type webinfo struct {
-	url         string
-	title       string
-	app         string
-	statuscode  int
-	ContentType string
-	xss         string
-	server      string
+	url         string //web地址
+	title       string //网站标题
+	app         string //识别到的组件
+	statuscode  int    //状态码
+	ContentType string //ContentType
+	xss         string //是否存在xss漏洞
+	server      string //ContentType中的server
+	risk        string //通过title与ContentType确认是否存在风险
 }
 
 func IsWeb(host, port string, timeout int, xss, Poc bool) string {
@@ -81,8 +82,14 @@ func IsWeb(host, port string, timeout int, xss, Poc bool) string {
 		//poc扫描
 		if Poc {
 			go poc.CheckPoc(info.url, info.app)
-
 		}
+
+		// 基于title确认是否url是目录浏览
+		var risk []string
+		if strings.Contains(strings.ToLower(info.title), "index of") {
+			risk = append(risk, "目录浏览漏洞")
+		}
+		info.risk = strings.Join(risk, ",")
 
 		info.server = resp.Header.Get("Server")
 
@@ -134,8 +141,12 @@ func CheckApp(body string, head map[string][]string, cookies []*http.Cookie) str
 func chekwebinfo(info webinfo) string {
 	output := fmt.Sprintf("%-23s ", info.url)
 
+	if info.risk != "" {
+		output += color.RedString("%s", fmt.Sprintf("[%s]", info.risk))
+	}
+
 	if info.xss != "" {
-		output += color.RedString("%s", fmt.Sprintf(" XSS:「%s」", info.xss))
+		output += color.RedString("%s", fmt.Sprintf(" [XSS漏洞:%s]", info.xss))
 	}
 
 	if info.app != "" {

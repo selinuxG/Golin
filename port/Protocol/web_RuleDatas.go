@@ -15,7 +15,7 @@ var RuleDatas = []RuleData{
 	{"织梦内容管理系统", "body", "(织梦内容管理系统)"},
 	{"宝塔", "body", "(app.bt.cn/static/app.png|安全入口校验失败|<title>入口校验失败</title>|href=\"http://www.bt.cn/bbs|恭喜, 站点创建成功！)"},
 	{"启明防火墙", "body", "(/cgi-bin/webui?op=get_product_model)"},
-	{"数据库「ElasticSearch」(未授权)", "body", `(?s)"name"\s*:\s*"[^"]*".*?"cluster_name"\s*:\s*"[^"]*".*?"cluster_uuid"\s*:\s*"[^"]*".*?"number"\s*:\s*"[^"]*"`},
+	{"数据库|ElasticSearch[存在未授权漏洞]", "body", `(?s)"name"\s*:\s*"[^"]*".*?"cluster_name"\s*:\s*"[^"]*".*?"cluster_uuid"\s*:\s*"[^"]*".*?"number"\s*:\s*"[^"]*"`},
 	{"AList", "body", "(由 AList 驱动|alist_pic.js)"},
 	{"数据库「MongoDB」", "body", `(MongoDB)`},
 	{"ZABBIX-监控系统", "body", "(Zabbix SIA|<title>omni: Zabbix</title>|images/general/zabbix.ico|Zabbix SIA|zabbix-server: Zabbix)"},

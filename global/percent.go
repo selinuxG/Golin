@@ -12,7 +12,7 @@ var (
 )
 
 // Percent 输出进度条
-func Percent(mu *sync.Mutex, succeCount, countall int) {
+func Percent(mu *sync.Mutex, succeCount, countall uint32) {
 	percent := (float64(succeCount) / float64(countall)) * 100.00
 
 	spinChar := rotateSpinner(mu)

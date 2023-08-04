@@ -7,13 +7,14 @@ import (
 	"golin/port/crack"
 	"net"
 	"strings"
+	"sync/atomic"
 	"time"
 )
 
 func scanPort() {
 	checkPing()
 
-	allcount = len(iplist) * len(portlist)
+	allcount = uint32(len(iplist) * len(portlist))
 
 	for _, ip := range iplist {
 		for _, port := range portlist {
@@ -24,7 +25,6 @@ func scanPort() {
 	}
 
 	wg.Wait()
-	time.Sleep(time.Second * 1) //等待1秒是为了正常显示进度条
 
 	fmt.Printf("\r+------------------------------+\n")
 	fmt.Printf("[*] 存活主机:%v 存活端口:%v ssh:%v rdp:%v web服务:%v 数据库:%v \n",
@@ -50,9 +50,7 @@ func IsPortOpen(host, port string) {
 	defer func() {
 		wg.Done()
 		<-ch
-		outputMux.Lock()
-		donecount += 1
-		outputMux.Unlock()
+		atomic.AddUint32(&donecount, 1)
 		global.Percent(&outputMux, donecount, allcount)
 	}()
 
@@ -63,9 +61,8 @@ func IsPortOpen(host, port string) {
 	}
 
 	parseprotocol := parseProtocol(conn, host, port, Xss, Poc) //识别协议、xss、poc扫描
-
-	fmt.Print("\033[2K") // 擦除整行
-	fmt.Printf("\r| %-2s | %-15s | %-4s |%s \n",
+	fmt.Printf("\033[2K\r")                                    // 擦除整行
+	fmt.Printf("\r| %-2s | %-15s | %-4s |%-50s \n",
 		fmt.Sprintf("%s", color.GreenString("%s", "✓")),
 		host,
 		port,

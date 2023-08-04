@@ -6,9 +6,10 @@ import (
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
+	"sync"
 )
 
-func mySql(ctx context.Context, cancel context.CancelFunc, ip, user, passwd string, port, timeout int) {
+func mySql(ctx context.Context, cancel context.CancelFunc, ip, user, passwd string, port, timeout int, ch <-chan struct{}, wg *sync.WaitGroup) {
 	defer func() {
 		wg.Done()
 		<-ch

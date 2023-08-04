@@ -6,9 +6,10 @@ import (
 	"gorm.io/driver/sqlserver"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
+	"sync"
 )
 
-func sqlservercon(ctx context.Context, cancel context.CancelFunc, ip, user, passwd string, port, timeout int) {
+func sqlservercon(ctx context.Context, cancel context.CancelFunc, ip, user, passwd string, port, timeout int, ch <-chan struct{}, wg *sync.WaitGroup) {
 	defer func() {
 		wg.Done()
 		<-ch

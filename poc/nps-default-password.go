@@ -6,8 +6,8 @@ import (
 	"net/http"
 )
 
-// npc_default_passwd nps默认账号密码admin/123
-func nps_default_passwd(url string) {
+// NPS_default_passwd nps默认账号密码admin/123
+func NPS_default_passwd(url string) {
 	url += "/login/verify"
 	var data = []byte(`username=admin&password=123`)
 	req, err := http.NewRequest("POST", url, bytes.NewBuffer(data))

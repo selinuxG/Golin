@@ -69,7 +69,7 @@
 | 11 |  主机操作系统识别  |  √   |                              基于ttl                               |
 | 12 |    组件识别    |  √   |                             目前常用200+                             |
 | 13 |  自动扫描弱口令   |  √   |           rdp、ssh、redis、mysql、oracle、es、telnet、pgsql等            |
-| 14 | web自动扫描xss |  √   |                              仅验证反射型                              |
+| 14 | web自动扫描xss |  √   |                                                                  |
 
 
 
@@ -92,7 +92,7 @@
 | 13 |    识别目录浏览     |  √   |                 |
 | 14 |   识别敏感信息泄露    |  √   |                 |
 | 15 |    识别文件下载     |  √   |                 |
-| 16 |     xss扫描     |  √   |     仅验证反射型      |
+| 16 |     xss扫描     |  √   |                 |
 | 17 |     组件识别      |  √   |    目前常用200+     |
 
 ## 子域名扫描现阶段支持功能
@@ -108,12 +108,14 @@
 # 常用启动参数
 ```
 golin web (通过web方式启动,仅支持等保功能)
-golin port -i 192.168.1.1/24 (扫描c段端口以及弱口令)
+golin port -i 192.168.1.1/24 (扫描c段端口并扫描弱口令、xss、poc漏洞)
+golin port -i 192.168.1.1/24 -c 1000 -t 1(仅扫描c段端口并设置并发数为1000,端口连接超时为1秒)
 golin port -i 192.168.1.1/24 --noping --nocrack --random(扫描c段端口但不探测存活不扫描弱口令,并且打乱主机顺序扫描)
 golin port -i 192.168.1.1/24 --noxss(扫描c段端口但禁用扫描xss)
+golin port -i 192.168.1.1/24 --nopoc(扫描c段端口但禁用扫描poc)
 golin dirsearch -u https://test.com -f 字典.txt --code 200,404 (扫描状态码为200以及404的web目录)
 golin domain -u baidu.com --api (扫描子域名,并且调用fofa、RapidDNS的API)
-golin [linux、mysql、oracle、sqlserver、redis、windows...] (按照3级等保要求核查各项安全配置)
+golin [linux、mysql、oracle、sqlserver、redis、windows...] (按照3级等保要求核查各项安全配置生成html形式报告)
 golin update (检查是否可更新)
 ```
 

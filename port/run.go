@@ -22,8 +22,8 @@ var (
 	random     bool   //打乱顺序
 	save       bool   //是否保存
 	infolist   []INFO //成功的主机列表
-	allcount   int    //IP*PORT的总数量
-	donecount  int    //线程技术的数量
+	allcount   uint32 //IP*PORT的总数量
+	donecount  uint32 //线程技术的数量
 	outputMux  sync.Mutex
 	userfile   string //user字典路径
 	passwdfile string //passwd字典路径
@@ -56,9 +56,6 @@ func ParseFlags(cmd *cobra.Command, args []string) {
 	ch = make(chan struct{}, chancount)
 
 	Timeout, _ = cmd.Flags().GetInt("time") //超时等待时常
-	if Timeout <= 0 {
-		Timeout = 3
-	}
 
 	nocrack, _ := cmd.Flags().GetBool("nocrack") //弱口令扫描
 	if nocrack {

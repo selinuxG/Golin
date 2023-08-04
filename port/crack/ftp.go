@@ -4,10 +4,11 @@ import (
 	"context"
 	"fmt"
 	"github.com/jlaffaye/ftp"
+	"sync"
 	"time"
 )
 
-func ftpcon(ctx context.Context, cancel context.CancelFunc, ip, user, passwd string, port, timeout int) {
+func ftpcon(ctx context.Context, cancel context.CancelFunc, ip, user, passwd string, port, timeout int, ch <-chan struct{}, wg *sync.WaitGroup) {
 	defer func() {
 		wg.Done()
 		<-ch

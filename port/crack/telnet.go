@@ -6,10 +6,11 @@ import (
 	"github.com/ziutek/telnet"
 	"io"
 	"strings"
+	"sync"
 	"time"
 )
 
-func telnetcon(ctx context.Context, cancel context.CancelFunc, ip, user, passwd string, port, timeout int) {
+func telnetcon(ctx context.Context, cancel context.CancelFunc, ip, user, passwd string, port, timeout int, ch <-chan struct{}, wg *sync.WaitGroup) {
 	defer func() {
 		wg.Done()
 		<-ch
