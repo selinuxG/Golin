@@ -13,17 +13,17 @@ var (
 )
 
 var userMap = map[string][]string{
-	"ssh":       {"root", "admin"},
-	"mysql":     {"root", "mysql"},
+	"ssh":       {"root"},
+	"mysql":     {"root"},
 	"redis":     {"", "root"},
-	"pgsql":     {"postgres", "root", "admin"},
+	"pgsql":     {"postgres", "root"},
 	"sqlserver": {"sa", "administrator"},
-	"ftp":       {"ftp", "admin", "www", "web", "root", "db", "wwwroot", "data"},
-	"smb":       {"administrator", "admin", "guest"},
+	"ftp":       {"ftp", "admin"},
+	"smb":       {"administrator", "guest"},
 	"telnet":    {"admin", "root"},
 	"tomcat":    {"tomcat", "manager", "admin"},
 	"rdp":       {"administrator", "admin", "guest"},
-	"oracle":    {"orcl", "sys", "system", "admin", "test"},
+	"oracle":    {"orcl", "sys", "system"},
 }
 
 //go:embed password.txt

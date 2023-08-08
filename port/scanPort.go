@@ -27,7 +27,7 @@ func scanPort() {
 	wg.Wait()
 
 	fmt.Printf("\r+------------------------------+\n")
-	fmt.Printf("[*] 存活主机:%v 存活端口:%v ssh:%v rdp:%v web服务:%v 数据库:%v \n",
+	fmt.Printf("\r[*] 存活主机:%v 存活端口:%v ssh:%v rdp:%v web服务:%v 数据库:%v \n",
 		color.GreenString("%d", len(iplist)),
 		color.GreenString("%d", len(infolist)),
 		color.GreenString("%d", protocolExistsAndCount("ssh")),
@@ -35,7 +35,6 @@ func scanPort() {
 		color.GreenString("%d", protocolExistsAndCount("WEB应用")),
 		color.GreenString("%d", protocolExistsAndCount("数据库")),
 	)
-
 	if save {
 		if len(infolist) > 0 || len(iplist) > 0 {
 			saveXlsx(infolist, iplist)
@@ -59,26 +58,30 @@ func IsPortOpen(host, port string) {
 	if err != nil {
 		return
 	}
+	Protocol := parseProtocol(conn, host, port, Xss, Poc) //识别协议、xss、poc扫描
+	thisINFO := INFO{host, port, Protocol}
 
-	parseprotocol := parseProtocol(conn, host, port, Xss, Poc) //识别协议、xss、poc扫描
-	fmt.Printf("\033[2K\r")                                    // 擦除整行
+	fmt.Printf("\033[2K\r") // 擦除整行
 	fmt.Printf("\r| %-2s | %-15s | %-4s |%-50s \n",
 		fmt.Sprintf("%s", color.GreenString("%s", "✓")),
-		host,
-		port,
-		parseprotocol,
+		thisINFO.Host,
+		thisINFO.Port,
+		thisINFO.Protocol,
 	)
+
 	outputMux.Lock()
-	infolist = append(infolist, INFO{host, port, parseprotocol})
+	infolist = append(infolist, INFO{host, port, thisINFO.Protocol})
 	outputMux.Unlock()
 
 	if Carck {
-		protocol := strings.ToLower(parseprotocol)
+		protocol := strings.ToLower(thisINFO.Protocol)
 		//支持遍历字典扫描的类型
 		protocols := []string{"ssh", "mysql", "redis", "pgsql", "sqlserver", "ftp", "smb", "telnet", "tomcat", "rdp", "oracle"}
 		for _, proto := range protocols {
 			if strings.Contains(protocol, proto) { //不区分大小写
+				outputMux.Lock()
 				crack.Run(host, port, Timeout, chancount, proto)
+				outputMux.Unlock()
 				break
 			}
 		}
