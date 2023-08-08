@@ -11,7 +11,14 @@ import (
 	"time"
 )
 
+const clearLine = "\033[2K\r"                                            //清除当前行
+const portformatString = clearLine + "\r| %-2s | %-15s | %-4s |%-50s \n" //端口存活的占位符
+
 func scanPort() {
+	defer func() {
+		end()                      //输出总体结果
+		saveXlsx(infolist, iplist) //结果保存文件
+	}()
 	checkPing()
 
 	allcount = uint32(len(iplist) * len(portlist))
@@ -20,26 +27,12 @@ func scanPort() {
 		for _, port := range portlist {
 			ch <- struct{}{}
 			wg.Add(1)
-			go IsPortOpen(ip, port) //扫描端口是否存活
+			go IsPortOpen(ip, port) //启动线程扫描端口是否存活
 		}
 	}
 
 	wg.Wait()
-
-	fmt.Printf("\r+------------------------------+\n")
-	fmt.Printf("\r[*] 存活主机:%v 存活端口:%v ssh:%v rdp:%v web服务:%v 数据库:%v \n",
-		color.GreenString("%d", len(iplist)),
-		color.GreenString("%d", len(infolist)),
-		color.GreenString("%d", protocolExistsAndCount("ssh")),
-		color.GreenString("%d", protocolExistsAndCount("rdp")),
-		color.GreenString("%d", protocolExistsAndCount("WEB应用")),
-		color.GreenString("%d", protocolExistsAndCount("数据库")),
-	)
-	if save {
-		if len(infolist) > 0 || len(iplist) > 0 {
-			saveXlsx(infolist, iplist)
-		}
-	}
+	global.Percent(&outputMux, donecount, allcount)
 
 }
 
@@ -61,13 +54,7 @@ func IsPortOpen(host, port string) {
 	Protocol := parseProtocol(conn, host, port, Xss, Poc) //识别协议、xss、poc扫描
 	thisINFO := INFO{host, port, Protocol}
 
-	fmt.Printf("\033[2K\r") // 擦除整行
-	fmt.Printf("\r| %-2s | %-15s | %-4s |%-50s \n",
-		fmt.Sprintf("%s", color.GreenString("%s", "✓")),
-		thisINFO.Host,
-		thisINFO.Port,
-		thisINFO.Protocol,
-	)
+	fmt.Printf(portformatString, printGreen("%v", "✓"), thisINFO.Host, thisINFO.Port, thisINFO.Protocol) //端口存活信息
 
 	outputMux.Lock()
 	infolist = append(infolist, INFO{host, port, thisINFO.Protocol})
@@ -103,4 +90,23 @@ func protocolExistsAndCount(protocol string) (count int) {
 		}
 	}
 	return count
+}
+
+// printGreen 绿色编码输出
+func printGreen(format string, a ...interface{}) string {
+	return color.GreenString(format, a...)
+}
+
+// end 运行结束是输出,输出一些统计信息
+func end() {
+	fmt.Printf("\r+------------------------------+\n")
+	fmt.Printf("\r[*] 存活主机:%v 存活端口:%v ssh:%v rdp:%v web服务:%v 数据库:%v \n",
+		printGreen("%v", len(iplist)),
+		printGreen("%v", len(infolist)),
+		printGreen("%v", protocolExistsAndCount("ssh")),
+		printGreen("%v", protocolExistsAndCount("rdp")),
+		printGreen("%v", protocolExistsAndCount("WEB应用")),
+		printGreen("%v", protocolExistsAndCount("数据库")),
+	)
+
 }

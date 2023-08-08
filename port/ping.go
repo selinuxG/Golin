@@ -19,10 +19,23 @@ var (
 	windowscount   int                       //windows 主机数量
 	pingwg         = sync.WaitGroup{}        //ping的并发数
 	pingch         = make(chan struct{}, 50) //ping的缓冲区数量
-	filteredIPList []string                  //存放失败主机列表
+	filteredIPList []string                  //存放失败主机列表以及本地设备IP
 )
 
 func checkPing() {
+
+	//删除本地ip不进行扫描
+	LocalAddr, err := net.InterfaceAddrs()
+	if err == nil {
+		for _, address := range LocalAddr {
+			if ipNet, ok := address.(*net.IPNet); ok && !ipNet.IP.IsLoopback() {
+				if ipNet.IP.To4() != nil {
+					filteredIPList = append(filteredIPList, ipNet.IP.String())
+				}
+			}
+		}
+	}
+
 	if !NoPing {
 		SanPing()
 		pingwg.Wait()
@@ -35,6 +48,7 @@ func checkPing() {
 				}
 			}
 		}
+
 	}
 
 	if random { //打乱主机顺序

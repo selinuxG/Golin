@@ -69,7 +69,7 @@ func saveXlsx(infoList []INFO, ipList []string) {
 		fmt.Printf("[-] 保存文件失败！1、文件是否已打开？ 2、是否有权限\n")
 		return
 	}
-
+	fmt.Printf(clearLine)
 	fmt.Printf("[*] 结果保存路径：\033[32m%s\033[0m\n", "portscan.xlsx")
 
 }

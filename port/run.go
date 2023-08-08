@@ -20,7 +20,6 @@ var (
 	chancount  int    //并发数量
 	Timeout    int    //超时等待时常
 	random     bool   //打乱顺序
-	save       bool   //是否保存
 	infolist   []INFO //成功的主机列表
 	allcount   uint32 //IP*PORT的总数量
 	donecount  uint32 //线程技术的数量
@@ -58,29 +57,15 @@ func ParseFlags(cmd *cobra.Command, args []string) {
 	Timeout, _ = cmd.Flags().GetInt("time") //超时等待时常
 
 	nocrack, _ := cmd.Flags().GetBool("nocrack") //弱口令扫描
-	if nocrack {
-		Carck = false
-	} else {
-		Carck = true
-	}
+	Carck = !nocrack
 
 	noxss, _ := cmd.Flags().GetBool("noxss") //xss扫描
-	if noxss {
-		Xss = false
-	} else {
-		Xss = true
-	}
+	Xss = !noxss
 
 	nopoc, _ := cmd.Flags().GetBool("nopoc") //poc扫描
-	if nopoc {
-		Poc = false
-	} else {
-		Poc = true
-	}
+	Poc = !nopoc
 
 	random, _ = cmd.Flags().GetBool("random") //打乱顺序
-
-	save, _ = cmd.Flags().GetBool("save") //保存文件
 
 	userfile, _ = cmd.Flags().GetString("userfile")
 	passwdfile, _ = cmd.Flags().GetString("passwdfile")

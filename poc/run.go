@@ -30,9 +30,12 @@ func CheckPoc(url, app string) {
 	app = strings.ToLower(app)
 	switch {
 	case strings.Contains(app, "spring"):
-		CVE_2022_22947(url, "pwd") //任意执行命令
+		CVE_2022_22947(url, "pwd")  //任意执行命令
+		SpringActuatorHeapdump(url) //内存文件下载
 	case strings.Contains(app, "nps"):
 		NPS_default_passwd(url) //默认用户密码
+	case strings.Contains(app, "struts2"):
+		CVE_2021_31805(url) //任意执行命令
 	}
 
 }
