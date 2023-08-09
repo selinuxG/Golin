@@ -39,7 +39,7 @@ func IsWeb(host, port string, timeout int, xss, Poc bool) string {
 		Timeout:   time.Duration(timeout) * time.Second,
 	}
 
-	for _, v := range []string{"http", "https"} {
+	for _, v := range []string{"https", "http"} {
 		info := webinfo{}
 		switch port {
 		case "443":
@@ -58,7 +58,10 @@ func IsWeb(host, port string, timeout int, xss, Poc bool) string {
 		defer resp.Body.Close()
 
 		body, _ := io.ReadAll(resp.Body)
-		//fmt.Println(string(body))
+
+		if global.Debug {
+			fmt.Println(string(body))
+		}
 
 		doc, err := goquery.NewDocumentFromReader(bytes.NewReader(body))
 		if err == nil {

@@ -9,13 +9,15 @@ import (
 var (
 	spinnerChars = []string{"|", "/", "-", "\\"} //进度条更新动画
 	counter      = 0                             //当前已扫描的数量，计算百分比
+	PrintLock    sync.RWMutex
 )
 
 // Percent 输出进度条
-func Percent(mu *sync.Mutex, succeCount, countall uint32) {
+func Percent(succeCount, countall uint32) {
+	PrintLock.Lock()
+	defer PrintLock.Unlock()
 	percent := (float64(succeCount) / float64(countall)) * 100.00
-
-	spinChar := rotateSpinner(mu)
+	spinChar := rotateSpinner()
 	if percent == 100 {
 		spinChar = "√"
 	}
@@ -29,10 +31,7 @@ func Percent(mu *sync.Mutex, succeCount, countall uint32) {
 }
 
 // 旋转进度条
-func rotateSpinner(mu *sync.Mutex) string {
-	mu.Lock()
-	defer mu.Unlock()
-
+func rotateSpinner() string {
 	spinChar := spinnerChars[counter%len(spinnerChars)]
 	counter++
 	return spinChar

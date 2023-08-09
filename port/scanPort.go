@@ -32,7 +32,7 @@ func scanPort() {
 	}
 
 	wg.Wait()
-	global.Percent(&outputMux, donecount, allcount)
+	global.Percent(donecount, allcount)
 
 }
 
@@ -43,7 +43,7 @@ func IsPortOpen(host, port string) {
 		wg.Done()
 		<-ch
 		atomic.AddUint32(&donecount, 1)
-		global.Percent(&outputMux, donecount, allcount)
+		global.Percent(donecount, allcount)
 	}()
 
 	address := net.JoinHostPort(host, port)
@@ -66,9 +66,7 @@ func IsPortOpen(host, port string) {
 		protocols := []string{"ssh", "mysql", "redis", "pgsql", "sqlserver", "ftp", "smb", "telnet", "tomcat", "rdp", "oracle"}
 		for _, proto := range protocols {
 			if strings.Contains(protocol, proto) { //不区分大小写
-				outputMux.Lock()
 				crack.Run(host, port, Timeout, chancount, proto)
-				outputMux.Unlock()
 				break
 			}
 		}

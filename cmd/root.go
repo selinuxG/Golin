@@ -24,16 +24,25 @@ func Execute() {
 }
 
 func init() {
+	if os.Getenv("golin") == "on" {
+		global.Debug = true //调试信息
+	}
 	golin := fmt.Sprintf(`
- _____   _____   _       _   __   _  
-/  ___| /  _  \ | |     | | |  \ | | 
-| |     | | | | | |     | | |   \| | 
-| |  _  | | | | | |     | | | |\   | 
-| |_| | | |_| | | |___  | | | | \  | 
-\_____/ \_____/ |_____| |_| |_|  \_| `)
+
+  ▄████  ▒█████   ██▓     ██▓ ███▄    █ 
+ ██▒ ▀█▒▒██▒  ██▒▓██▒    ▓██▒ ██ ▀█   █ 
+▒██░▄▄▄░▒██░  ██▒▒██░    ▒██▒▓██  ▀█ ██▒
+░▓█  ██▓▒██   ██░▒██░    ░██░▓██▒  ▐▌██▒
+░▒▓███▀▒░ ████▓▒░░██████▒░██░▒██░   ▓██░
+ ░▒   ▒ ░ ▒░▒░▒░ ░ ▒░▓  ░░▓  ░ ▒░   ▒ ▒ 
+  ░   ░   ░ ▒ ▒░ ░ ░ ▒  ░ ▒ ░░ ░░   ░ ▒░
+░ ░   ░ ░ ░ ░ ▒    ░ ░    ▒ ░   ░   ░ ░ 
+      ░     ░ ░      ░  ░ ░           ░ 
+                                        
+ `)
 
 	fmt.Printf("%s\nVersion: %s\ngithub : %s\nauthor : %s\n\n",
-		color.RedString("%s", golin),
+		color.GreenString("%s", golin),
 		color.GreenString("%s %s", global.Version, global.Releasenotes),
 		color.BlueString("%s", "https://github.com/selinuxG/Golin"),
 		color.MagentaString("%s", "gaoyeshang"),

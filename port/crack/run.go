@@ -37,6 +37,7 @@ func Run(host, port string, Timeout, chanCount int, mode string) {
 		for _, passwd := range Passwdlist() {
 			fmt.Printf("\033[2K\r") // 擦除整行
 			fmt.Printf("\r%s", color.MagentaString("\r[...] 正在进行弱口令扫描 -> %s", fmt.Sprintf("%s://%s:%s?user=%s?passwd=%s", mode, host, port, user, passwd)))
+
 			ch <- struct{}{}
 			wg.Add(1)
 			if connFunc, ok := connectionFuncs[mode]; ok {

@@ -90,5 +90,20 @@ func parseProtocol(conn net.Conn, host, port string, xss, Poc bool) string {
 		return fmt.Sprintf("数据库|MySQL:%s", version)
 	}
 
+	return defaultPort(port)
+}
+
+func defaultPort(port string) string {
+	defMap := map[string]string{
+		"3306": "数据库|MySQL",
+		"23":   "Telnet",
+		"21":   "FTP",
+		"80":   "|WEB应用",
+		"443":  "|WEB应用",
+	}
+	value, exists := defMap[port]
+	if exists {
+		return value
+	}
 	return ""
 }
