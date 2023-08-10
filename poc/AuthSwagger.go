@@ -50,12 +50,8 @@ func AuthSwagger(url string) {
 				strings.Contains(bodyString, "swagger:") ||
 				strings.Contains(bodyString, "Swagger 2.0") ||
 				strings.Contains(bodyString, "\"swagger\":") {
-				flags := Flagcve{
-					url: url + path,
-					cve: "swagger未授权访问",
-				}
+				flags := Flagcve{url + path, "swagger未授权访问", ""}
 				echoFlag(flags)
-				//break
 			}
 		}
 	}

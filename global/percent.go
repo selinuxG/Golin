@@ -3,13 +3,11 @@ package global
 import (
 	"fmt"
 	"github.com/fatih/color"
-	"sync"
 )
 
 var (
 	spinnerChars = []string{"|", "/", "-", "\\"} //进度条更新动画
 	counter      = 0                             //当前已扫描的数量，计算百分比
-	PrintLock    sync.RWMutex
 )
 
 // Percent 输出进度条

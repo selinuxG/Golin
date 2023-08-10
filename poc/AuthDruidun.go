@@ -24,10 +24,7 @@ func AuthDruidun(url string) {
 		if strings.Contains(bodyString, "Druid Stat Index") &&
 			strings.Contains(bodyString, "DruidVersion") &&
 			strings.Contains(bodyString, "DruidDrivers") {
-			flags := Flagcve{
-				url: url,
-				cve: "Druid未授权访问",
-			}
+			flags := Flagcve{url, "Druid未授权访问", ""}
 			echoFlag(flags)
 		}
 	}

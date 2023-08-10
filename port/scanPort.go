@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/fatih/color"
 	"golin/global"
+	"golin/poc"
 	"golin/port/crack"
 	"net"
 	"strings"
@@ -16,8 +17,11 @@ const portformatString = clearLine + "\r| %-2s | %-15s | %-4s |%-50s \n" //端�
 
 func scanPort() {
 	defer func() {
-		end()                      //输出总体结果
-		saveXlsx(infolist, iplist) //结果保存文件
+		global.Percent(donecount, allcount) //输出100%的进度条
+		echoCrack()                         //输出弱口令资产
+		echoPoc()                           //输出漏洞资产
+		end()                               //输出总体结果
+		saveXlsx(infolist, iplist)          //结果保存文件
 	}()
 	checkPing()
 
@@ -32,7 +36,6 @@ func scanPort() {
 	}
 
 	wg.Wait()
-	global.Percent(donecount, allcount)
 
 }
 
@@ -97,14 +100,14 @@ func printGreen(format string, a ...interface{}) string {
 
 // end 运行结束是输出,输出一些统计信息
 func end() {
-	fmt.Printf("\r+------------------------------+\n")
-	fmt.Printf("\r[*] 存活主机:%v 存活端口:%v ssh:%v rdp:%v web服务:%v 数据库:%v \n",
+	fmt.Printf("\r[*] 存活主机:%v 存活端口:%v ssh:%v rdp:%v web服务:%v 数据库:%v 弱口令:%v 漏洞:%v \n",
 		printGreen("%v", len(iplist)),
 		printGreen("%v", len(infolist)),
 		printGreen("%v", protocolExistsAndCount("ssh")),
 		printGreen("%v", protocolExistsAndCount("rdp")),
 		printGreen("%v", protocolExistsAndCount("WEB应用")),
 		printGreen("%v", protocolExistsAndCount("数据库")),
+		printGreen("%v", len(crack.ListCrackHost)),
+		printGreen("%v", len(poc.ListPocInfo)),
 	)
-
 }

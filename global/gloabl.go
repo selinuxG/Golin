@@ -2,6 +2,7 @@ package global
 
 import (
 	"os"
+	"sync"
 )
 
 const (
@@ -24,6 +25,7 @@ var (
 	Succpath         = "采集完成目录"                                             //CLi模式成功主机写入日志的目录
 	Succwebpath      = "webhistory.json"                                    //Web模式运行记录
 	Denynametype     = []string{"\\", "\\/", "*", "?", "\"", "<", ">", "|"} //windos下不允许创建名称的特殊符号。
+	PrintLock        sync.RWMutex                                           //并发输出写入
 )
 
 // AppendToFile 创建追加写入函数

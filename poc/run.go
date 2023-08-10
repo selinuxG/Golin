@@ -1,15 +1,16 @@
 package poc
 
 import (
-	"fmt"
-	"github.com/fatih/color"
+	"golin/global"
 	"strings"
 )
 
+var ListPocInfo []Flagcve
+
 type Flagcve struct {
-	url  string
-	cve  string
-	flag string
+	Url  string
+	Cve  string
+	Flag string
 }
 
 func CheckPoc(url, app string) {
@@ -41,12 +42,7 @@ func CheckPoc(url, app string) {
 }
 
 func echoFlag(flag Flagcve) {
-	fmt.Printf("\033[2K\r") // 擦除整行
-	fmt.Printf("\r| %-2s | %-15s | %-15s |%s\n",
-		fmt.Sprintf("%s", color.RedString("%s", "✓")),
-		fmt.Sprintf("%s", color.RedString("漏洞:%s", flag.cve)),
-		fmt.Sprintf("%s", color.RedString(flag.url)),
-		fmt.Sprintf("%s", color.RedString(flag.flag)),
-	)
-
+	global.PrintLock.Lock()
+	defer global.PrintLock.Unlock()
+	ListPocInfo = append(ListPocInfo, Flagcve{flag.Url, flag.Cve, flag.Flag})
 }

@@ -32,11 +32,7 @@ func NPS_default_passwd(url string) {
 	body, _ := io.ReadAll(resp.Body)
 
 	if resp.StatusCode == 200 && bytes.Contains(body, []byte("login success")) {
-		flags := Flagcve{
-			url:  url,
-			cve:  "NPS代理默认账号密码",
-			flag: "登录方式:Admin/123",
-		}
+		flags := Flagcve{url, "NPS代理默认账号密码", "登录方式:Admin/123"}
 		echoFlag(flags)
 	}
 }

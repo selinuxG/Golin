@@ -10,6 +10,16 @@ import (
 	"time"
 )
 
+var ListCrackHost []SussCrack
+
+type SussCrack struct {
+	Host   string
+	User   string
+	Passwd string
+	Port   int
+	Mode   string
+}
+
 // ConnectionFunc 定义一个函数类型
 type ConnectionFunc func(cancel context.CancelFunc, host, user, passwd string, newport, timeout int)
 
@@ -36,7 +46,6 @@ func Run(host, port string, Timeout, chanCount int, mode string) {
 	newport, _ := strconv.Atoi(port)
 
 	for _, user := range Userlist(mode) {
-		git
 		for _, passwd := range Passwdlist() {
 			fmt.Printf("\033[2K\r") // 擦除整行
 			fmt.Printf("\r%s", color.MagentaString("\r[...] 正在进行弱口令扫描 -> %s", fmt.Sprintf("%s://%s:%s?user=%s?passwd=%s", mode, host, port, user, passwd)))
@@ -58,17 +67,7 @@ func Run(host, port string, Timeout, chanCount int, mode string) {
 func end(host, user, passwd string, port int, mode string) {
 	global.PrintLock.Lock()
 	defer global.PrintLock.Unlock()
-
-	fmt.Printf("\033[2K\r") // 擦除整行
-	fmt.Printf("\r| %-2s | %-15s | %-4d |%-6s|%-4s|%-50s \n",
-		fmt.Sprintf("%s", color.GreenString("%s", "✓")),
-		host,
-		port,
-		color.RedString("%s", "弱口令"),
-		mode,
-		fmt.Sprintf("%s", color.RedString(fmt.Sprintf("%s	%s", user, passwd))),
-	)
-	fmt.Printf("\033[2K\r") // 擦除整行
+	ListCrackHost = append(ListCrackHost, SussCrack{host, user, passwd, port, mode})
 }
 
 func done(ch <-chan struct{}, wg *sync.WaitGroup) {

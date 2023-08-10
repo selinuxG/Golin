@@ -13,11 +13,7 @@ func SpringActuatorHeapdump(url string) {
 	defer resp.Body.Close()
 
 	if resp.StatusCode == 200 && resp.Header.Get("Content-Type") == "application/octet-stream" {
-		flags := Flagcve{
-			url:  url,
-			cve:  "Spring Actuator Heapdump",
-			flag: "Spring内存文件下载",
-		}
+		flags := Flagcve{url, "Spring Actuator Heapdump", "Spring内存文件下载"}
 		echoFlag(flags)
 	}
 
