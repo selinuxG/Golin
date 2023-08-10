@@ -3,10 +3,9 @@ package crack
 import (
 	"context"
 	"github.com/stacktitan/smb/smb"
-	"sync"
 )
 
-func smbcon(ctx context.Context, cancel context.CancelFunc, ip, user, passwd string, port, timeout int, ch <-chan struct{}, wg *sync.WaitGroup) {
+func smbcon(cancel context.CancelFunc, ip, user, passwd string, port, timeout int) {
 	options := smb.Options{
 		Host:        ip,
 		Port:        port,

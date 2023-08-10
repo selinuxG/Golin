@@ -5,11 +5,10 @@ import (
 	"database/sql"
 	"fmt"
 	_ "github.com/sijms/go-ora/v2"
-	"sync"
 	"time"
 )
 
-func oraclecon(ctx context.Context, cancel context.CancelFunc, ip, user, passwd string, port, timeout int, ch <-chan struct{}, wg *sync.WaitGroup) {
+func oraclecon(cancel context.CancelFunc, ip, user, passwd string, port, timeout int) {
 	dataSourceName := fmt.Sprintf("oracle://%s:%s@%s:%d/orcl", user, passwd, ip, port)
 	db, err := sql.Open("oracle", dataSourceName)
 	if err == nil {

@@ -6,11 +6,10 @@ import (
 	"github.com/ziutek/telnet"
 	"io"
 	"strings"
-	"sync"
 	"time"
 )
 
-func telnetcon(ctx context.Context, cancel context.CancelFunc, ip, user, passwd string, port, timeout int, ch <-chan struct{}, wg *sync.WaitGroup) {
+func telnetcon(cancel context.CancelFunc, ip, user, passwd string, port, timeout int) {
 	conn, err := telnet.DialTimeout("tcp", fmt.Sprintf("%s:%d", ip, port), time.Duration(timeout))
 	if err != nil {
 		return

@@ -32,7 +32,7 @@ type Client struct {
 	vnc  *rfb.RFB
 }
 
-func rdpcon(ctx context.Context, cancel context.CancelFunc, ip, user, passwd string, port, timeout int, ch <-chan struct{}, wg *sync.WaitGroup) {
+func rdpcon(cancel context.CancelFunc, ip, user, passwd string, port, timeout int) {
 	glog.SetLevel(5) //禁止日志输出
 	logger := log.New(os.Stdout, "", 0)
 	glog.SetLogger(logger)

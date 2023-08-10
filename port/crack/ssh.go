@@ -4,11 +4,10 @@ import (
 	"context"
 	"fmt"
 	"golang.org/x/crypto/ssh"
-	"sync"
 	"time"
 )
 
-func SSH(ctx context.Context, cancel context.CancelFunc, ip, user, passwd string, port, timeout int, ch <-chan struct{}, wg *sync.WaitGroup) {
+func SSH(cancel context.CancelFunc, ip, user, passwd string, port, timeout int) {
 	configssh := &ssh.ClientConfig{
 		Timeout:         time.Duration(timeout) * time.Second, // ssh连接timeout时间
 		User:            user,

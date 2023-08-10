@@ -7,11 +7,10 @@ import (
 	"io"
 	"net/http"
 	"strings"
-	"sync"
 	"time"
 )
 
-func tomcat(ctx context.Context, cancel context.CancelFunc, ip, user, passwd string, port, timeout int, ch <-chan struct{}, wg *sync.WaitGroup) {
+func tomcat(cancel context.CancelFunc, ip, user, passwd string, port, timeout int) {
 	url := fmt.Sprintf("%s:%d", ip, port)
 	base64passwd := fmt.Sprintf("%s:%s", user, passwd)
 	base64passwd = base64.StdEncoding.EncodeToString([]byte(base64passwd))

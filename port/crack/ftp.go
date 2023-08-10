@@ -4,11 +4,10 @@ import (
 	"context"
 	"fmt"
 	"github.com/jlaffaye/ftp"
-	"sync"
 	"time"
 )
 
-func ftpcon(ctx context.Context, cancel context.CancelFunc, ip, user, passwd string, port, timeout int, ch <-chan struct{}, wg *sync.WaitGroup) {
+func ftpcon(cancel context.CancelFunc, ip, user, passwd string, port, timeout int) {
 	c, err := ftp.Dial(fmt.Sprintf("%s:%d", ip, port), ftp.DialWithTimeout(time.Duration(timeout)*time.Second))
 	if err == nil {
 		err = c.Login(user, passwd)

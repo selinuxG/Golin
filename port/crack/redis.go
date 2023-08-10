@@ -4,13 +4,12 @@ import (
 	"context"
 	"fmt"
 	"github.com/go-redis/redis/v8"
-	"sync"
 	"time"
 )
 
 var ctx = context.Background()
 
-func rediscon(ctx context.Context, cancel context.CancelFunc, ip, user, passwd string, port, timeout int, ch <-chan struct{}, wg *sync.WaitGroup) {
+func rediscon(cancel context.CancelFunc, ip, user, passwd string, port, timeout int) {
 	client := redis.NewClient(&redis.Options{
 		Addr:            fmt.Sprintf("%s:%d", ip, port),
 		Username:        user,

@@ -11,21 +11,21 @@ import (
 )
 
 // ConnectionFunc 定义一个函数类型
-type ConnectionFunc func(ctx context.Context, cancel context.CancelFunc, host, user, passwd string, newport, timeout int, ch <-chan struct{}, wg *sync.WaitGroup)
+type ConnectionFunc func(cancel context.CancelFunc, host, user, passwd string, newport, timeout int)
 
 // connectionFuncs 创建一个映射，将字符串映射到对应的函数
 var connectionFuncs = map[string]ConnectionFunc{
-	"ssh":       SSH,
-	"mysql":     mySql,
-	"redis":     rediscon,
-	"pgsql":     pgsql,
-	"sqlserver": sqlservercon,
-	"ftp":       ftpcon,
-	"smb":       smbcon,
-	"telnet":    telnetcon,
-	"tomcat":    tomcat,
-	"rdp":       rdpcon,
-	"oracle":    oraclecon,
+	"ssh":        SSH,
+	"mysql":      mySql,
+	"redis":      rediscon,
+	"postgresql": pgsql,
+	"sqlserver":  sqlservercon,
+	"ftp":        ftpcon,
+	"smb":        smbcon,
+	"telnet":     telnetcon,
+	"tomcat":     tomcat,
+	"rdp":        rdpcon,
+	"oracle":     oraclecon,
 }
 
 func Run(host, port string, Timeout, chanCount int, mode string) {
@@ -36,6 +36,7 @@ func Run(host, port string, Timeout, chanCount int, mode string) {
 	newport, _ := strconv.Atoi(port)
 
 	for _, user := range Userlist(mode) {
+		git
 		for _, passwd := range Passwdlist() {
 			fmt.Printf("\033[2K\r") // 擦除整行
 			fmt.Printf("\r%s", color.MagentaString("\r[...] 正在进行弱口令扫描 -> %s", fmt.Sprintf("%s://%s:%s?user=%s?passwd=%s", mode, host, port, user, passwd)))
@@ -80,7 +81,7 @@ func crackOnce(ctx context.Context, cancel context.CancelFunc, host, user, passw
 
 	hasDone := make(chan struct{}, 1)
 	go func() {
-		connFunc(ctx, cancel, host, user, passwd, newport, timeout, ch, wg)
+		connFunc(cancel, host, user, passwd, newport, timeout)
 		hasDone <- struct{}{}
 	}()
 
