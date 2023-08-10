@@ -4,8 +4,10 @@ import (
 	"context"
 	"fmt"
 	"github.com/fatih/color"
+	"golin/global"
 	"strconv"
 	"sync"
+	"time"
 )
 
 // ConnectionFunc 定义一个函数类型
@@ -29,7 +31,7 @@ var connectionFuncs = map[string]ConnectionFunc{
 func Run(host, port string, Timeout, chanCount int, mode string) {
 	ch := make(chan struct{}, chanCount)
 	wg := sync.WaitGroup{}
-	ctx, cancel := context.WithCancel(context.Background())
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second*time.Duration(Timeout))
 	defer cancel() //确保所有的goroutine都已经退出
 	newport, _ := strconv.Atoi(port)
 
@@ -41,7 +43,7 @@ func Run(host, port string, Timeout, chanCount int, mode string) {
 			ch <- struct{}{}
 			wg.Add(1)
 			if connFunc, ok := connectionFuncs[mode]; ok {
-				go connFunc(ctx, cancel, host, user, passwd, newport, Timeout, ch, &wg)
+				go crackOnce(ctx, cancel, host, user, passwd, newport, Timeout, ch, &wg, connFunc, mode)
 			} else {
 				wg.Done()
 				<-ch
@@ -53,6 +55,9 @@ func Run(host, port string, Timeout, chanCount int, mode string) {
 }
 
 func end(host, user, passwd string, port int, mode string) {
+	global.PrintLock.Lock()
+	defer global.PrintLock.Unlock()
+
 	fmt.Printf("\033[2K\r") // 擦除整行
 	fmt.Printf("\r| %-2s | %-15s | %-4d |%-6s|%-4s|%-50s \n",
 		fmt.Sprintf("%s", color.GreenString("%s", "✓")),
@@ -64,7 +69,28 @@ func end(host, user, passwd string, port int, mode string) {
 	)
 	fmt.Printf("\033[2K\r") // 擦除整行
 }
+
 func done(ch <-chan struct{}, wg *sync.WaitGroup) {
 	<-ch
 	wg.Done()
+}
+
+func crackOnce(ctx context.Context, cancel context.CancelFunc, host, user, passwd string, newport, timeout int, ch <-chan struct{}, wg *sync.WaitGroup, connFunc ConnectionFunc, key string) {
+	defer done(ch, wg)
+
+	hasDone := make(chan struct{}, 1)
+	go func() {
+		connFunc(ctx, cancel, host, user, passwd, newport, timeout, ch, wg)
+		hasDone <- struct{}{}
+	}()
+
+	select {
+	case <-hasDone:
+		return
+	case <-ctx.Done():
+		if global.Debug {
+			fmt.Println(key, host, user, passwd, "time out")
+		}
+		return
+	}
 }

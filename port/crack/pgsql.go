@@ -10,12 +10,6 @@ import (
 )
 
 func pgsql(ctx context.Context, cancel context.CancelFunc, ip, user, passwd string, port, timeout int, ch <-chan struct{}, wg *sync.WaitGroup) {
-	defer done(ch, wg)
-	select {
-	case <-ctx.Done():
-		return
-	default:
-	}
 	dsn := fmt.Sprintf("host=%s user=%s password=%s dbname=postgres port=%d sslmode=disable  TimeZone=Asia/Shanghai connect_timeout=%d", ip, user, passwd, port, timeout)
 	_, err := gorm.Open(postgres.Open(dsn), &gorm.Config{
 		Logger: logger.Default.LogMode(logger.Silent),

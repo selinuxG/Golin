@@ -33,12 +33,6 @@ type Client struct {
 }
 
 func rdpcon(ctx context.Context, cancel context.CancelFunc, ip, user, passwd string, port, timeout int, ch <-chan struct{}, wg *sync.WaitGroup) {
-	defer done(ch, wg)
-	select {
-	case <-ctx.Done():
-		return
-	default:
-	}
 	glog.SetLevel(5) //禁止日志输出
 	logger := log.New(os.Stdout, "", 0)
 	glog.SetLogger(logger)

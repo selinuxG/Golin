@@ -11,16 +11,6 @@ import (
 )
 
 func telnetcon(ctx context.Context, cancel context.CancelFunc, ip, user, passwd string, port, timeout int, ch <-chan struct{}, wg *sync.WaitGroup) {
-	defer func() {
-		wg.Done()
-		<-ch
-	}()
-	select {
-	case <-ctx.Done():
-		return
-	default:
-	}
-
 	conn, err := telnet.DialTimeout("tcp", fmt.Sprintf("%s:%d", ip, port), time.Duration(timeout))
 	if err != nil {
 		return

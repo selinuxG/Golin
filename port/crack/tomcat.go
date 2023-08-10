@@ -12,16 +12,6 @@ import (
 )
 
 func tomcat(ctx context.Context, cancel context.CancelFunc, ip, user, passwd string, port, timeout int, ch <-chan struct{}, wg *sync.WaitGroup) {
-	defer func() {
-		wg.Done()
-		<-ch
-	}()
-	select {
-	case <-ctx.Done():
-		return
-	default:
-	}
-
 	url := fmt.Sprintf("%s:%d", ip, port)
 	base64passwd := fmt.Sprintf("%s:%s", user, passwd)
 	base64passwd = base64.StdEncoding.EncodeToString([]byte(base64passwd))

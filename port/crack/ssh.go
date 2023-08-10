@@ -9,15 +9,6 @@ import (
 )
 
 func SSH(ctx context.Context, cancel context.CancelFunc, ip, user, passwd string, port, timeout int, ch <-chan struct{}, wg *sync.WaitGroup) {
-	defer func() {
-		wg.Done()
-		<-ch
-	}()
-	select {
-	case <-ctx.Done():
-		return
-	default:
-	}
 	configssh := &ssh.ClientConfig{
 		Timeout:         time.Duration(timeout) * time.Second, // ssh连接timeout时间
 		User:            user,

@@ -10,16 +10,6 @@ import (
 )
 
 func sqlservercon(ctx context.Context, cancel context.CancelFunc, ip, user, passwd string, port, timeout int, ch <-chan struct{}, wg *sync.WaitGroup) {
-	defer func() {
-		wg.Done()
-		<-ch
-	}()
-	select {
-	case <-ctx.Done():
-		return
-	default:
-	}
-
 	dsn := fmt.Sprintf("sqlserver://%s:%s@%s:%d?database=master&timeout=%ds", user, passwd, ip, port, timeout)
 	_, err := gorm.Open(sqlserver.Open(dsn), &gorm.Config{
 		Logger: logger.Default.LogMode(logger.Silent),

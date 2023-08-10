@@ -11,16 +11,6 @@ import (
 var ctx = context.Background()
 
 func rediscon(ctx context.Context, cancel context.CancelFunc, ip, user, passwd string, port, timeout int, ch <-chan struct{}, wg *sync.WaitGroup) {
-	defer func() {
-		wg.Done()
-		<-ch
-	}()
-	select {
-	case <-ctx.Done():
-		return
-	default:
-	}
-
 	client := redis.NewClient(&redis.Options{
 		Addr:            fmt.Sprintf("%s:%d", ip, port),
 		Username:        user,
