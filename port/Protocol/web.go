@@ -8,9 +8,11 @@ import (
 	"github.com/fatih/color"
 	"golin/global"
 	"golin/poc"
+	"golin/port/crack"
 	"io"
 	"net/http"
 	"regexp"
+	"strconv"
 	"strings"
 	"time"
 )
@@ -23,7 +25,6 @@ type webinfo struct {
 	ContentType string //ContentType
 	xss         string //是否存在xss漏洞
 	server      string //ContentType中的server
-	risk        string //通过title与ContentType确认是否存在风险
 }
 
 func IsWeb(host, port string, timeout int, xss, Poc bool) string {
@@ -74,11 +75,17 @@ func IsWeb(host, port string, timeout int, xss, Poc bool) string {
 		info.ContentType = resp.Header.Get("Content-Type")
 		info.app = CheckApp(string(body), resp.Header, resp.Cookies()) // 匹配组件
 
+		if strings.Contains(strings.ToLower(info.app), "elasticsearch") {
+			intport, _ := strconv.Atoi(port)
+			crack.ListCrackHost = append(crack.ListCrackHost, crack.SussCrack{Host: host, Port: intport, Mode: "ElasticSearch"})
+		}
+
 		//xss扫描
 		if xss {
 			checkXSS, xssPayloads := CheckXss(url, body)
 			if checkXSS {
 				info.xss = xssPayloads
+				poc.ListPocInfo = append(poc.ListPocInfo, poc.Flagcve{url, "XSS", xssPayloads})
 			}
 		}
 
@@ -88,11 +95,9 @@ func IsWeb(host, port string, timeout int, xss, Poc bool) string {
 		}
 
 		// 基于title确认是否url是目录浏览
-		var risk []string
 		if strings.Contains(strings.ToLower(info.title), "index of") {
-			risk = append(risk, "目录浏览漏洞")
+			poc.ListPocInfo = append(poc.ListPocInfo, poc.Flagcve{Url: url, Cve: "目录浏览漏洞"})
 		}
-		info.risk = strings.Join(risk, ",")
 
 		info.server = resp.Header.Get("Server")
 
@@ -143,10 +148,6 @@ func CheckApp(body string, head map[string][]string, cookies []*http.Cookie) str
 
 func chekwebinfo(info webinfo) string {
 	output := fmt.Sprintf("%-23s ", info.url)
-
-	if info.risk != "" {
-		output += color.RedString("%s", fmt.Sprintf("[%s]", info.risk))
-	}
 
 	if info.xss != "" {
 		output += color.RedString("%s", fmt.Sprintf(" [XSS漏洞:%s]", info.xss))
