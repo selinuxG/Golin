@@ -8,28 +8,24 @@ import (
 	"github.com/fatih/color"
 	"golin/global"
 	"golin/poc"
-	"golin/port/crack"
 	"io"
 	"net/http"
 	"regexp"
-	"strconv"
 	"strings"
 	"time"
 )
 
-type webinfo struct {
-	url         string //web地址
-	title       string //网站标题
-	app         string //识别到的组件
-	statuscode  int    //状态码
-	ContentType string //ContentType
-	xss         string //是否存在xss漏洞
-	server      string //ContentType中的server
+type WebInfo struct {
+	url         string
+	title       string
+	statuscode  int
+	ContentType string
+	app         string
+	server      string
 }
 
-func IsWeb(host, port string, timeout int, xss, Poc bool) string {
-	url := ""
-
+func IsWeb(host, port string, timeout int, Poc bool) map[string]string {
+	results := make(map[string]string)
 	transport := &http.Transport{
 		TLSClientConfig: &tls.Config{
 			InsecureSkipVerify: true,
@@ -41,7 +37,7 @@ func IsWeb(host, port string, timeout int, xss, Poc bool) string {
 	}
 
 	for _, v := range []string{"https", "http"} {
-		info := webinfo{}
+		info := WebInfo{}
 		switch port {
 		case "443":
 			info.url = fmt.Sprintf("https://%s", host)
@@ -50,69 +46,66 @@ func IsWeb(host, port string, timeout int, xss, Poc bool) string {
 		default:
 			info.url = fmt.Sprintf("%s://%s:%s", v, host, port)
 		}
-		url = info.url
-
-		resp, err := client.Get(info.url)
+		body, err := handleRequest(client, &info)
 		if err != nil {
 			continue
 		}
-		defer resp.Body.Close()
 
-		body, _ := io.ReadAll(resp.Body)
+		handlePocAndXss(&info, body, Poc)
+		results[v] = chekwebinfo(info)
+		return results
+	}
+	return results
+}
 
-		if global.Debug {
-			fmt.Println(string(body))
-		}
+// handleRequest 请求网页并补充WebInfo结构体
+func handleRequest(client *http.Client, info *WebInfo) ([]byte, error) {
+	resp, err := client.Get(info.url)
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
 
-		doc, err := goquery.NewDocumentFromReader(bytes.NewReader(body))
-		if err == nil {
-			info.title = doc.Find("title").Text()
-			info.title = strings.ReplaceAll(info.title, "\n", "")
-			info.title = strings.ReplaceAll(info.title, "  ", "")
+	body, _ := io.ReadAll(resp.Body)
 
-		}
-		info.statuscode = resp.StatusCode
-		info.ContentType = resp.Header.Get("Content-Type")
-		info.app = CheckApp(string(body), resp.Header, resp.Cookies()) // 匹配组件
-
-		if strings.Contains(strings.ToLower(info.app), "elasticsearch") {
-			intport, _ := strconv.Atoi(port)
-			crack.ListCrackHost = append(crack.ListCrackHost, crack.SussCrack{Host: host, Port: intport, Mode: "ElasticSearch"})
-		}
-
-		//xss扫描
-		if xss {
-			checkXSS, xssPayloads := CheckXss(url, body)
-			if checkXSS {
-				info.xss = xssPayloads
-				poc.ListPocInfo = append(poc.ListPocInfo, poc.Flagcve{url, "XSS", xssPayloads})
-			}
-		}
-
-		//poc扫描
-		if Poc {
-			go poc.CheckPoc(info.url, info.app)
-		}
-
-		// 基于title确认是否url是目录浏览
-		if strings.Contains(strings.ToLower(info.title), "index of") {
-			poc.ListPocInfo = append(poc.ListPocInfo, poc.Flagcve{Url: url, Cve: "目录浏览漏洞"})
-		}
-
-		info.server = resp.Header.Get("Server")
-
-		return chekwebinfo(info)
+	doc, err := goquery.NewDocumentFromReader(bytes.NewReader(body)) //获取标题
+	if err == nil {
+		info.title = strings.TrimSpace(doc.Find("title").Text())
 	}
 
-	if port == "443" {
-		return url
+	info.statuscode = resp.StatusCode
+	info.ContentType = resp.Header.Get("Content-Type")
+	info.app = CheckApp(string(body), resp.Header, resp.Cookies()) // 匹配组件
+	info.server = resp.Header.Get("Server")
+
+	if global.Debug {
+		fmt.Println(string(body))
 	}
 
-	return ""
+	return body, nil
+}
+
+// handlePocAndXss 漏洞扫描以及POC扫描
+func handlePocAndXss(info *WebInfo, body []byte, Poc bool) {
+	if !Poc {
+		return
+	}
+	poc.CheckPoc(info.url, info.app) //POC扫描
+
+	checkXSS, xssPayloads := CheckXss(info.url, body) //XSS扫描
+	if checkXSS {
+		poc.ListPocInfo = append(poc.ListPocInfo, poc.Flagcve{Url: info.url, Cve: "XSS", Flag: xssPayloads})
+	}
+
+	// 基于title确认是否url是目录浏览
+	if strings.Contains(strings.ToLower(info.title), "index of") {
+		poc.ListPocInfo = append(poc.ListPocInfo, poc.Flagcve{Url: info.url, Cve: "目录浏览漏洞"})
+	}
 }
 
 // CheckApp 基于返回的body、headers、cookies判定组件信息
 func CheckApp(body string, head map[string][]string, cookies []*http.Cookie) string {
+
 	var app []string
 	for _, rule := range RuleDatas {
 		switch rule.Type {
@@ -126,6 +119,7 @@ func CheckApp(body string, head map[string][]string, cookies []*http.Cookie) str
 			for _, values := range head {
 				for _, value := range values {
 					patterns, err := regexp.Compile(`(?i)` + rule.Rule) //不区分大小写
+					//fmt.Println(patterns, err)
 					if err == nil && patterns.MatchString(value) {
 						app = append(app, rule.Name)
 					}
@@ -146,20 +140,18 @@ func CheckApp(body string, head map[string][]string, cookies []*http.Cookie) str
 
 }
 
-func chekwebinfo(info webinfo) string {
+func chekwebinfo(info WebInfo) string {
 	output := fmt.Sprintf("%-23s ", info.url)
-
-	if info.xss != "" {
-		output += color.RedString("%s", fmt.Sprintf(" [XSS漏洞:%s]", info.xss))
-	}
 
 	if info.app != "" {
 		output += color.GreenString("%s", fmt.Sprintf(" APP:「%s」", info.app))
 	}
+
 	if info.title != "" {
 		info.title = strings.ReplaceAll(info.title, "  ", "")
 		output += color.BlueString("%s", fmt.Sprintf(" title:「%s」", info.title))
 	}
+
 	if info.server != "" {
 		output += fmt.Sprintf("%s", color.MagentaString("%s", fmt.Sprintf(" Server:「%s」", info.server)))
 	}

@@ -1,0 +1,8 @@
+name: poc-yaml-SpringActuatorHeapdump
+description: "可下载内存文件,文件中会包含大量敏感信息"
+method: HEAD
+path:
+  - /actuator/heapdump
+expression:
+  status: 200
+  content_type: "application/octet-stream"

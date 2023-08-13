@@ -1,0 +1,11 @@
+name: poc-yaml-Springboot-env-unauth
+description: "springboot未授权访问"
+method: GET
+path:
+  - /env
+  - /actuator/env
+expression:
+  status: 200
+  body_all:
+    - "version"
+    - "arch"

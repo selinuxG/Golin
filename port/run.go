@@ -9,11 +9,11 @@ import (
 )
 
 var (
-	iplist     = []string{}              //扫描的端口
-	portlist   = []string{}              //扫描的端口
+	port       string //接受cli要扫描的端口
+	iplist     []string
+	portlist   []string
 	NoPing     bool                      //是否禁止ping监测
 	Carck      bool                      //是否进行弱口令扫描
-	Xss        bool                      //是否进行xss扫描
 	Poc        bool                      //是否进行poc扫描
 	ch         = make(chan struct{}, 30) //控制并发数
 	wg         = sync.WaitGroup{}
@@ -43,7 +43,7 @@ func ParseFlags(cmd *cobra.Command, args []string) {
 	}
 	parseIP(ip)
 
-	port, _ := cmd.Flags().GetString("port")
+	port, _ = cmd.Flags().GetString("port")
 	parsePort(port)
 
 	excludeport, _ := cmd.Flags().GetString("exclude") //去重端口以及排查过滤端口
@@ -58,9 +58,6 @@ func ParseFlags(cmd *cobra.Command, args []string) {
 
 	nocrack, _ := cmd.Flags().GetBool("nocrack") //弱口令扫描
 	Carck = !nocrack
-
-	noxss, _ := cmd.Flags().GetBool("noxss") //xss扫描
-	Xss = !noxss
 
 	nopoc, _ := cmd.Flags().GetBool("nopoc") //poc扫描
 	Poc = !nopoc

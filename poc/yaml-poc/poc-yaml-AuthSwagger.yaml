@@ -1,0 +1,30 @@
+name: poc-yaml-AuthSwagger
+description: "Swagger接口未授权访问"
+method: GET
+alwaysExecute: true
+path:
+    - "/swagger/ui/index"
+    -  "/swagger-ui.html"
+    - "/api/swagger-ui.html"
+    -  "/service/swagger-ui.html"
+    -  "/web/swagger-ui.html"
+    -  "/swagger/swagger-ui.html"
+    -  "/actuator/swagger-ui.html"
+    -  "/libs/swagger-ui.html"
+    -  "/template/swagger-ui.html"
+    -  "/api_docs"
+    -  "/api/docs/"
+    -  "/api/index.html"
+    -  "/swagger/v1/swagger.yaml"
+    -  "/swagger/v1/swagger.json"
+    -  "/swagger.yaml"
+    -  "/swagger.json"
+    -  "/api-docs/swagger.yaml"
+    -  "/api-docs/swagger.json"
+expression:
+  status: 200
+  body_any:
+    - "Swagger UI"
+    - "swagger-ui.min.js"
+    - "swagger"
+    - "Swagger 2.0"

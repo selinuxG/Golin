@@ -54,12 +54,10 @@ func IsPortOpen(host, port string) {
 	if err != nil {
 		return
 	}
-	Protocol := parseProtocol(conn, host, port, Xss, Poc) //识别协议、xss、poc扫描
+	Protocol := parseProtocol(conn, host, port, Poc) //识别协议
 	thisINFO := INFO{host, port, Protocol}
-
-	fmt.Printf(portformatString, printGreen("%v", "✓"), thisINFO.Host, thisINFO.Port, thisINFO.Protocol) //端口存活信息
-
 	outputMux.Lock()
+	fmt.Printf(portformatString, printGreen("%v", "✓"), thisINFO.Host, thisINFO.Port, thisINFO.Protocol) //端口存活信息
 	infolist = append(infolist, INFO{host, port, thisINFO.Protocol})
 	outputMux.Unlock()
 
@@ -74,9 +72,12 @@ func IsPortOpen(host, port string) {
 			}
 		}
 
-		//mongodb模式只进行验证未授权访问
 		if strings.Contains(protocol, "mongodb") {
 			crack.Mongodbcon(host, port)
+		}
+
+		if strings.Contains(protocol, "zookeeper") {
+			poc.ZookeeperCon(host, port)
 		}
 	}
 

@@ -26,8 +26,6 @@ var portProtocols = map[string]string{
 	"587":   "Submission",
 	"993":   "IMAPS",
 	"995":   "POP3S",
-	"1080":  "SOCKS代理",
-	"1194":  "开放VPN",
 	"1433":  "数据库|SqlServer",
 	"1521":  "数据库|Oracle",
 	"1723":  "PPTP",
@@ -37,13 +35,13 @@ var portProtocols = map[string]string{
 	"5900":  "VNC",
 	"5901":  "VNC",
 	"6000":  "X11",
-	"6443":  "Kubernetes",
 	"5672":  "RabbitMq",
 	"27017": "数据库|MongoDB",
+	"2181":  "ZooKeeper",
 }
 
 // parseProtocol 协议/组件分析：有的基于默认端口去对应服务
-func parseProtocol(conn net.Conn, host, port string, xss, Poc bool) string {
+func parseProtocol(conn net.Conn, host, port string, Poc bool) string {
 
 	if protocol, ok := portProtocols[port]; ok {
 		return protocol
@@ -79,10 +77,13 @@ func parseProtocol(conn net.Conn, host, port string, xss, Poc bool) string {
 		return "数据库|PostgreSQL"
 
 	default:
-		isWeb := Protocol.IsWeb(host, port, Timeout, xss, Poc)
-		if isWeb != "" {
-			return fmt.Sprintf("%-5s| %s", "WEB应用", isWeb)
+		isWeb := Protocol.IsWeb(host, port, Timeout, Poc)
+		for _, v := range isWeb {
+			if v != "" {
+				return fmt.Sprintf("%-5s| %s", "WEB应用", v)
+			}
 		}
+
 	}
 
 	isMySQL, version := Protocol.IsMySqlProtocol(host, port)

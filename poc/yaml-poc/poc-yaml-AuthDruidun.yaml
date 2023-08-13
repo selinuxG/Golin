@@ -1,0 +1,11 @@
+name: poc-yaml-AuthDruidun
+description: "Druidun未授权访问"
+method: GET
+path:
+  - /druid/index.html
+expression:
+  status: 200
+  body_all:
+    - "ruid Stat Index"
+    - "DruidVersion"
+    - "DruidDrivers"

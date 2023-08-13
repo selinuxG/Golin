@@ -6,6 +6,10 @@ import (
 )
 
 func parsePort(port string) {
+	if len(portlist) == 1 { //如果是快速扫描则已经有端口了
+		return
+	}
+
 	if port == "0" {
 		portlist = default_port
 		return
@@ -81,6 +85,7 @@ var (
 		"1080",  //SOCKS
 		"1194",  //开放VPN
 		"5900",  //VNC
+		"2181",  //ZooKeeper
 		"53",    // DNS
 		"3389",  // RDP
 		"23",    // Telnet
@@ -110,10 +115,13 @@ var (
 		"1194",  //vpn
 		"5900",  //vnc
 		"5901",  //vnc
-		"5672",  //RabbitMq
-		"6000",  //x11
-		"6443",  //K8S
-		"9000",  //Hadoop
+		"6066",
+		"8085",
+		"7105",
+		"5672", //RabbitMq
+		"6000", //x11
+		"6443", //K8S
+		"9000", //Hadoop
 		"3000",
 		"8001",
 		"8002",
@@ -121,6 +129,7 @@ var (
 		"8004",
 		"8005",
 		"8006",
+		"5984",
 		"8007",
 		"8008",
 		"8009",

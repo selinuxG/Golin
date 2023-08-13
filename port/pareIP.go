@@ -25,6 +25,11 @@ func parseIP(ip string) {
 		if len(p) > 0 && p[len(p)-1] == '/' {
 			p = p[:len(p)-1]
 		}
+		checkPort := strings.Split(p, ":") //快速扫描
+		if len(checkPort) == 2 {
+			p = checkPort[0]
+			portlist = []string{checkPort[1]}
+		}
 
 		switch {
 		case strings.Contains(p, "-"): //起始-结束ip
