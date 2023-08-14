@@ -80,6 +80,7 @@ func handleRequest(client *http.Client, info *WebInfo) ([]byte, error) {
 
 	if global.Debug {
 		fmt.Println(string(body))
+		fmt.Println(resp.Header)
 	}
 
 	return body, nil

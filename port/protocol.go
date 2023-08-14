@@ -62,7 +62,7 @@ func parseProtocol(conn net.Conn, host, port string, Poc bool) string {
 
 	switch {
 	case Protocol.IsSSHProtocol(line):
-		return strings.ReplaceAll(strings.ReplaceAll(line, "\r", ""), "\n", "")
+		return Protocol.IsSSHProtocolApp(line)
 
 	case strings.HasPrefix(line, "220"):
 		return "FTP"

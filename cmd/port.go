@@ -19,7 +19,7 @@ func init() {
 	portCmd.Flags().StringP("exclude", "e", "", "此参数排除扫描的端口,格式支持:1,2,3")
 	portCmd.Flags().Bool("noping", false, "此参数是禁止ping检测")
 	portCmd.Flags().IntP("chan", "c", 100, "并发数量")
-	portCmd.Flags().IntP("time", "t", 3, "超时等待时常/s")
+	portCmd.Flags().IntP("time", "t", 5, "超时等待时常/s")
 	portCmd.Flags().Bool("random", false, "打乱主机顺序")
 	portCmd.Flags().Bool("nocrack", false, "此参数是不进行弱口令扫描")
 	portCmd.Flags().Bool("nopoc", false, "此参数是不进行poc漏洞扫描")
