@@ -36,12 +36,18 @@ type INFO struct {
 }
 
 func ParseFlags(cmd *cobra.Command, args []string) {
+	ipFile, _ := cmd.Flags().GetString("ipfile") //读取文件
+	parseFileIP(ipFile)
+
 	ip, _ := cmd.Flags().GetString("ip")
 	if ip == "" {
-		fmt.Printf("[-] 未指定扫描主机!通过 golin port -i 指定,支持：192.168.1.1,192.168.1.1/24,192.168.1.1-100\n")
-		os.Exit(1)
+		if len(iplist) == 0 {
+			fmt.Printf("[-] 未指定扫描主机!通过 golin port -i 指定,支持：192.168.1.1,192.168.1.1/24,192.168.1.1-100\n")
+			os.Exit(1)
+		}
+	} else {
+		parseIP(ip)
 	}
-	parseIP(ip)
 
 	port, _ = cmd.Flags().GetString("port")
 	parsePort(port)

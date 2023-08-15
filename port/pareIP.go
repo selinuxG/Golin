@@ -2,7 +2,9 @@ package port
 
 import (
 	"fmt"
+	"golin/global"
 	"net"
+	"os"
 	"strconv"
 	"strings"
 )
@@ -86,4 +88,19 @@ func incrementIP(ip net.IP) {
 			break
 		}
 	}
+}
+
+// parseFileIP解析扫描文件
+func parseFileIP(path string) {
+	if global.PathExists(path) {
+		data, _ := os.ReadFile(path)
+		for _, v := range strings.Split(string(data), "\n") {
+			if v != "" {
+				v = strings.ReplaceAll(v, "\r", "")
+				v = strings.ReplaceAll(v, " ", "")
+				parseIP(v)
+			}
+		}
+	}
+	return
 }
