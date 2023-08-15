@@ -31,7 +31,6 @@ var portProtocols = map[string]string{
 	"1723":  "PPTP",
 	"2049":  "NFS",
 	"3389":  "RDP",
-	"5601":  "Kibana",
 	"5900":  "VNC",
 	"5901":  "VNC",
 	"6000":  "X11",

@@ -6,7 +6,7 @@ import (
 )
 
 func parsePort(port string) {
-	if len(portlist) == 1 { //如果是快速扫描则已经有端口了
+	if len(portlist) > 0 { //是否有特定端口
 		return
 	}
 

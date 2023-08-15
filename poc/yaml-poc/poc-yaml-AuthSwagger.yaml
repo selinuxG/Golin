@@ -26,5 +26,4 @@ expression:
   body_any:
     - "Swagger UI"
     - "swagger-ui.min.js"
-    - "swagger"
     - "Swagger 2.0"

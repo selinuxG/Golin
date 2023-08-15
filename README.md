@@ -42,6 +42,9 @@
 | 21 | Hadoop-Administration |  √   |      仅验证未授权访问      |
 | 22 |     APACHE-Spark      |  √   |      仅验证未授权访问      |
 | 23 |        swagger        |  √   |      仅验证未授权访问      |
+| 24 |        Kibana         |  √   |      仅验证未授权访问      |
+| 25 |     Kafka-Manager     |  √   |      仅验证未授权访问      |
+
 
 ## 端口扫描现阶段支持功能
 | 序号 |     功能     | 是否支持 |                                   备注                                   |

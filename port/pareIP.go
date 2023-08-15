@@ -21,9 +21,9 @@ func parseIP(ip string) {
 		if p == "" {
 			continue
 		}
+		replacer := strings.NewReplacer("https://", "", "http://", "")
+		p = replacer.Replace(p)
 
-		p = strings.ReplaceAll(p, "https://", "")
-		p = strings.ReplaceAll(p, "http://", "")
 		if len(p) > 0 && p[len(p)-1] == '/' {
 			p = p[:len(p)-1]
 		}
@@ -96,8 +96,18 @@ func parseFileIP(path string) {
 		data, _ := os.ReadFile(path)
 		for _, v := range strings.Split(string(data), "\n") {
 			if v != "" {
-				v = strings.ReplaceAll(v, "\r", "")
-				v = strings.ReplaceAll(v, " ", "")
+				if strings.Contains(v, "-") {
+					continue
+				}
+				replacer := strings.NewReplacer("\r", "", " ", "", "https://", "", "http://", "")
+				v = replacer.Replace(v)
+				if len(strings.Split(v, ":")) == 2 {
+					ip := strings.Split(v, ":")[0]
+					nowPort := strings.Split(v, ":")[1]
+					portlist = append(portlist, nowPort)
+					parseIP(ip)
+					continue
+				}
 				parseIP(v)
 			}
 		}

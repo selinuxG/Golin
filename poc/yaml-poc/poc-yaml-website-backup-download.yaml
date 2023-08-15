@@ -1,0 +1,22 @@
+name: poc-yaml-website-backup-download
+description: "备份文件下载"
+alwaysExecute: true
+request:
+  method: GET
+  path:
+    - "/backup.tar.gz"
+    - "/backup.zip"
+    - "/backup.sql"
+    - "/backup.rar"
+    - "/backup.bak"
+    - "/.git/HEAD"
+    - "/.svn/entries"
+    - "/.hg/dirstate"
+    - "/.DS_Store"
+    - "/.htaccess"
+    - "/.htpasswd"
+    - "/web.config"
+    - "/db/backup.db"
+    - "/db/backup.sql"
+expression:
+  status: 200

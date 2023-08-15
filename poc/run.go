@@ -59,6 +59,7 @@ func CheckPoc(url, app string) {
 		"couchdb":       {url, "CouchDB未授权访问", "可通过/_all_dbs获取所有数据库"},
 		"hadoop":        {url, "Hadoop-Administration未授权访问", ""},
 		"apache-spark":  {url, "Apache-Spark未授权访问", ""},
+		"kafka-manager": {url, "Kafka-Manager未授权访问", ""},
 	}
 	for aps, flag := range authPocs {
 		if strings.Contains(app, aps) {

@@ -1,0 +1,9 @@
+name: poc-yaml-kibana-unauth
+description: "kibana未授权访问"
+method: GET
+path:
+  - "/app/kibana"
+expression:
+  status: 200
+  body_any:
+    - "kibanaWelcomeView"
