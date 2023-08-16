@@ -16,12 +16,21 @@ import (
 )
 
 type WebInfo struct {
-	url         string
-	title       string
-	statuscode  int
-	ContentType string
-	app         string
-	server      string
+	url         string   //url
+	title       string   //标题
+	statuscode  int      //状态码
+	ContentType string   //类型
+	app         string   //组件
+	server      string   //server
+	cert        certInfo //ssl证书信息
+}
+
+// certInfo 证书信息
+type certInfo struct {
+	certIssuer string //颁发者
+	certDay    int    //过期天数
+	signature  string //加密算法
+	version    string //tls版本
 }
 
 func IsWeb(host, port string, timeout int, Poc bool) map[string]string {
@@ -72,6 +81,33 @@ func handleRequest(client *http.Client, info *WebInfo) ([]byte, error) {
 	if err == nil {
 		info.title = strings.TrimSpace(doc.Find("title").Text())
 	}
+	// SSL信息
+	if resp.TLS != nil {
+		state := resp.TLS
+		if len(state.PeerCertificates) > 0 {
+			//过期天数
+			remainingDays := int(state.PeerCertificates[0].NotAfter.Sub(time.Now()).Hours() / 24)
+			info.cert.certDay = remainingDays
+			//签发
+			issuerCert := state.PeerCertificates[0].Issuer
+			info.cert.certIssuer = issuerCert.CommonName
+			//加密算法
+			signatureAlgorithm := state.PeerCertificates[0].SignatureAlgorithm.String()
+			info.cert.signature = signatureAlgorithm
+			// 判断协议版本
+			switch state.Version {
+			case tls.VersionTLS13:
+				info.cert.version = "TLS1.3"
+			case tls.VersionTLS12:
+				info.cert.version = "TLS1.2"
+			case tls.VersionTLS11:
+				info.cert.version = "TLS1.1"
+			case tls.VersionTLS10:
+				info.cert.version = "TLS1.0"
+			}
+			info.url += color.CyanString("%s", fmt.Sprintf("「%d %s %s」", info.cert.certDay, info.cert.version, info.cert.signature))
+		}
+	}
 
 	info.statuscode = resp.StatusCode
 	info.ContentType = resp.Header.Get("Content-Type")
@@ -120,7 +156,6 @@ func CheckApp(body string, head map[string][]string, cookies []*http.Cookie) str
 			for _, values := range head {
 				for _, value := range values {
 					patterns, err := regexp.Compile(`(?i)` + rule.Rule) //不区分大小写
-					//fmt.Println(patterns, err)
 					if err == nil && patterns.MatchString(value) {
 						app = append(app, rule.Name)
 					}
@@ -137,15 +172,15 @@ func CheckApp(body string, head map[string][]string, cookies []*http.Cookie) str
 		}
 	}
 
-	return strings.Join(global.RemoveDuplicates(app), "、")
+	return strings.Join(global.RemoveDuplicates(app), ",")
 
 }
 
 func chekwebinfo(info WebInfo) string {
-	output := fmt.Sprintf("%-23s ", info.url)
+	output := fmt.Sprintf("%-20s ", info.url)
 
 	if info.app != "" {
-		output += color.GreenString("%s", fmt.Sprintf(" APP:「%s」", info.app))
+		output += color.GreenString("%s", fmt.Sprintf("「%s」", info.app))
 	}
 
 	if info.title != "" {

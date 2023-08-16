@@ -34,7 +34,7 @@ func CheckPoc(url, app string) {
 
 	// 这是运行yaml格式的漏洞
 	for _, poc := range dirPocs {
-		apps := strings.Split(app, "、") // 分割app
+		apps := strings.Split(app, ",") // 分割app
 		for _, singleApp := range apps {
 			if strings.Contains(strings.ToLower(poc.Name), singleApp) && singleApp != "" {
 				wg.Add(1)

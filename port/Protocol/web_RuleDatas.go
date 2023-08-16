@@ -15,6 +15,7 @@ var RuleDatas = []RuleData{
 	{"Jetty", "body", "(Powered by Jetty)"},
 	{"Kibana", "body", "(kibanaLegacy)"},
 	{"Kafka-Manager", "headers", "Kafka-Manager"},
+	{"Baidu-ECharts", "body", "(echarts\\.js|echarts\\.min\\.js)"},
 	{"Kafka-Manager[未授权访问]", "body", "(<title>Kafka Manager</title>)"},
 	{"Jumpserver堡垒机", "body", "(Jumpserver|全球首款完全开源的堡垒机)"},
 	{"天融信-入侵检测系统TopSentry", "body", "(<title>天融信入侵检测系统TopSentry</title>|TopSentry)"},
