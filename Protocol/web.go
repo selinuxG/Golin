@@ -82,32 +82,32 @@ func handleRequest(client *http.Client, info *WebInfo) ([]byte, error) {
 		info.title = strings.TrimSpace(doc.Find("title").Text())
 	}
 	// SSL信息
-	if resp.TLS != nil {
-		state := resp.TLS
-		if len(state.PeerCertificates) > 0 {
-			//过期天数
-			remainingDays := int(state.PeerCertificates[0].NotAfter.Sub(time.Now()).Hours() / 24)
-			info.cert.certDay = remainingDays
-			//签发
-			issuerCert := state.PeerCertificates[0].Issuer
-			info.cert.certIssuer = issuerCert.CommonName
-			//加密算法
-			signatureAlgorithm := state.PeerCertificates[0].SignatureAlgorithm.String()
-			info.cert.signature = signatureAlgorithm
-			// 判断协议版本
-			switch state.Version {
-			case tls.VersionTLS13:
-				info.cert.version = "TLS1.3"
-			case tls.VersionTLS12:
-				info.cert.version = "TLS1.2"
-			case tls.VersionTLS11:
-				info.cert.version = "TLS1.1"
-			case tls.VersionTLS10:
-				info.cert.version = "TLS1.0"
-			}
-			info.url += color.CyanString("%s", fmt.Sprintf("「%d %s %s」", info.cert.certDay, info.cert.version, info.cert.signature))
-		}
-	}
+	//if resp.TLS != nil {
+	//	state := resp.TLS
+	//	if len(state.PeerCertificates) > 0 {
+	//		//过期天数
+	//		remainingDays := int(state.PeerCertificates[0].NotAfter.Sub(time.Now()).Hours() / 24)
+	//		info.cert.certDay = remainingDays
+	//		//签发
+	//		issuerCert := state.PeerCertificates[0].Issuer
+	//		info.cert.certIssuer = issuerCert.CommonName
+	//		//加密算法
+	//		signatureAlgorithm := state.PeerCertificates[0].SignatureAlgorithm.String()
+	//		info.cert.signature = signatureAlgorithm
+	//		// 判断协议版本
+	//		switch state.Version {
+	//		case tls.VersionTLS13:
+	//			info.cert.version = "TLS1.3"
+	//		case tls.VersionTLS12:
+	//			info.cert.version = "TLS1.2"
+	//		case tls.VersionTLS11:
+	//			info.cert.version = "TLS1.1"
+	//		case tls.VersionTLS10:
+	//			info.cert.version = "TLS1.0"
+	//		}
+	//		info.url += color.CyanString("%s", fmt.Sprintf("「%d %s %s」", info.cert.certDay, info.cert.version, info.cert.signature))
+	//	}
+	//}
 
 	info.statuscode = resp.StatusCode
 	info.ContentType = resp.Header.Get("Content-Type")
@@ -153,10 +153,10 @@ func CheckApp(body string, head map[string][]string, cookies []*http.Cookie) str
 			}
 
 		case "headers":
-			for _, values := range head {
+			for k, values := range head {
 				for _, value := range values {
 					patterns, err := regexp.Compile(`(?i)` + rule.Rule) //不区分大小写
-					if err == nil && patterns.MatchString(value) {
+					if err == nil && patterns.MatchString(value) || patterns.MatchString(k) {
 						app = append(app, rule.Name)
 					}
 				}

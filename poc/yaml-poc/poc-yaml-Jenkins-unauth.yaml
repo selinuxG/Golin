@@ -1,0 +1,10 @@
+name: poc-yaml-Jenkins-unauth
+description: "Jenkins未授权访问"
+method: GET
+path:
+  - /
+expression:
+  status: 200
+  body_all:
+    - "Dashboard"
+    - "Jenkins"

@@ -3,7 +3,7 @@ package port
 import (
 	"bufio"
 	"fmt"
-	"golin/port/Protocol"
+	Protocol2 "golin/Protocol"
 	"net"
 	"strings"
 	"time"
@@ -60,23 +60,23 @@ func parseProtocol(conn net.Conn, host, port string, Poc bool) string {
 	}
 
 	switch {
-	case Protocol.IsSSHProtocol(line):
-		return Protocol.IsSSHProtocolApp(line)
+	case Protocol2.IsSSHProtocol(line):
+		return Protocol2.IsSSHProtocolApp(line)
 
 	case strings.HasPrefix(line, "220"):
 		return "FTP"
 
-	case Protocol.IsRedisProtocol(conn):
+	case Protocol2.IsRedisProtocol(conn):
 		return "数据库|Redis"
 
-	case Protocol.IsTelnet(conn):
+	case Protocol2.IsTelnet(conn):
 		return "Telnet"
 
-	case Protocol.IsPgsqlProtocol(host, port):
+	case Protocol2.IsPgsqlProtocol(host, port):
 		return "数据库|PostgreSQL"
 
 	default:
-		isWeb := Protocol.IsWeb(host, port, Timeout, Poc)
+		isWeb := Protocol2.IsWeb(host, port, Timeout, Poc)
 		for _, v := range isWeb {
 			if v != "" {
 				return fmt.Sprintf("%-5s| %s", "WEB应用", v)
@@ -85,7 +85,7 @@ func parseProtocol(conn net.Conn, host, port string, Poc bool) string {
 
 	}
 
-	isMySQL, version := Protocol.IsMySqlProtocol(host, port)
+	isMySQL, version := Protocol2.IsMySqlProtocol(host, port)
 	if isMySQL {
 		return fmt.Sprintf("数据库|MySQL:%s", version)
 	}

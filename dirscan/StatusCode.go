@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"github.com/PuerkitoBio/goquery"
 	"github.com/fatih/color"
-	"golin/port/Protocol"
+	Protocol2 "golin/Protocol"
 	"strconv"
 	"strings"
 	"sync"
@@ -108,11 +108,11 @@ func isStatusCodeOk(URL string) {
 			}
 		}
 
-		check, xss := Protocol.CheckXss(URL, body)
+		check, xss := Protocol2.CheckXss(URL, body)
 		if check {
 			yesurl.info = append(yesurl.info, fmt.Sprintf("xss:%s", xss))
 		}
-		yesurl.App = Protocol.CheckApp(string(body), resp.Header, req.Cookies) // 匹配组件
+		yesurl.App = Protocol2.CheckApp(string(body), resp.Header, req.Cookies) // 匹配组件
 
 		_ = AppendUrlStatusToFile(yesurl) // 写入文件
 
