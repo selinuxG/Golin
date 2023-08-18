@@ -79,18 +79,15 @@ var (
 		"110",   // POP3
 		"143",   // IMAP
 		"465",   //SMTPS
-		"587",   //Submission
 		"993",   //IMAPS
 		"995",   //POP3S
 		"1080",  //SOCKS
 		"1194",  //开放VPN
-		"5900",  //VNC
 		"2181",  //ZooKeeper
 		"53",    // DNS
 		"3389",  // RDP
 		"23",    // Telnet
 		"514",   //Syslog
-		"389",   // LDAP
 		"1433",  // MSSQL
 		"1521",  // Oracle Database
 		"6379",  // Redis
@@ -109,18 +106,10 @@ var (
 		"1723",  //PPTP
 		"3306",  // MySQL (Alternate)
 		"5432",  // PostgreSQL (Alternate)
-		"6378",  // redis
 		"5601",  //kibana
 		"1080",  //sock
-		"1194",  //vpn
-		"5900",  //vnc
-		"5901",  //vnc
-		"6066",
 		"8085",
-		"7105",
 		"5672", //RabbitMq
-		"6000", //x11
-		"6443", //K8S
 		"9000", //Hadoop
 		"3000",
 		"8001",
@@ -129,7 +118,6 @@ var (
 		"8004",
 		"8005",
 		"8006",
-		"5984",
 		"8007",
 		"8008",
 		"8009",
@@ -157,3 +145,31 @@ var (
 		"61616",
 	}
 )
+
+var portProtocols = map[string]string{
+	"25":    "SMTP",
+	"53":    "DNS",
+	"110":   "POP3",
+	"135":   "RPC服务",
+	"137":   "NetBIOS名称服务",
+	"138":   "NetBIOS数据报服务",
+	"139":   "NetBIOS会话服务",
+	"161":   "SNMP",
+	"162":   "SNMP-trap",
+	"143":   "IMAP",
+	"445":   "SMB",
+	"465":   "SMTPS",
+	"514":   "syslog",
+	"993":   "IMAPS",
+	"995":   "POP3S",
+	"1433":  "数据库|SqlServer",
+	"1521":  "数据库|Oracle",
+	"1723":  "PPTP",
+	"2049":  "NFS",
+	"3389":  "RDP",
+	"5900":  "VNC",
+	"5901":  "VNC",
+	"5672":  "RabbitMq",
+	"27017": "数据库|MongoDB",
+	"2181":  "ZooKeeper",
+}

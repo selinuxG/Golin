@@ -81,33 +81,32 @@ func handleRequest(client *http.Client, info *WebInfo) ([]byte, error) {
 	if err == nil {
 		info.title = strings.TrimSpace(doc.Find("title").Text())
 	}
-	// SSL信息
-	//if resp.TLS != nil {
-	//	state := resp.TLS
-	//	if len(state.PeerCertificates) > 0 {
-	//		//过期天数
-	//		remainingDays := int(state.PeerCertificates[0].NotAfter.Sub(time.Now()).Hours() / 24)
-	//		info.cert.certDay = remainingDays
-	//		//签发
-	//		issuerCert := state.PeerCertificates[0].Issuer
-	//		info.cert.certIssuer = issuerCert.CommonName
-	//		//加密算法
-	//		signatureAlgorithm := state.PeerCertificates[0].SignatureAlgorithm.String()
-	//		info.cert.signature = signatureAlgorithm
-	//		// 判断协议版本
-	//		switch state.Version {
-	//		case tls.VersionTLS13:
-	//			info.cert.version = "TLS1.3"
-	//		case tls.VersionTLS12:
-	//			info.cert.version = "TLS1.2"
-	//		case tls.VersionTLS11:
-	//			info.cert.version = "TLS1.1"
-	//		case tls.VersionTLS10:
-	//			info.cert.version = "TLS1.0"
-	//		}
-	//		info.url += color.CyanString("%s", fmt.Sprintf("「%d %s %s」", info.cert.certDay, info.cert.version, info.cert.signature))
-	//	}
-	//}
+	//SSL信息
+	if resp.TLS != nil {
+		state := resp.TLS
+		if len(state.PeerCertificates) > 0 {
+			//过期天数
+			remainingDays := int(state.PeerCertificates[0].NotAfter.Sub(time.Now()).Hours() / 24)
+			info.cert.certDay = remainingDays
+			//签发
+			issuerCert := state.PeerCertificates[0].Issuer
+			info.cert.certIssuer = strings.Split(issuerCert.CommonName, " ")[0]
+			//加密算法
+			signatureAlgorithm := state.PeerCertificates[0].SignatureAlgorithm.String()
+			info.cert.signature = signatureAlgorithm
+			// 判断协议版本
+			switch state.Version {
+			case tls.VersionTLS13:
+				info.cert.version = "TLS1.3"
+			case tls.VersionTLS12:
+				info.cert.version = "TLS1.2"
+			case tls.VersionTLS11:
+				info.cert.version = "TLS1.1"
+			case tls.VersionTLS10:
+				info.cert.version = "TLS1.0"
+			}
+		}
+	}
 
 	info.statuscode = resp.StatusCode
 	info.ContentType = resp.Header.Get("Content-Type")
@@ -189,13 +188,17 @@ func chekwebinfo(info WebInfo) string {
 	}
 
 	if info.server != "" {
-		output += fmt.Sprintf("%s", color.MagentaString("%s", fmt.Sprintf(" Server:「%s」", info.server)))
+		output += fmt.Sprintf("%s", color.MagentaString("%s", fmt.Sprintf("「%s」", info.server)))
 	}
 
-	output += fmt.Sprintf(" Code:%d", info.statuscode)
+	if info.cert.version != "" && info.cert.certIssuer != "" && info.cert.certDay != 0 && info.cert.signature != "" {
+		output += color.CyanString("%s", fmt.Sprintf("「%d %s %s %s」", info.cert.certDay, info.cert.version, info.cert.signature, info.cert.certIssuer))
+	}
+
+	output += fmt.Sprintf("「%d」", info.statuscode)
 
 	if info.ContentType != "" {
-		output += fmt.Sprintf(" ContentType:%s", info.ContentType)
+		output += fmt.Sprintf("「%s」", info.ContentType)
 	}
 
 	return output
