@@ -23,19 +23,6 @@ var (
 )
 
 func checkPing() {
-
-	//删除本地ip不进行扫描
-	LocalAddr, err := net.InterfaceAddrs()
-	if err == nil {
-		for _, address := range LocalAddr {
-			if ipNet, ok := address.(*net.IPNet); ok && !ipNet.IP.IsLoopback() {
-				if ipNet.IP.To4() != nil {
-					filteredIPList = append(filteredIPList, ipNet.IP.String())
-				}
-			}
-		}
-	}
-
 	if !NoPing {
 		SanPing()
 		pingwg.Wait()
@@ -79,7 +66,6 @@ func checkPing() {
 }
 
 func SanPing() {
-	//fmt.Printf("%s\n", "下发PING任务...\n+------------------------------+")
 	pingch = make(chan struct{}, chancount)
 	for _, ip := range iplist {
 		pingch <- struct{}{}

@@ -5,7 +5,7 @@
 # 主要功能
 > 主机存活探测、漏洞扫描、子域名扫描、端口扫描、各类服务数据库爆破、poc扫描、xss扫描、webtitle探测、web指纹识别、web敏感信息泄露、web目录浏览、web文件下载、等保安全风险问题风险自查等
 
-## web功能预览
+## web功能预览(仅支持运行等保功能)
 ![web](images/web.gif)
 
 ## 端口扫描功能预览
@@ -13,9 +13,6 @@
 
 ## WEB目录扫描功能预览
 ![dirsearch](images/dirsearch.jpg)
-
-## 等保采集配置模式预览
-![Windows](images/windows.png)
 
 ## 弱口令/未授权现阶段支持类型
 | 序号 |          类型           | 是否支持 |         备注         |
@@ -109,6 +106,7 @@
 # 常用启动参数
 ```
 golin web (通过web方式启动,仅支持等保功能)
+golin port (自动读取本地网卡IP地址段进行扫描,过滤虚拟网卡地址段)
 golin port -i 192.168.1.1/24 (扫描c段端口并扫描弱口令、xss、poc漏洞)
 golin port -i 192.168.1.1/24 --ipfile ip.txt (扫描指定IP段的同时扫描ip.txt文件中的主机,默认读取ip.txt,目录下如果存在不使用--ipfile也会读取)
 golin port -i 192.168.1.1:8080 (快速扫描某一主机的特定端口)

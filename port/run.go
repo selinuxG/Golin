@@ -41,8 +41,9 @@ func ParseFlags(cmd *cobra.Command, args []string) {
 
 	ip, _ := cmd.Flags().GetString("ip")
 	if ip == "" {
+		conNETLocal() //当为指定IP时通过读取本地网卡并且过滤虚拟网卡进行扫描
 		if len(iplist) == 0 {
-			fmt.Printf("[-] 未指定扫描主机!通过 golin port -i 指定,支持：192.168.1.1,192.168.1.1/24,192.168.1.1-100\n")
+			fmt.Printf("[-] 未指定扫描主机!\n")
 			os.Exit(1)
 		}
 	} else {
