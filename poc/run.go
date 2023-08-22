@@ -5,8 +5,10 @@ import (
 	"golin/global"
 	"io"
 	"net/http"
+	"net/url"
 	"strings"
 	"sync"
+	"time"
 )
 
 var ListPocInfo []Flagcve
@@ -28,7 +30,6 @@ func CheckPoc(url, app string) {
 
 	dirPocs, err := parseConfigs("yaml-poc")
 	if err != nil {
-		fmt.Printf("Error parsing configs: %v\n", err)
 		return
 	}
 
@@ -72,11 +73,16 @@ func CheckPoc(url, app string) {
 }
 
 // 基于yaml格式处理http请求
-func executeRequest(url string, config Config, wg *sync.WaitGroup) {
+func executeRequest(URL string, config Config, wg *sync.WaitGroup) {
 	defer wg.Done()
 	for _, path := range config.Path {
-		baseurl := fmt.Sprintf("%s%s", url, path)
-		req, err := http.NewRequest(config.Method, baseurl, strings.NewReader(config.Body))
+		path = replacepath(path) //path中可能有变量进行替换
+		baseurl := fmt.Sprintf("%s%s", URL, path)
+		values, err := url.ParseQuery(config.Body) //解析body字符串为URL编码
+		if err != nil {
+			return
+		}
+		req, err := http.NewRequest(config.Method, baseurl, strings.NewReader(values.Encode()))
 		if err != nil {
 			return
 		}
@@ -118,6 +124,13 @@ func executeRequest(url string, config Config, wg *sync.WaitGroup) {
 		echoFlag(flags)
 
 	}
+}
+
+// replacepath 替换路径中的变量
+func replacepath(path string) string {
+	nowday := time.Now().Format("06_01_02") //当前日期23_08_22
+	path = strings.ReplaceAll(path, "{01_01_01}", nowday)
+	return path
 }
 
 // allSubstringsPresent 返回值是否同时包含

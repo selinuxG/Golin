@@ -1,0 +1,9 @@
+name: poc-yaml-thinkphp-3.x-日志泄露
+description: "可基于thinkphp泄露的日志获得敏感日志"
+method: GET
+path:
+  - /Application/Runtime/Logs/Home/{01_01_01}.log
+expression:
+  status: 200
+  body_any:
+    - "INFO"

@@ -14,7 +14,10 @@ var RuleDatas = []RuleData{
 	{"APACHE-ActiveMQ", "body", "(Apache ActiveMQ)"},
 	{"Jetty", "body", "(Powered by Jetty)"},
 	{"Kibana", "body", "(kibanaLegacy)"},
-
+	{"ThinkPHP", "body", "(ApiAdmin开发维护团队|ThinkPHP)"},
+	{"用友NC", "body", "(url=nccloud|YONYOU NC)"},
+	{"小米路由器", "headers", "(Micgi-Preload)"},
+	{"小米路由器", "body", "(<title>小米路由器</title>)"},
 	{"Everything", "body", "Everything"},
 	{"Jenkins", "headers", "Jenkins"},
 	{"Kafka-Manager", "headers", "Kafka-Manager"},
