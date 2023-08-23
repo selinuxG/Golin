@@ -1,5 +1,5 @@
 name: poc-yaml-用友nc-BshServlet-cmd
-description: "可基于BeanShell接口执行任意命令"
+description: "BeanShell执行任意命令(exec)"
 method: GET
 path:
   - /servlet/~ic/bsh.servlet.BshServlet
