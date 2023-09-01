@@ -15,6 +15,7 @@ var RuleDatas = []RuleData{
 	{"Jetty", "body", "(Powered by Jetty)"},
 	{"Kibana", "body", "(kibanaLegacy)"},
 	{"ThinkPHP", "body", "(ApiAdmin开发维护团队|ThinkPHP)"},
+	{"亿邮电子邮件系统", "body", "(亿邮电子邮件系统)"},
 	{"用友NC", "body", "(url=nccloud|YONYOU NC)"},
 	{"小米路由器", "headers", "(Micgi-Preload)"},
 	{"小米路由器", "body", "(<title>小米路由器</title>)"},
