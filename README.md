@@ -15,34 +15,36 @@
 ![dirsearch](images/dirsearch.jpg)
 
 ## 弱口令/未授权现阶段支持类型
-| 序号 |          类型           | 是否支持 |         备注         |
-|:--:|:---------------------:|:----:|:------------------:|
-| 1  |          SSH          |  √   |                    |
-| 2  |          RDP          |  √   |                    |
-| 3  |          FTP          |  √   |                    |
-| 4  |         MySQL         |  √   |                    |
-| 5  |      PostgreSQL       |  √   |                    |
-| 6  |         Redis         |  √   |                    |
-| 7  |         MSSQL         |  √   |                    |
-| 8  |          SMB          |  √   |                    |
-| 9  |        Telnet         |  √   |                    |
-| 10 |        Tomcat         |  √   |                    |
-| 11 |        MangoDB        |  √   |      仅验证未授权访问      |
-| 12 |     Elasticsearch     |  √   |      仅验证未授权访问      |
-| 13 |        oracle         |  √   |                    |
-| 14 |       ZooKeeper       |  √   |      仅验证未授权访问      |
-| 15 |         dubbo         |  √   |  仅验证默认账户root/root  |
-| 16 |          nps          |  √   |  仅验证默认账户admin/123  |
-| 17 |         Druid         |  √   |      仅验证未授权访问      |
-| 18 |       activemq        |  √   | 仅验证默认账户admin/admin |
-| 20 |        couchdb        |  √   |      仅验证未授权访问      |
-| 21 | Hadoop-Administration |  √   |      仅验证未授权访问      |
-| 22 |     APACHE-Spark      |  √   |      仅验证未授权访问      |
-| 23 |        swagger        |  √   |      仅验证未授权访问      |
-| 24 |        Kibana         |  √   |      仅验证未授权访问      |
-| 25 |     Kafka-Manager     |  √   |      仅验证未授权访问      |
-| 26 |        Jenkins        |  √   |      仅验证未授权访问      |
-| 27 |      Everything       |  √   |      仅验证未授权访问      |
+| 序号 |          类型           | 是否支持 |    备注    |
+|:--:|:---------------------:|:----:|:--------:|
+| 1  |          SSH          |  √   |          |
+| 2  |          RDP          |  √   |          |
+| 3  |          FTP          |  √   |          |
+| 4  |         MySQL         |  √   |          |
+| 5  |      PostgreSQL       |  √   |          |
+| 6  |         Redis         |  √   |          |
+| 7  |         MSSQL         |  √   |          |
+| 8  |          SMB          |  √   |          |
+| 9  |        Telnet         |  √   |          |
+| 10 |        Tomcat         |  √   |          |
+| 11 |        MangoDB        |  √   | 仅验证未授权访问 |
+| 12 |     Elasticsearch     |  √   | 仅验证未授权访问 |
+| 13 |        oracle         |  √   |          |
+| 14 |       ZooKeeper       |  √   | 仅验证未授权访问 |
+| 15 |         dubbo         |  √   | 仅验证默认账户  |
+| 16 |          nps          |  √   | 仅验证默认账户  |
+| 17 |         Druid         |  √   | 仅验证未授权访问 |
+| 18 |       activemq        |  √   | 仅验证默认账户  |
+| 20 |        couchdb        |  √   | 仅验证未授权访问 |
+| 21 | Hadoop-Administration |  √   | 仅验证未授权访问 |
+| 22 |     APACHE-Spark      |  √   | 仅验证未授权访问 |
+| 23 |        swagger        |  √   | 仅验证未授权访问 |
+| 24 |        Kibana         |  √   | 仅验证未授权访问 |
+| 25 |     Kafka-Manager     |  √   | 仅验证未授权访问 |
+| 26 |        Jenkins        |  √   | 仅验证未授权访问 |
+| 27 |      Everything       |  √   | 仅验证未授权访问 |
+| 28 |       D-Link路由器       |  √   | 仅验证默认账户  |
+| 29 |         Nacos         |  √   | 仅验证默认账户  |
 
 
 ## 端口扫描现阶段支持功能

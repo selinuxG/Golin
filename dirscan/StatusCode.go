@@ -112,7 +112,7 @@ func isStatusCodeOk(URL string) {
 		if check {
 			yesurl.info = append(yesurl.info, fmt.Sprintf("xss:%s", xss))
 		}
-		yesurl.App = Protocol2.CheckApp(string(body), resp.Header, req.Cookies) // 匹配组件
+		yesurl.App = Protocol2.CheckApp(string(body), resp.Header, req.Cookies, resp.Header.Get("Server")) // 匹配组件
 
 		_ = AppendUrlStatusToFile(yesurl) // 写入文件
 

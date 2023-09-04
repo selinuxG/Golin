@@ -110,8 +110,8 @@ func handleRequest(client *http.Client, info *WebInfo) ([]byte, error) {
 
 	info.statuscode = resp.StatusCode
 	info.ContentType = resp.Header.Get("Content-Type")
-	info.app = CheckApp(string(body), resp.Header, resp.Cookies()) // 匹配组件
 	info.server = resp.Header.Get("Server")
+	info.app = CheckApp(string(body), resp.Header, resp.Cookies(), info.server) // 匹配组件
 
 	if global.Debug {
 		fmt.Println(string(body))
@@ -140,7 +140,7 @@ func handlePocAndXss(info *WebInfo, body []byte, Poc bool) {
 }
 
 // CheckApp 基于返回的body、headers、cookies判定组件信息
-func CheckApp(body string, head map[string][]string, cookies []*http.Cookie) string {
+func CheckApp(body string, head map[string][]string, cookies []*http.Cookie, server string) string {
 
 	var app []string
 	for _, rule := range RuleDatas {
@@ -167,6 +167,11 @@ func CheckApp(body string, head map[string][]string, cookies []*http.Cookie) str
 				if err == nil && patterns.MatchString(cookie.Name) {
 					app = append(app, rule.Name)
 				}
+			}
+
+		case "server":
+			if strings.EqualFold(rule.Rule, server) {
+				app = append(app, rule.Name)
 			}
 		}
 	}

