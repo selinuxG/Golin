@@ -1,0 +1,10 @@
+name: poc-yaml-Apache-storm-unauth
+description: "Apache-storm未授权访问"
+method: GET
+path:
+  - /index.html
+expression:
+  status: 200
+  body_all:
+    - "Storm UI"
+    - "Cluster Summary"

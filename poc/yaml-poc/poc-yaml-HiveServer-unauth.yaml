@@ -1,0 +1,10 @@
+name: poc-yaml-HiveServer-unauth
+description: "HiveServer未授权访问"
+method: GET
+path:
+  - /
+expression:
+  status: 200
+  body_all:
+    - "HiveServer"
+    - "Active Sessions"

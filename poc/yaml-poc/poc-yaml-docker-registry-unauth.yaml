@@ -1,0 +1,9 @@
+name: poc-yaml-docker-registry-unauth
+description: "docker-registry未授权访问"
+method: GET
+path:
+  - /home
+expression:
+  status: 200
+  body_all:
+    - "Report a bug"

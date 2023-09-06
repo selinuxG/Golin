@@ -1,0 +1,10 @@
+name: poc-yaml-kibana-unauth
+description: "kibana未授权访问"
+method: GET
+path:
+  - /
+expression:
+  status: 200
+  body_all:
+    - "Inter UI"
+    - "add-scripts-here"

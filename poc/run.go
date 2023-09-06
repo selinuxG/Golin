@@ -56,7 +56,7 @@ func CheckPoc(url, app string) {
 
 	// 这是未授权的漏洞
 	authPocs := map[string]Flagcve{
-		"ElasticSearch[未授权访问]": {url, "elasticsearch未授权访问", "可通过/_cat/indices?v获取所有索引信息"},
+		"elasticsearch[未授权访问]": {url, "elasticsearch未授权访问", "可通过/_cat/indices?v获取所有索引信息"},
 		"couchdb":              {url, "CouchDB未授权访问", "可通过/_all_dbs获取所有数据库"},
 		"hadoop":               {url, "Hadoop-Administration未授权访问", ""},
 		"apache-spark":         {url, "Apache-Spark未授权访问", ""},
