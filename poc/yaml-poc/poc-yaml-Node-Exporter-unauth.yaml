@@ -1,0 +1,9 @@
+name: poc-yaml-Node-Exporter-unauth
+description: "metrics接口信息泄露"
+method: GET
+path:
+  - /metrics
+expression:
+  status: 200
+  body_any:
+    - "go_gc"

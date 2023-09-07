@@ -41,14 +41,19 @@ func ParseFlags(cmd *cobra.Command, args []string) {
 
 	ip, _ := cmd.Flags().GetString("ip")
 	if ip == "" {
-		conNETLocal() //当为指定IP时通过读取本地网卡并且过滤虚拟网卡进行扫描
 		if len(iplist) == 0 {
-			fmt.Printf("[-] 未指定扫描主机!\n")
-			os.Exit(1)
+			conNETLocal() //当未指定IP以及IP文件时通过读取本地网卡并且过滤虚拟网卡进行扫描
+			if len(iplist) == 0 {
+				fmt.Printf("[-] 未指定扫描主机!\n")
+				os.Exit(1)
+			}
 		}
 	} else {
 		parseIP(ip)
 	}
+
+	excludeiplist, _ := cmd.Flags().GetString("excludeip") //去过滤扫描IP
+	removeIP(excludeiplist)
 
 	port, _ = cmd.Flags().GetString("port")
 	parsePort(port)

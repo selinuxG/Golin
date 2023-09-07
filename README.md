@@ -46,9 +46,10 @@
 | 28 |       D-Link路由器       |  √   | 仅验证默认账户  |
 | 29 |         Nacos         |  √   | 仅验证默认账户  |
 | 30 |      HiveServer       |  √   | 仅验证未授权访问 |
-| 31 |        Kibana         |  √   | 仅验证未授权访问 |
-| 32 |    docker registry    |  √   | 仅验证未授权访问 |
-| 33 |     Apache storm      |  √   | 仅验证未授权访问 |
+| 31 |    docker registry    |  √   | 仅验证未授权访问 |
+| 32 |     Apache storm      |  √   | 仅验证未授权访问 |
+| 33 |      Prometheus       |  √   | 仅验证未授权访问 |
+| 34 |     Node-Exporter     |  √   | 仅验证未授权访问 |
 
 
 ## 端口扫描现阶段支持功能

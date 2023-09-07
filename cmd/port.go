@@ -18,6 +18,7 @@ func init() {
 	portCmd.Flags().StringP("ipfile", "", "ip.txt", "此参数是扫描的IP文件,一行一个")
 	portCmd.Flags().StringP("port", "p", "0", "此参数是指定的端口,不支持则默认端口,格式支持1,2,3,2-20")
 	portCmd.Flags().StringP("exclude", "e", "", "此参数排除扫描的端口,格式支持:1,2,3")
+	portCmd.Flags().StringP("excludeip", "", "noip.txt", "此参数排除扫描的IP")
 	portCmd.Flags().Bool("noping", false, "此参数是禁止ping检测")
 	portCmd.Flags().IntP("chan", "c", 100, "并发数量")
 	portCmd.Flags().IntP("time", "t", 5, "超时等待时常/s")

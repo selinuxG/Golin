@@ -3,9 +3,10 @@ description: "Go语言pprof包中的api信息泄露"
 method: GET
 path:
   - /debug/pprof/
-  - /debug/pprof/goroutine?debug=1
+#  - /debug/pprof/goroutine?debug=1
 expression:
   status: 200
   body_any:
+    - "/debug/pprof/"
     - "available"
     - "goroutine"
