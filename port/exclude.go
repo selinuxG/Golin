@@ -44,12 +44,7 @@ func removeDuplicates(slice []string) []string {
 
 // removeIP 获取不进行扫描的IP
 func removeIP(data string) {
-	if data == "" {
-		return
-	}
-
 	var NoList []string
-
 	if global.PathExists(data) {
 		fireData, _ := os.ReadFile(data)
 		fireData = []byte(strings.ReplaceAll(string(fireData), "\r\n", "\n"))

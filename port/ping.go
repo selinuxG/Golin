@@ -116,7 +116,7 @@ func NetWorkPing(ip string) (bool, string, string) {
 	outttl := strings.ToLower(string(output)) //所有大写转换为小写
 
 	// time
-	re := regexp.MustCompile(`=(\d+)ms`)
+	re := regexp.MustCompile(`(\d+)ms`)
 	timems := ""
 	timeStr := re.FindStringSubmatch(outttl)
 	if len(timeStr) > 1 {
