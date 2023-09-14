@@ -1,0 +1,9 @@
+name: poc-yaml-Apache-Druid-unauth
+description: "ApacheDruid未授权访问"
+method: GET
+path:
+  - /unified-console.html
+expression:
+  status: 200
+  body_all:
+    - "<title>Apache Druid</title>"

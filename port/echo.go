@@ -7,6 +7,7 @@ import (
 	"golin/port/crack"
 	"os"
 	"strconv"
+	"strings"
 )
 
 // echoCrack 输出弱口令的资产信息
@@ -35,6 +36,7 @@ func echoPoc() {
 	}
 	var data [][]string
 	for _, sussPoc := range poc.ListPocInfo {
+		sussPoc.Cve = strings.ReplaceAll(sussPoc.Cve, "poc-yaml-", "")
 		data = append(data, []string{sussPoc.Url, sussPoc.Cve, sussPoc.Flag})
 	}
 

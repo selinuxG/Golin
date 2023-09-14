@@ -33,7 +33,7 @@
 | 18 |       activemq        |  √   | 仅验证默认账户  |
 | 20 |        couchdb        |  √   | 仅验证未授权访问 |
 | 21 | Hadoop-Administration |  √   | 仅验证未授权访问 |
-| 22 |     APACHE-Spark      |  √   | 仅验证未授权访问 |
+| 22 |      ApacheSpark      |  √   | 仅验证未授权访问 |
 | 23 |        swagger        |  √   | 仅验证未授权访问 |
 | 24 |        Kibana         |  √   | 仅验证未授权访问 |
 | 25 |     Kafka-Manager     |  √   | 仅验证未授权访问 |
@@ -42,10 +42,12 @@
 | 28 |       D-Link路由器       |  √   | 仅验证默认账户  |
 | 29 |         Nacos         |  √   | 仅验证默认账户  |
 | 30 |      HiveServer       |  √   | 仅验证未授权访问 |
-| 31 |    docker registry    |  √   | 仅验证未授权访问 |
-| 32 |     Apache storm      |  √   | 仅验证未授权访问 |
+| 31 |    DockerRegistry     |  √   | 仅验证未授权访问 |
+| 32 |      ApacheStorm      |  √   | 仅验证未授权访问 |
 | 33 |      Prometheus       |  √   | 仅验证未授权访问 |
 | 34 |     Node-Exporter     |  √   | 仅验证未授权访问 |
+| 35 |      ApacheDruid      |  √   | 仅验证未授权访问 |
+
 
 
 ## 端口扫描现阶段支持功能

