@@ -1,5 +1,6 @@
 name: poc-yaml-AuthDruidun
 description: "Druidun未授权访问"
+alwaysExecute: true
 method: GET
 path:
   - /druid/index.html

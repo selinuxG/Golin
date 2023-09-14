@@ -6,6 +6,7 @@ import (
 	"io"
 	"net/http"
 	"net/url"
+	"os"
 	"strings"
 	"sync"
 	"time"
@@ -119,6 +120,9 @@ func executeRequest(URL string, config Config, wg *sync.WaitGroup) {
 			if !anySubstringsPresent(strBody, config.Expression.BodyAny) {
 				continue
 			}
+		}
+		if os.Getenv("poc") == "on" {
+			fmt.Println(strBody, "\n---------------------")
 		}
 		flags := Flagcve{baseurl, config.Name, config.Description}
 		echoFlag(flags)

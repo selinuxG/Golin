@@ -17,9 +17,9 @@ import (
 )
 
 var (
-	routecmd          []string                                                                                                            //执行的命令列表
-	Defroutecmd       = []string{"display version", "disp curr", "disp interface brief", "disp cpu-usage"}                                //默认h3c命令
-	DefroutecmdHuawei = []string{"display local-user", "display local-aaa-user password policy access-user", "display aaa configuration"} //默认华为命令
+	routecmd          []string                                                                                                                                                                                                                                                                                                                                                             //执行的命令列表
+	Defroutecmd       = []string{"display version", "display memory", "display  cpu-usage", "display local-user", "display role", "display current-configuration | begin local-user", "display password-control", "display info-center", "dir flash:/logfile/", "display acl all", "display ip interface brief description", "display ssh server status", "display current-configuration"} //默认h3c命令
+	DefroutecmdHuawei = []string{"display local-user", "display local-aaa-user password policy access-user", "display aaa configuration"}                                                                                                                                                                                                                                                  //默认华为命令
 
 )
 

@@ -24,9 +24,15 @@ func parseIP(ip string) {
 		replacer := strings.NewReplacer("https://", "", "http://", "")
 		p = replacer.Replace(p)
 
-		if len(p) > 0 && p[len(p)-1] == '/' {
-			p = p[:len(p)-1]
+		//if len(p) > 0 && p[len(p)-1] == '/' {
+		//	p = p[:len(p)-1]
+		//}
+
+		index := strings.Index(p, "/") //匹配第一个/之前的内容为扫描地址
+		if index != -1 {
+			p = p[:index]
 		}
+
 		checkPort := strings.Split(p, ":") //快速扫描
 		if len(checkPort) == 2 {
 			p = checkPort[0]
