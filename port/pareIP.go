@@ -5,32 +5,32 @@ import (
 	"golin/global"
 	"net"
 	"os"
+	"regexp"
 	"strconv"
 	"strings"
 )
 
 // parseIP解析IP地址范围 支持：192.168.1.1-100、192.168.1.1/24、192.168.1.1、baidu.com、http://www.baidu.com
 func parseIP(ip string) {
-
-	if strings.Count(ip, ",") == 0 {
-		ip = ip + ","
-	}
-
 	for _, p := range strings.Split(ip, ",") {
-
-		if p == "" {
-			continue
-		}
-		replacer := strings.NewReplacer("https://", "", "http://", "")
-		p = replacer.Replace(p)
-
-		//if len(p) > 0 && p[len(p)-1] == '/' {
-		//	p = p[:len(p)-1]
-		//}
-
-		index := strings.Index(p, "/") //匹配第一个/之前的内容为扫描地址
-		if index != -1 {
-			p = p[:index]
+		//1、匹配CIDR子网掩码的地址 2、匹配IP 3、匹配第一个/之前的数据
+		reCIDR := regexp.MustCompile(`\b\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}/\d{1,2}\b`)
+		reIP := regexp.MustCompile(`\b\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\b`)
+		matchCIDR := reCIDR.FindString(p)
+		if matchCIDR != "" {
+			p = matchCIDR
+		} else {
+			matchIP := reIP.FindString(p)
+			if matchIP != "" {
+				p = matchIP
+			} else {
+				replacer := strings.NewReplacer("https://", "", "http://", "")
+				p = replacer.Replace(p)
+				index := strings.Index(p, "/")
+				if index != -1 {
+					p = p[:index]
+				}
+			}
 		}
 
 		checkPort := strings.Split(p, ":") //快速扫描
@@ -41,6 +41,10 @@ func parseIP(ip string) {
 
 		switch {
 		case strings.Contains(p, "-"): //起始-结束ip
+			matched := reIP.MatchString(p) //域名可能会包含-符号，则会处罚此规则则直接跳过了，此bug目前先留存
+			if !matched {
+				continue
+			}
 			ipa := strings.Split(strings.Split(p, "-")[0], ".")
 
 			start := strings.Split(ipa[3], "-")[0]
@@ -78,6 +82,7 @@ func parseIP(ip string) {
 			if net.ParseIP(p) == nil {
 				_, err := net.ResolveIPAddr("ip", p) //ip失败时判断是不是域名
 				if err != nil {
+					fmt.Println(err)
 					continue
 				}
 			}

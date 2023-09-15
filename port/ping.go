@@ -50,7 +50,7 @@ func checkPing() {
 		return
 	}
 
-	fmt.Println("+------------------------------+")
+	fmt.Println("+------------------------------------------------------------+")
 	fmt.Printf("[*] Linux设备:%v Windows设备:%v 未识别:%v 共计存活:%v\n[*] 开始扫描端口:%v 最大并发数:%v 共计尝试:%v 端口连接超时:%v\n",
 		color.GreenString("%d", linuxcount),
 		color.GreenString("%d", windowscount),
@@ -61,7 +61,7 @@ func checkPing() {
 		color.GreenString("%d", len(iplist)*len(portlist)),
 		color.GreenString("%d", Timeout),
 	)
-	fmt.Println("+------------------------------+")
+	fmt.Println("+------------------------------------------------------------+")
 
 }
 

