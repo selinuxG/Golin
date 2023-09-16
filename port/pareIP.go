@@ -13,6 +13,11 @@ import (
 // parseIP解析IP地址范围 支持：192.168.1.1-100、192.168.1.1/24、192.168.1.1、baidu.com、http://www.baidu.com
 func parseIP(ip string) {
 	for _, p := range strings.Split(ip, ",") {
+
+		//识别端口
+		rePort := regexp.MustCompile(`:\d{1,5}`)
+		matchPort := rePort.FindString(p)
+
 		//1、匹配CIDR子网掩码的地址 2、匹配IP 3、匹配第一个/之前的数据
 		reCIDR := regexp.MustCompile(`\b\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}/\d{1,2}\b`)
 		reIP := regexp.MustCompile(`\b\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\b`)
@@ -32,6 +37,7 @@ func parseIP(ip string) {
 				}
 			}
 		}
+		p += matchPort
 
 		checkPort := strings.Split(p, ":") //快速扫描
 		if len(checkPort) == 2 {
