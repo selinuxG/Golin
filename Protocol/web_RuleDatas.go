@@ -34,6 +34,7 @@ var RuleDatas = []RuleData{
 	{"小米路由器", "headers", "(Micgi-Preload)"},
 	{"小米路由器", "body", "(<title>小米路由器</title>)"},
 	{"Everything", "body", "Everything"},
+	{"大华城市安防监控系统平台", "body", "(User: Selene)"},
 	{"Jenkins", "headers", "Jenkins"},
 	{"Kafka-Manager", "headers", "Kafka-Manager"},
 	{"vhost-Panel", "body", "This is the default server vhost"},

