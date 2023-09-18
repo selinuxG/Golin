@@ -17,6 +17,7 @@ var RuleDatas = []RuleData{
 	{"Lightdash", "body", "(Lightdash)"},
 	{"Apache-storm", "body", "(Storm UI)"},
 	{"HiveServer", "body", "(HiveServer)"},
+	{"华测监测预警系统", "body", "(华测监测预警系统)"},
 	{"D-Link-Route", "server", "HTTPD_ac 1.0"},
 	{"Kibana", "body", "(kibanaLegacy|.kbnLoader)"},
 	{"Node-Exporter", "body", "(Node Exporter)"},

