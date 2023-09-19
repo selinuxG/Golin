@@ -224,7 +224,7 @@ var RuleDatas = []RuleData{
 	{"ATLASSIAN-Confluence", "body", "(Atlassian Confluence)"},
 	{"HFS", "body", "(href=\"http://www.rejetto.com/hfs/)"},
 	{"Jellyfin", "body", "(content=\"http://jellyfin.org\")"},
-	{"FIT2CLOUD-JumpServer-堡垒机", "body", "(<title>JumpServer</title>)"},
+	{"JumpServer", "body", "(<title>JumpServer</title>)"},
 	{"Nacos", "body", "(<title>Nacos</title>)"},
 	{"Pulse Connect Secure", "body", "(/dana-na/imgs/space.gif)"},
 	{"h5ai", "body", "(powered by h5ai)"},

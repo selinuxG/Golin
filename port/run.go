@@ -52,7 +52,7 @@ func ParseFlags(cmd *cobra.Command, args []string) {
 		parseIP(ip)
 	}
 
-	excludeiplist, _ := cmd.Flags().GetString("excludeip") //去过滤扫描IP
+	excludeiplist, _ := cmd.Flags().GetString("excludeip") //去重IP以及排查过滤IP
 	removeIP(excludeiplist)
 
 	port, _ = cmd.Flags().GetString("port")
