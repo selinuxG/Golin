@@ -1,0 +1,9 @@
+name: poc-yaml-JupyterLab-unauth
+description: "未授权访问"
+method: GET
+path:
+  - /lab?
+expression:
+  status: 200
+  body_all:
+    - "settings"

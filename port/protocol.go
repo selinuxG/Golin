@@ -45,6 +45,9 @@ func parseProtocol(conn net.Conn, host, port string, Poc bool) string {
 	case Protocol2.IsPgsqlProtocol(host, port):
 		return "数据库|PostgreSQL"
 
+	case Protocol2.IsRsyncProtocol(line):
+		return "rsync|" + line
+
 	default:
 		isWeb := Protocol2.IsWeb(host, port, Timeout, Poc)
 		for _, v := range isWeb {

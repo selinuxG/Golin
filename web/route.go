@@ -79,7 +79,7 @@ func GolinSubmitFile(c *gin.Context) {
 			allserver = append(allserver, Service{Name: namesplit[0], User: namesplit[2], Ip: namesplit[1], Port: namesplit[4], Time: time.Now().Format(time.DateTime), Type: mode, Status: Failed})
 			//增加保存的文件路径名称到切片中
 			apendname := filepath.Join(global.Succpath, mode, fmt.Sprintf("%s_%s.log", namesplit[0], namesplit[1]))
-			if mode == "MySQL" || mode == "Redis" || mode == "pgsql" {
+			if mode == "MySQL" || mode == "Redis" || mode == "pgsql" || mode == "Linux" {
 				apendname = strings.ReplaceAll(apendname, ".log", ".html")
 			}
 			//如果是网络设备：拼接目录时需要更改为Route
@@ -140,7 +140,7 @@ func GolinSubmit(c *gin.Context) {
 	if mode == "h3c" || mode == "huawei" {
 		successfile = filepath.Join(global.Succpath, "Route", savefilename) //网络设备模式下的完整路径
 	}
-	if mode == "MySQL" || mode == "Redis" || mode == "pgsql" {
+	if mode == "MySQL" || mode == "Redis" || mode == "pgsql" || mode == "Linux" {
 		successfile = strings.ReplaceAll(successfile, ".log", ".html")
 	}
 
@@ -173,7 +173,7 @@ func GolinSubmit(c *gin.Context) {
 		if down == "down" {
 			c.Header("Content-Description", "File Transfer")
 			c.Header("Content-Disposition", "attachment; filename="+fmt.Sprintf(fmt.Sprintf("%s_%s(%s).log", name, ip, mode)))
-			if mode == "MySQL" || mode == "Redis" || mode == "pgsql" {
+			if mode == "MySQL" || mode == "Redis" || mode == "pgsql" || mode == "Linux" {
 				c.Header("Content-Disposition", "attachment; filename="+fmt.Sprintf(fmt.Sprintf("%s_%s(%s).html", name, ip, mode)))
 			}
 			c.Header("Content-Type", "application/octet-stream")

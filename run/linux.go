@@ -4,14 +4,9 @@ import (
 	"fmt"
 	"github.com/spf13/cobra"
 	"go.uber.org/zap"
-	"golang.org/x/crypto/ssh"
 	"golin/global"
-	"io/fs"
-	"io/ioutil"
 	"os"
-	"path/filepath"
 	"strings"
-	"time"
 )
 
 var echorun bool
@@ -109,62 +104,4 @@ func Linux(cmd *cobra.Command, args []string) {
 	wg.Wait()
 	//完成前最后写入文件
 	Deffile("Linux", count, count-len(errhost), errhost)
-}
-
-// Runssh 通过调用ssh协议执行命令，写入到文件,并减一个线程数
-func Runssh(sshname string, sshHost string, sshUser string, sshPasswrod string, sshPort int, cmd string) {
-	defer wg.Done()
-	// 创建ssh登录配置
-	configssh := &ssh.ClientConfig{
-		Timeout:         time.Second * 3, // ssh连接timeout时间
-		User:            sshUser,
-		HostKeyCallback: ssh.InsecureIgnoreHostKey(),
-	}
-	configssh.Auth = []ssh.AuthMethod{ssh.Password(sshPasswrod)}
-	//增加旧版本算法支持,部分机器会出现 ssh: handshake failed: ssh: packet too large 报错
-	//configssh.Ciphers = []string{"aes128-cbc", "aes256-cbc", "3des-cbc", "aes128-ctr", "aes192-ctr", "aes256-ctr", "aes128-gcm@openssh.com", "chacha20-poly1305@openssh.com"}
-
-	// dial 获取ssh client
-	addr := fmt.Sprintf("%s:%d", sshHost, sshPort)
-	sshClient, err := ssh.Dial("tcp", addr, configssh)
-	if err != nil {
-		errhost = append(errhost, sshHost)
-		//fmt.Println(err)
-		return
-	}
-	defer sshClient.Close()
-
-	// 创建ssh-session
-	session, err := sshClient.NewSession()
-	if err != nil {
-		fmt.Println(err)
-		errhost = append(errhost, sshHost)
-		return
-	}
-
-	defer session.Close()
-	// 执行远程命令
-	combo, err := session.CombinedOutput(cmd)
-	if err != nil {
-		errhost = append(errhost, sshHost)
-		fmt.Println("err,", err)
-		return
-	}
-
-	//判断是否进行输出命令结果
-	if echorun {
-		fmt.Printf("%s\n%s\n", "<输出结果>", string(combo))
-	}
-	firepath := filepath.Join(succpath, "Linux")
-	_, err = os.Stat(firepath)
-	if err != nil {
-		os.MkdirAll(firepath, os.FileMode(global.FilePer))
-	}
-	//fmt.Println(fire)
-	datanew := []byte(string(combo))
-	err = ioutil.WriteFile(filepath.Join(firepath, fmt.Sprintf("%s_%s.log", sshname, sshHost)), datanew, fs.FileMode(global.FilePer))
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
 }

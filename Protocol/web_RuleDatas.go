@@ -17,6 +17,7 @@ var RuleDatas = []RuleData{
 	{"Lightdash", "body", "(Lightdash)"},
 	{"Apache-storm", "body", "(Storm UI)"},
 	{"HiveServer", "body", "(HiveServer)"},
+	{"JupyterLab", "body", "(JupyterLab)"},
 	{"华测监测预警系统", "body", "(华测监测预警系统)"},
 	{"时空智友企业信息管理", "body", "(时空智友企业信息管理)"},
 	{"D-Link-Route", "server", "HTTPD_ac 1.0"},

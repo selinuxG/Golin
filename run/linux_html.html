@@ -1,0 +1,403 @@
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Linux安全配置核查</title>
+    <link rel="icon" href="https://s1.ax1x.com/2023/07/19/pC7B5sx.jpg" sizes="16x16">
+    <style>
+
+        body {
+            display: grid;
+            grid-template-columns: 1fr 200px;
+            gap: 10px;
+            font-family: Arial, sans-serif;
+            position: relative;
+        }
+
+        table {
+            border-collapse: collapse;
+            margin-bottom: 20px;
+            width: 100%;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+            table-layout: fixed;
+            word-wrap: break-word;
+        }
+
+        th,
+        td {
+            border: 1px solid #ddd;
+            padding: 15px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #007BFF;
+            color: white;
+            font-weight: bold;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        tr:hover {
+            background-color: #e6f2ff;
+        }
+
+        .watermark {
+            font-size: 36px;
+            color: rgba(128, 128, 128, 0.2);
+            position: absolute;
+            z-index: -1;
+            transform: rotate(-30deg);
+        }
+
+        #toc {
+            position: fixed;
+            top: 20px;
+            right: 30px;
+            padding-left: 10px;
+            background-color: #f8f9fa;
+            padding: 10px;
+            border: 1px solid #dee2e6;
+            border-radius: 5px;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+        }
+
+        #toc ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        #toc a {
+            text-decoration: none;
+            color: #333;
+            display: block;
+        }
+
+        #toc a:hover {
+            color: #007BFF;
+        }
+        .watermark {
+            font-size: 36px;
+            color: rgba(128, 128, 128, 0.2);
+            position: absolute;
+            z-index: 1000;
+            transform: rotate(-30deg);
+        }
+        pre {
+            background-color: #f8f9fa;
+            border: 1px solid #dee2e6;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+            font-family: "Courier New", Courier, monospace;
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
+        .permissions {
+            width: 350px;
+            white-space: nowrap;
+            overflow-x: auto;
+        }
+    </style>
+
+<body>
+
+<div id="content">
+    <div style="text-align: center;"><h1>{{.Name}}_Linux安全策略核查</h1></div>
+    <h2 id="userinfo">现有用户信息</h2>
+    <table>
+        <thead>
+        <tr>
+            <th>用户</th>
+            <th>密码</th>
+            <th>UID</th>
+            <th>GID</th>
+            <th>描述</th>
+            <th>主目录</th>
+            <th>Bash</th>
+            <th>可登录</th>
+            <th>最近修改密码</th>
+            <th>密码过期密码</th>
+            <th>密码失效密码</th>
+            <th>帐户过期时间</th>
+            <th>密码最大使用天数</th>
+        </tr>
+        </thead>
+        <tbody>
+        {{range .User}}
+        <tr>
+            <td>{{.Name}}</td>
+            <td>{{.Passwd}}</td>
+            <td>{{.Uid}}</td>
+            <td>{{.Gid}}</td>
+            <td>{{.Description}}</td>
+            <td>{{.Pwd}}</td>
+            <td>{{.Bash}}</td>
+            {{if .Login}}
+                <td style="color: rgb(32, 199, 29)">是</td>
+            {{else}}
+                <td style="color: rgb(255, 0, 0)">否</td>
+            {{end}}
+            <td>{{.LastPasswd}}</td>
+            <td>{{.PasswdExpired}}</td>
+            <td>{{.Lose}}</td>
+            <td>{{.UserExpired}}</td>
+            <td>{{.MaxPasswd}}</td>
+        </tr>
+        {{end}}
+        </tbody>
+    </table>
+
+    <h2 id="newuserinfo">新建用户密码信息(只对新创建的用户账户有效)</h2>
+    <table>
+        <thead>
+        <tr>
+            <th>用户更改密码之间的最小天数</th>
+            <th>用户密码的最大有效期</th>
+            <th>在密码过期之前发出警告的天数</th>
+            <th>新创建的文件和目录的默认权限掩码</th>
+            <th>加密用户密码的方法</th>
+        </tr>
+        </thead>
+        <tbody>
+        {{range .CreateUser}}
+        <tr>
+            <td>{{.PassMinDays}}</td>
+            <td>{{.PassMaxDays}}</td>
+            <td>{{.PassWarnAge}}</td>
+            <td>{{.UMASK}}</td>
+            <td>{{.EncryptMethod}}</td>
+        </tr>
+        {{end}}
+        </tbody>
+    </table>
+
+
+    <h2 id="sshd">sshd_config安全配置信息</h2>
+    <table>
+        <thead>
+        <tr>
+            <th>是否可以root登录</th>
+            <th>是否允许密码进行验证</th>
+            <th>是否允许空密码进行认证</th>
+            <th>版本协议</th>
+            <th>关闭连接之前允许的最大身份验证尝试次数</th>
+        </tr>
+        </thead>
+        <tbody>
+        {{range .ConfigSSH}}
+        <tr>
+            <td>{{.PermitRootLogin}}</td>
+            <td>{{.PasswordAuthentication}}</td>
+            <td>{{.PermitEmptyPasswords}}</td>
+            <td>{{.Protocol}}</td>
+            <td>{{.MaxAuthTries}}</td>
+        </tr>
+        {{end}}
+        </tbody>
+    </table>
+
+
+    <h2 id="port">端口开放状态</h2>
+    <table>
+        <thead>
+        <tr>
+            <th>协议</th>
+            <th>状态</th>
+            <th>监听地址</th>
+            <th>进程信息</th>
+        </tr>
+        </thead>
+        <tbody>
+        {{range .Port}}
+        <tr>
+            <td>{{.Netid}}</td>
+            <td>{{.State}}</td>
+            <td>{{.Local}}</td>
+            <td>{{.Process}}</td>
+        </tr>
+        {{end}}
+        </tbody>
+    </table>
+
+    <h2 id="FilePer">重要文件信息</h2>
+    <table>
+        <thead>
+        <tr>
+            <th>文件</th>
+            <th>权限</th>
+            <th>大小(字节)</th>
+            <th>所属用户</th>
+            <th>所属组</th>
+            <th>最后访问时间</th>
+            <th>最后修改时间</th>
+        </tr>
+        </thead>
+        <tbody>
+        {{range .FilePer}}
+        <tr>
+            <td>{{.Name}}</td>
+            <td>{{.Permission}}</td>
+            <td>{{.Size}}</td>
+            <td>{{.Uid}}</td>
+            <td>{{.Gid}}</td>
+            <td>{{.LastReadTime}}</td>
+            <td>{{.LastWriteTime}}</td>
+        </tr>
+        {{end}}
+        </tbody>
+    </table>
+
+    <h2 id="iptables">防火墙/selinux状态</h2>
+    <table>
+        <thead>
+        <tr>
+            <th>名称</th>
+            <th>状态</th>
+        </tr>
+        </thead>
+        <tbody>
+        {{range .FireWalld}}
+        <tr>
+            <td>{{.Name}}</td>
+            <td>{{.Status}}</td>
+        </tr>
+        {{end}}
+
+        </tbody>
+    </table>
+
+    <h2 id="iptablesinfo">防火墙策略</h2>
+    <pre><code>
+{{.IptablesInfo}}
+    </code></pre>
+
+    <h2 id="allow">地址限制</h2>
+    <pre><code>
+/etc/hosts.allow:
+{{.HostAllow}}
+/etc/hosts.deny:
+{{.HostDeny}}
+    </code></pre>
+
+    <h2 id="ipaddr">网卡信息</h2>
+    <pre><code>
+{{.Address}}
+    </code></pre>
+
+    <h2 id="disk">磁盘信息</h2>
+    <pre><code>
+{{.Disk}}
+    </code></pre>
+
+    <h2 id="sudoers">/etc/sudoers</h2>
+    <pre><code>
+{{.Sudoers}}
+    </code></pre>
+
+    <h2 id="rsyslog">etc/rsyslog.conf</h2>
+    <pre><code>
+{{.Rsyslog}}
+    </code></pre>
+
+    <h2 id="pamsshd">/etc/pam.d/sshd</h2>
+    <pre><code>
+{{.PamSSH}}
+    </code></pre>
+
+    <h2 id="pampasswd">/etc/pam.d/passwd</h2>
+    <pre><code>
+{{.PamPasswd}}
+    </code></pre>
+
+    <h2 id="ps">正在运行的进程</h2>
+    <pre><code>
+{{.PS}}
+    </code></pre>
+
+    <h2 id="cron">定时任务</h2>
+    <pre><code>
+{{.CronTab}}
+    </code></pre>
+
+    <h2 id="share">文件共享</h2>
+    <pre><code>
+{{.Share}}
+    </code></pre>
+
+    <h2 id="env">环境变量</h2>
+    <pre><code>
+{{.Env}}
+    </code></pre>
+
+    <h2 id="version">版本信息</h2>
+    <pre><code>
+{{.Version}}
+    </code></pre>
+
+    <h2 id="docker">正在运行的docker</h2>
+    <pre><code>
+{{.Docker}}
+    </code></pre>
+
+    <h2 id="list-unit">开机启动项</h2>
+    <pre><code>
+{{.ListUnit}}
+    </code></pre>
+
+</div>
+<div id="toc">
+    <h3>目录</h3>
+    <ul>
+        <li><a href="#userinfo">用户信息</a></li>
+        <li><a href="#newuserinfo">新建用户安全配置</a></li>
+        <li><a href="#sshd">sshd安全配置</a></li>
+        <li><a href="#port">端口开放状态</a></li>
+        <li><a href="#FilePer">重要文件信息</a></li>
+        <li><a href="#iptables">防火墙/selinux状态</a></li>
+        <li><a href="#iptablesinfo">防火墙策略</a></li>
+        <li><a href="#allow">地址限制</a></li>
+        <li><a href="#ipaddr">网卡信息</a></li>
+        <li><a href="#disk">磁盘信息</a></li>
+        <li><a href="#sudoers">/etc/sudoers</a></li>
+        <li><a href="#pamsshd">/pam.d/sshd</a></li>
+        <li><a href="#pampasswd">/pam.d/passwd</a></li>
+        <li><a href="#rsyslog">/etc/rsyslog.conf</a></li>
+        <li><a href="#ps">正常运行的进程</a></li>
+        <li><a href="#cron">定时任务</a></li>
+        <li><a href="#share">文件共享</a></li>
+        <li><a href="#env">环境变量</a></li>
+        <li><a href="#version">版本信息</a></li>
+        <li><a href="#docker">正在运行的docker</a></li>
+        <li><a href="#list-unit">开机启动项</a></li>
+    </ul>
+</div>
+<div id="watermark"></div>
+</body>
+
+</html>
+<script>
+    const watermarkNum = 30 // 生成水印数量
+    build()
+
+    function build(){
+        for(var i = 0; i < watermarkNum; i++){
+            addWatermark(i);
+        }
+    }
+
+    function addWatermark(i){
+        var watermark = document.getElementById("watermark");
+        const top = i
+        const left = random();
+        const  html = '<div class="watermark" style="top: '+(top/watermarkNum)*100+'%; left: '+left+'%;">高业尚-SelinuxG</div>'
+        watermark.insertAdjacentHTML('afterend',html);
+    }
+
+    function random(){
+        return Math.floor(Math.random() * 70) ;
+    }
+</script>

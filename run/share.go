@@ -9,6 +9,7 @@ import (
 	"io/ioutil"
 	"net"
 	"os"
+	"path/filepath"
 	"runtime"
 	"strconv"
 	"strings"
@@ -21,7 +22,7 @@ var (
 	count        int                   //总数量,多少行文件就是多少
 	wg           sync.WaitGroup        //线程
 	errhost      []string              //失败主机列表
-	runcmd       = Linux_cmd()         //运行的linux默认cmd命令
+	runcmd       = ""                  //运行的linux命令
 	denynametype = global.Denynametype //windos下不允许创建名称的特殊符号。
 )
 
@@ -87,6 +88,13 @@ func Rangefile(path string, spr string, runtype string) {
 				continue
 			}
 		}
+
+		firepath := filepath.Join(succpath, runtype)
+		_, err = os.Stat(firepath)
+		if err != nil {
+			_ = os.MkdirAll(firepath, os.FileMode(global.FilePer))
+		}
+
 		switch runtype {
 		case "Linux":
 			go Runssh(Name, Host, User, Passwrod, Port, runcmd)
