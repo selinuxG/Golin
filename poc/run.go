@@ -81,28 +81,38 @@ func executeRequest(URL string, config Config, wg *sync.WaitGroup) {
 		baseurl := fmt.Sprintf("%s%s", URL, path)
 		values, err := url.ParseQuery(config.Body) //解析body字符串为URL编码
 		if err != nil {
-			return
+			continue
 		}
-		req, err := http.NewRequest(config.Method, baseurl, strings.NewReader(values.Encode()))
+
+		var req *http.Request
+
+		if config.Headers["Content-Type"] == "application/json" {
+			req, err = http.NewRequest(config.Method, baseurl, strings.NewReader(config.Body)) //json不需要编码
+		} else {
+			req, err = http.NewRequest(config.Method, baseurl, strings.NewReader(values.Encode()))
+		}
 		if err != nil {
-			return
+			continue
 		}
 
 		for k, v := range config.Headers { //设置header
 			req.Header.Set(k, v)
 		}
 
-		resp, err := newRequest(req)
+		resp, err := newRequest(req, config.Timeout)
 		if err != nil {
-			return
+			continue
 		}
+
 		defer resp.Body.Close()
 		if resp.StatusCode != config.Expression.Status { //状态码判断
+			//fmt.Println(errors.New(fmt.Sprintf("当前请求状态码为:%d,与yaml中%d不符!", resp.StatusCode, config.Expression.Status)))
 			continue
 		}
 
 		if config.Expression.ContentType != "" {
 			if resp.Header.Get("Content-Type") != config.Expression.ContentType { //返回类型判断
+				//fmt.Println(errors.New(fmt.Sprintf("当前返回类型为:%s,与yaml中%s不符!", resp.Header.Get("Content-Type"), config.Expression.ContentType)))
 				continue
 			}
 		}
@@ -112,12 +122,14 @@ func executeRequest(URL string, config Config, wg *sync.WaitGroup) {
 
 		if len(config.Expression.BodyALL) >= 1 {
 			if !allSubstringsPresent(strBody, config.Expression.BodyALL) {
+				//fmt.Println(errors.New("返回body中不包含规定的任意数据！"))
 				continue
 			}
 		}
 
 		if len(config.Expression.BodyAny) >= 1 {
 			if !anySubstringsPresent(strBody, config.Expression.BodyAny) {
+				//fmt.Println(errors.New("返回body中不包含规定的所有数据！"))
 				continue
 			}
 		}
@@ -126,7 +138,6 @@ func executeRequest(URL string, config Config, wg *sync.WaitGroup) {
 		}
 		flags := Flagcve{baseurl, config.Name, config.Description}
 		echoFlag(flags)
-
 	}
 }
 

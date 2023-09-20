@@ -5,6 +5,7 @@ import (
 	"gopkg.in/yaml.v2"
 	"io/fs"
 	"strings"
+	"time"
 )
 
 //go:embed yaml-poc/*.yaml
@@ -19,6 +20,7 @@ type Config struct {
 	Headers       map[string]string `yaml:"headers"`       //设置Headers
 	Expression    Expression        `yaml:"expression"`    //返回值
 	AlwaysExecute bool              `yaml:"alwaysExecute"` //是否直接执行不考虑app等组件
+	Timeout       time.Duration     `yaml:"timeout"`       //等待时常
 }
 
 type Expression struct {

