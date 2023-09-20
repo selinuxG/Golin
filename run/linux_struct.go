@@ -6,7 +6,8 @@ import "embed"
 var templateFile embed.FS
 
 type Data struct {
-	Name         string
+	Name         string          //资产名
+	Info         ServerInfo      //服务器基本信息
 	User         []LinUser       //现有用户信息
 	CreateUser   []Logindefs     //新创建用户时信息
 	Port         []PortList      //开放端口信息
@@ -29,6 +30,8 @@ type Data struct {
 	Version      string          //版本信息
 	Docker       string          //docker ps -a
 	ListUnit     string          //开机启动项
+	HeadLog      string          //前十行日志
+	TailLog      string          //后十行日志
 }
 
 type LinUser struct {
@@ -83,6 +86,17 @@ type FileListPer struct {
 type FireListWalld struct {
 	Name   string
 	Status string
+}
+
+type ServerInfo struct {
+	HostName    string
+	Arch        string
+	Cpu         string
+	CpuPhysical string
+	CpuCore     string
+	Version     string
+	ProductName string
+	Free        string
 }
 
 // NewSSH 初始化SSH默认配置

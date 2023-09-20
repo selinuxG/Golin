@@ -13,6 +13,17 @@ import (
 // parseIP解析IP地址范围 支持：192.168.1.1-100、192.168.1.1/24、192.168.1.1、baidu.com、http://www.baidu.com
 func parseIP(ip string) {
 	for _, p := range strings.Split(ip, ",") {
+		replacer := strings.NewReplacer("https://", "", "http://", "")
+		p = replacer.Replace(p)
+		index := strings.Index(p, "/")
+		// 如果存在后缀则写入环境变量，用于后续组件识别，漏洞扫描，否则进行首页扫描
+		if strings.Index(p, "/") != -1 && index+1 < len(p) {
+			url := p[index+1:]
+			reMsk := regexp.MustCompile(`\b\d{1,2}`)
+			if reMsk.FindString(url) == "" {
+				global.WebURl = "/" + url
+			}
+		}
 
 		//识别端口
 		rePort := regexp.MustCompile(`:\d{1,5}`)
@@ -29,14 +40,12 @@ func parseIP(ip string) {
 			if matchIP != "" {
 				p = matchIP
 			} else {
-				replacer := strings.NewReplacer("https://", "", "http://", "")
-				p = replacer.Replace(p)
-				index := strings.Index(p, "/")
 				if index != -1 {
 					p = p[:index]
 				}
 			}
 		}
+		//增加扫描端口
 		p += matchPort
 
 		checkPort := strings.Split(p, ":") //快速扫描

@@ -26,6 +26,7 @@ var (
 	Succwebpath      = "webhistory.json"                                    //Web模式运行记录
 	Denynametype     = []string{"\\", "\\/", "*", "?", "\"", "<", ">", "|"} //windos下不允许创建名称的特殊符号。
 	PrintLock        sync.RWMutex                                           //并发输出写入
+	WebURl           = ""                                                   //web扫描时临时后缀
 )
 
 // AppendToFile 创建追加写入函数

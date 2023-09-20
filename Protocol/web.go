@@ -55,6 +55,9 @@ func IsWeb(host, port string, timeout int, Poc bool) map[string]string {
 		default:
 			info.url = fmt.Sprintf("%s://%s:%s", v, host, port)
 		}
+
+		info.url += global.WebURl //拼接扫描url后缀
+
 		body, err := handleRequest(client, &info)
 		if err != nil {
 			continue

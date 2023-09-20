@@ -107,6 +107,36 @@
 
 <div id="content">
     <div style="text-align: center;"><h1>{{.Name}}_Linux安全策略核查</h1></div>
+
+    <h2 id="info">服务器基本信息</h2>
+    <table>
+        <thead>
+        <tr>
+            <th>主机名</th>
+            <th>操作系统位数</th>
+            <th>CPU型号</th>
+            <th>CPU个数</th>
+            <th>CPU核数</th>
+            <th>共计内存/G</th>
+            <th>硬件型号</th>
+            <th>系统版本</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <td>{{.Info.HostName}}</td>
+            <td>{{.Info.Arch}}</td>
+            <td>{{.Info.Cpu}}</td>
+            <td>{{.Info.CpuPhysical}}</td>
+            <td>{{.Info.CpuCore}}</td>
+            <td>{{.Info.Free}}</td>
+            <td>{{.Info.ProductName}}</td>
+            <td>{{.Info.Version}}</td>
+        </tr>
+        </tbody>
+    </table>
+
+
     <h2 id="userinfo">现有用户信息</h2>
     <table>
         <thead>
@@ -277,9 +307,9 @@
 
     <h2 id="allow">地址限制</h2>
     <pre><code>
-/etc/hosts.allow:
+<span style="color: rgb(32, 199, 29);font-size: 20px">/etc/hosts.allow:</span>
 {{.HostAllow}}
-/etc/hosts.deny:
+<span style="color: rgb(32, 199, 29);font-size: 20px">/etc/hosts.deny:</span>
 {{.HostDeny}}
     </code></pre>
 
@@ -348,11 +378,21 @@
 {{.ListUnit}}
     </code></pre>
 
+    <h2 id="log">部分关键日志信息</h2>
+    <pre><code>
+<span style="color: rgb(32, 199, 29);font-size: 20px">前十行：</span>
+{{.HeadLog}}
+
+<span style="color: rgb(32, 199, 29);font-size: 20px">后十行：</span>
+{{.TailLog}}
+    </code></pre>
+
 </div>
 <div id="toc">
     <h3>目录</h3>
     <ul>
-        <li><a href="#userinfo">用户信息</a></li>
+        <li><a href="#info">服务器基本信息</a></li>
+        <li><a href="#userinfo">现有用户信息</a></li>
         <li><a href="#newuserinfo">新建用户安全配置</a></li>
         <li><a href="#sshd">sshd安全配置</a></li>
         <li><a href="#port">端口开放状态</a></li>
@@ -373,6 +413,8 @@
         <li><a href="#version">版本信息</a></li>
         <li><a href="#docker">正在运行的docker</a></li>
         <li><a href="#list-unit">开机启动项</a></li>
+        <li><a href="#log">部分关键日志信息</a></li>
+
     </ul>
 </div>
 <div id="watermark"></div>

