@@ -115,6 +115,9 @@ func Runssh(sshname string, sshHost string, sshUser string, sshPasswrod string, 
 			Login = true
 		}
 		shadow := strings.Split(runCmd(fmt.Sprintf("chage -l %s", userinfo[0]), sshClient), "\n")
+		if len(shadow) != 8 {
+			continue
+		}
 		user := LinUser{
 			Name:          userinfo[0],
 			Passwd:        userinfo[1],

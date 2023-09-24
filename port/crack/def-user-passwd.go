@@ -22,7 +22,7 @@ var userMap = map[string][]string{
 	"smb":        {"administrator", "guest"},
 	"telnet":     {"admin", "root"},
 	"tomcat":     {"tomcat", "manager", "admin"},
-	"rdp":        {"administrator", "admin", "guest"},
+	"rdp":        {"administrator"},
 	"oracle":     {"orcl", "sys", "system"},
 }
 

@@ -24,10 +24,11 @@ type Config struct {
 }
 
 type Expression struct {
-	Status      int      `yaml:"status"` //返回的状态码
-	ContentType string   `yaml:"content_type"`
-	BodyALL     []string `yaml:"body_all"` //必须包含所有特征
-	BodyAny     []string `yaml:"body_any"` //包含任意特征
+	Status      int      `yaml:"status"`       //返回的状态码
+	ContentType string   `yaml:"content_type"` //返回头
+	BodyALL     []string `yaml:"body_all"`     //必须包含所有特征
+	BodyAny     []string `yaml:"body_any"`     //包含任意特征
+	Time        float64  `yaml:"sleep"`        //总共耗时
 }
 
 // parseConfigs 解析yaml文件

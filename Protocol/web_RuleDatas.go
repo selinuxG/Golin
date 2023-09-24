@@ -338,4 +338,7 @@ var RuleDatas = []RuleData{
 	{"jeesite", "cookie", "(jeesite.session.id)"},
 	{"拓尔思SSO", "cookie", "(trsidsssosessionid)"},
 	{"拓尔思WCMv7/6", "cookie", "(com.trs.idm.coSessionId)"},
+	{"飞企互联-FE业务协作平台", "body", "(flyrise.stopBackspace.js)"},
+	{"用友GRP-U8", "body", "(GRP-U8)"},
+	{"网御星云-上网行为管理系统", "body", "<title>网御上网行为管理系统</title>"},
 }

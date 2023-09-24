@@ -99,7 +99,7 @@ func executeRequest(URL string, config Config, wg *sync.WaitGroup) {
 			req.Header.Set(k, v)
 		}
 
-		resp, err := newRequest(req, config.Timeout)
+		resp, elapsedtime, err := newRequest(req, config.Timeout)
 		if err != nil {
 			continue
 		}
@@ -133,6 +133,13 @@ func executeRequest(URL string, config Config, wg *sync.WaitGroup) {
 				continue
 			}
 		}
+
+		if config.Expression.Time > 0 {
+			if config.Expression.Time < elapsedtime {
+				continue
+			}
+		}
+
 		if os.Getenv("poc") == "on" {
 			fmt.Println(strBody, "\n---------------------")
 		}

