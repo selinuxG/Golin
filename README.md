@@ -55,7 +55,7 @@
 | 37 |      JupyterLab       |  √   | 仅验证未授权访问 |
 | 38 |        XXLJOB         |  √   | 仅验证默认账户  |
 | 39 |    WIFISKY7层流控路由器     |  √   | 仅验证默认账户  |
-| 40 |          Apache-APISIX           |  √   | 仅验证默认账户  |
+| 40 |     Apache-APISIX     |  √   | 仅验证默认账户  |
 | 41 |   Alibaba-Sentinel    |  √   | 仅验证默认账户  |
 
 
