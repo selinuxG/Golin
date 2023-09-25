@@ -1,0 +1,9 @@
+name: poc-yaml-中国移动-禹路由-unauth
+description: "登录绕过"
+method: GET
+path:
+  -  /simple-index.asp
+expression:
+  status: 200
+  body_all:
+    - "无线设置"

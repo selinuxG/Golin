@@ -95,7 +95,7 @@ var RuleDatas = []RuleData{
 	{"vmware-ESX", "body", "(URL='/ui')"},
 	{"RouterOS", "body", "(mikrotik_logo.png)"},
 	{"jQuery", "body", "(jquery.*?js)"},
-	{"MinIO-Console", "body", "(MinIO Console)"},
+	{"MinIO-Console", "body", "(MinIO Console|<title>MinIO Browser</title>)"},
 	{"Spring", "body", "(Whitelabel Error Page|No message available|令牌不能为空|timestamp.*?404.*?Not Found|timestamp.*?500.*?Internal Server Error)"},
 	{"H3C-Switch", "body", "(../images/Cnlink.jpg|Web user login)"},
 	{"H3C-安全管理平台", "body", "(安全产品管理平台|<title>Web managerment Home</title>)"},
@@ -341,4 +341,9 @@ var RuleDatas = []RuleData{
 	{"飞企互联-FE业务协作平台", "body", "(flyrise.stopBackspace.js)"},
 	{"用友GRP-U8", "body", "(GRP-U8)"},
 	{"网御星云-上网行为管理系统", "body", "<title>网御上网行为管理系统</title>"},
+	{"Apache-APISIX", "body", "(<title>Apache APISIX Dashboard</title>)"},
+	{"Alibaba-Sentinel", "body", "(<title>Sentinel Dashboard</title>)"},
+	{"Tencent-企业微信", "body", "(熟悉的沟通体验，多终端登录，随时随地沟通协作|<title>企业微信</title>|让每个企业都有自己的微信)"},
+	{"畅捷通-TPlus", "body", "<title>畅捷通 T"},
+	{"中国移动-禹路由", "headers", "GoAhead-Webs"},
 }

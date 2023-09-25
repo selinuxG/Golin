@@ -9,7 +9,7 @@ import (
 // linuxCmd represents the linux command
 var sqlServerCmd = &cobra.Command{
 	Use:   "sqlserver",
-	Short: "运行采集sqlserver采集模式",
+	Short: "运行采集sqlserver安全配置核查功能",
 	Long:  `基于远程登录功能,通过多线程的方法批量进行采集`,
 	Run:   run.SqlServer,
 }

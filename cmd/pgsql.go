@@ -9,7 +9,7 @@ import (
 // linuxCmd represents the linux command
 var pgsqlCmd = &cobra.Command{
 	Use:   "pgsql",
-	Short: "运行采集PostgreSQL采集模式",
+	Short: "运行采集PostgreSQL安全配置核查功能",
 	Long:  `基于远程登录功能,通过多线程的方法批量进行采集`,
 	Run:   run.Pgsqlstart,
 }

@@ -8,7 +8,7 @@ import (
 // portCmd represents the port command
 var portCmd = &cobra.Command{
 	Use:   "port",
-	Short: "端口扫描",
+	Short: "资产测绘、协议识别、漏洞扫描",
 	Run:   port.ParseFlags,
 }
 

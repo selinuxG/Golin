@@ -9,7 +9,7 @@ import (
 // linuxCmd represents the linux command
 var linuxCmd = &cobra.Command{
 	Use:   "linux",
-	Short: "运行采集Linux采集模式",
+	Short: "运行采集Linux安全配置核查功能",
 	Long:  `基于SSH协议远程登录功能,通过多线程的方法批量进行采集`,
 	Run:   run.Linux,
 }

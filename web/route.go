@@ -239,7 +239,7 @@ func GolinHistory(c *gin.Context) {
 	c.Header("Content-Type", "text/html; charset=utf-8")
 	allserver, err := parseJSONFile()
 	if err != nil {
-		GolinErrorhtml("error", "打开任务历史文件失败", c)
+		GolinErrorhtml("nil", "不存在历史记录哦~", c)
 		c.Abort()
 		return
 	}

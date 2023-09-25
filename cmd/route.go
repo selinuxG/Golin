@@ -10,7 +10,7 @@ import (
 // routeCmd represents the route command
 var routeCmd = &cobra.Command{
 	Use:   "route",
-	Short: "运行采集网络设备功能",
+	Short: "运行采集网络设备安全配置核查功能",
 	Long:  `基于SSH的功能进行采集`,
 	Run:   run.Route,
 }
