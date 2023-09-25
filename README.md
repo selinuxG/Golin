@@ -133,6 +133,9 @@ golin [linux、mysql、oracle、sqlserver、redis、windows...] (按照3级等�
 golin update (检查是否可更新)
 ```
 
+# Star Chart
+[![Stargazers over time](https://starchart.cc/selinuxG/Golin.svg)](https://starchart.cc/selinuxG/Golin)
+
 # 免责声明
 本工具仅面向合法授权的企业安全建设行为，如您需要测试本工具的可用性，请自行搭建靶机环境。
 
