@@ -8,7 +8,7 @@
 ## web功能预览(仅支持运行等保功能)
 ![web](images/web.gif)
 
-## 端口扫描功能预览
+## 资产/组件/漏洞扫描功能预览
 ![port](images/port.jpg)
 
 ## WEB目录扫描功能预览
@@ -74,11 +74,12 @@
 | 10 |    结果保存    |  √   |                                  默认保存保存到portscan.xlsx                                  |
 | 11 |  主机操作系统识别  |  √   |                                         基于ttl                                          |
 | 12 |    组件识别    |  √   |                                        目前常用300+                                        |
-| 13 |  自动扫描弱口令   |  √   |                     rdp、ssh、redis、mysql、oracle、es、telnet、pgsql等40种                     |
+| 13 |  自动扫描弱口令   |  √   |                    rdp、ssh、redis、mysql、oracle、es、telnet、pgsql等40+种                     |
 | 14 | web自动扫描xss |  √   |                                                                                        |
 | 15 | web自动扫描漏洞  |  √   |                                    扫描poc、未授权访问、目录泄露                                    |
 | 16 |   快速扫描格式   |  √   | 支持格式：https://192.168.1.1:9090、http://192.168.1.1:9090、192.168.1.1:9090/login/index.php |
 | 17 |  sql注入扫描   |  √   |                                                                                        |
+| 18 |   fofa数据   |  √   |                          需设置fofa_email、fofa_key、fofa_size环境变量                          |
 
 ## web目录扫描现阶段支持功能
 | 序号 |      功能       | 是否支持 |       备注        |
@@ -123,12 +124,14 @@ golin web (通过web方式启动,仅支持等保功能)
 golin port (自动读取本地网卡IP地址段进行扫描,过滤虚拟网卡地址段)
 golin port -i 192.168.1.1/24 (扫描c段端口并扫描弱口令、xss、poc漏洞)
 golin port -i 192.168.1.1/24 --ipfile ip.txt (扫描指定IP段的同时扫描ip.txt文件中的主机,默认读取ip.txt,目录下如果存在不使用--ipfile也会读取)
+golin port --fofa 'app="nps" && port="8080"' (调用fofa数据进行扫描)
 golin port -i 192.168.1.1:8080 (快速扫描某一主机的特定端口)
+golin port -i http://www.test.com:18080 (扫描网站首页)
+golin port -i http://www.test.com:18080/info (扫描网站特定页)
 golin port -i 192.168.1.1/24 -c 1000 -t 10(仅扫描c段端口并设置并发数为1000,端口连接超时为10秒)
 golin port -i 192.168.1.1/24 --noping --nocrack --random(扫描c段端口但不探测存活不扫描弱口令,并且打乱主机顺序扫描)
 golin port -i 192.168.1.1/24 --nopoc(扫描c段端口但禁用扫描漏洞)
 golin dirsearch -u https://test.com -f 字典.txt --code 200,404 (扫描状态码为200以及404的web目录)
-golin domain -u baidu.com --api (扫描子域名,并且调用fofa、RapidDNS的API)
 golin [linux、mysql、oracle、sqlserver、redis、windows...] (按照3级等保要求核查各项安全配置生成html形式报告)
 golin update (检查是否可更新)
 ```

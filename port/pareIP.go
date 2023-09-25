@@ -1,14 +1,25 @@
 package port
 
 import (
+	"encoding/base64"
+	"encoding/json"
+	"errors"
 	"fmt"
 	"golin/global"
+	"io"
 	"net"
+	"net/http"
 	"os"
 	"regexp"
 	"strconv"
 	"strings"
 )
+
+// FoFoData Fofa结构体
+type FoFoData struct {
+	err     bool       `json:"error"`
+	Results [][]string `json:"results"`
+}
 
 // parseIP解析IP地址范围 支持：192.168.1.1-100、192.168.1.1/24、192.168.1.1、baidu.com、http://www.baidu.com
 func parseIP(ip string) {
@@ -139,6 +150,44 @@ func parseFileIP(path string) {
 		}
 	}
 	return
+}
+
+// parseFoFa 读取fofa数据
+func parseFoFa(cmd string) error {
+	fofaEmail, fofaKey, fofaSize := os.Getenv("fofa_email"), os.Getenv("fofa_key"), os.Getenv("fofa_size")
+	if fofaEmail == "" || fofaKey == "" {
+		return errors.New("环境变量为空")
+	}
+	fofaSizeint, err := strconv.Atoi(fofaSize)
+	if err != nil {
+		fofaSizeint = 100
+	}
+	if fofaSizeint > 10000 {
+		fofaSizeint = 10000
+	} else if fofaSizeint == 0 {
+		fofaSizeint = 100
+	}
+
+	url := fmt.Sprintf("https://fofa.info/api/v1/search/all?email=%s&key=%s&page=1&size=%d&qbase64=%s", fofaEmail, fofaKey, fofaSizeint, base64.StdEncoding.EncodeToString([]byte(cmd)))
+	res, err := http.Get(url)
+	if err != nil {
+		return err
+	}
+	body, _ := io.ReadAll(res.Body)
+	resfofa := &FoFoData{}
+	err = json.Unmarshal(body, resfofa)
+	if err != nil {
+		return err
+	}
+	if resfofa.err {
+		return errors.New("请求fofa失败")
+	}
+	portlist = []string{}
+	for _, v := range resfofa.Results {
+		iplist = append(iplist, v[1])
+		portlist = append(portlist, v[2])
+	}
+	return nil
 }
 
 // conNETLocal 获取当前可以获取的IP网段

@@ -1,4 +1,4 @@
-name: poc-yaml-nps-defaultpasswd
+name: poc-yaml-NPS内网穿透-defaultpasswd
 description: "登录方式:admin/123"
 method: POST
 body: "username=admin&password=123"
@@ -14,5 +14,5 @@ path:
   - /login/verify
 expression:
   status: 200
-  body_all:
-    - "userName"
+  body_any:
+    - "success"

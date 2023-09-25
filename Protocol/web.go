@@ -2,6 +2,7 @@ package Protocol
 
 import (
 	"bytes"
+	"context"
 	"crypto/tls"
 	"fmt"
 	"github.com/PuerkitoBio/goquery"
@@ -37,8 +38,10 @@ func IsWeb(host, port string, timeout int, Poc bool) map[string]string {
 	results := make(map[string]string)
 	transport := &http.Transport{
 		TLSClientConfig: &tls.Config{
-			InsecureSkipVerify: true,
-		}}
+			InsecureSkipVerify: true, //跳过证书的验证
+		},
+		DisableKeepAlives: true, //禁用HTTP连接的keep-alive 特性
+	}
 
 	client := &http.Client{
 		Transport: transport,
@@ -62,8 +65,14 @@ func IsWeb(host, port string, timeout int, Poc bool) map[string]string {
 		if err != nil {
 			continue
 		}
+		// 验证漏洞，只允许运行30秒
+		if Poc {
+			ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+			defer cancel()
+			handlePocAndXss(ctx, &info, body)
+		}
 
-		handlePocAndXss(&info, body, Poc)
+		// 识别组件
 		results[v] = chekwebinfo(info)
 		return results
 	}
@@ -125,20 +134,28 @@ func handleRequest(client *http.Client, info *WebInfo) ([]byte, error) {
 }
 
 // handlePocAndXss 漏洞扫描以及POC扫描
-func handlePocAndXss(info *WebInfo, body []byte, Poc bool) {
-	if !Poc {
-		return
-	}
-	poc.CheckPoc(info.url, info.app) //POC扫描
+func handlePocAndXss(ctx context.Context, info *WebInfo, body []byte) {
+	done := make(chan bool)
 
-	checkXSS, xssPayloads := CheckXss(info.url, body) //XSS扫描
-	if checkXSS {
-		poc.ListPocInfo = append(poc.ListPocInfo, poc.Flagcve{Url: info.url, Cve: "XSS", Flag: xssPayloads})
-	}
+	go func() {
 
-	// 基于title确认是否url是目录浏览
-	if strings.Contains(strings.ToLower(info.title), "index of") {
-		poc.ListPocInfo = append(poc.ListPocInfo, poc.Flagcve{Url: info.url, Cve: "目录浏览漏洞"})
+		poc.CheckPoc(info.url, info.app) //POC扫描
+
+		// 基于title确认是否url是目录浏览
+		if strings.Contains(strings.ToLower(info.title), "index of") {
+			poc.ListPocInfo = append(poc.ListPocInfo, poc.Flagcve{Url: info.url, Cve: "目录浏览漏洞"})
+		}
+
+		checkXSS, xssPayloads := CheckXss(info.url, body) //XSS扫描
+		if checkXSS {
+			poc.ListPocInfo = append(poc.ListPocInfo, poc.Flagcve{Url: info.url, Cve: "XSS", Flag: xssPayloads})
+		}
+
+		done <- true
+	}()
+	select {
+	case <-done:
+	case <-ctx.Done(): //超时退出
 	}
 }
 

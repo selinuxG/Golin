@@ -13,11 +13,11 @@ func CheckXss(targetURL string, body []byte) (bool, string) {
 	foundXSS := false
 	ply := ""
 	xssPayloads := []string{
-		`<sCrIpt>alert("GYS")</SCriPt>`,
-		`<img src=x onerror=alert("GYS")>`,
-		`<div onmouseover="alert('GYS')">`,
-		`<sCrIpt\x09>javascript:alert('GYS')</SCriPt>`,
-		`<IMG SRC="javascript:alert('GYS');">`,
+		`<sCrIpt>alert("Golin")</SCriPt>`,
+		`<img src=x onerror=alert("Golin")>`,
+		`<div onmouseover="alert('Golin')">`,
+		`<sCrIpt\x09>javascript:alert('Golin')</SCriPt>`,
+		`<IMG SRC="javascript:alert('Golin');">`,
 	}
 
 	doc, err := goquery.NewDocumentFromReader(bytes.NewReader(body))

@@ -27,4 +27,5 @@ func init() {
 	portCmd.Flags().Bool("nopoc", false, "此参数是不进行poc漏洞扫描")
 	portCmd.Flags().StringP("userfile", "", "", "此参数是自定义用户字典文件")
 	portCmd.Flags().StringP("passwdfile", "", "", "此参数是自定义密码字典文件")
+	portCmd.Flags().StringP("fofa", "", "", "此参数是调用fofa数据进行扫描")
 }
