@@ -135,10 +135,13 @@ func handleRequest(client *http.Client, info *WebInfo) ([]byte, error) {
 
 // handlePocAndXss 漏洞扫描以及POC扫描
 func handlePocAndXss(ctx context.Context, info *WebInfo, body []byte) {
-	done := make(chan bool)
+	done := make(chan bool, 1)
 
 	go func() {
+		defer func() {
+			done <- true
 
+		}()
 		poc.CheckPoc(info.url, info.app) //POC扫描
 
 		// 基于title确认是否url是目录浏览
@@ -150,8 +153,6 @@ func handlePocAndXss(ctx context.Context, info *WebInfo, body []byte) {
 		if checkXSS {
 			poc.ListPocInfo = append(poc.ListPocInfo, poc.Flagcve{Url: info.url, Cve: "XSS", Flag: xssPayloads})
 		}
-
-		done <- true
 	}()
 	select {
 	case <-done:

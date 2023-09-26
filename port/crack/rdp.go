@@ -33,6 +33,9 @@ type Client struct {
 }
 
 func rdpcon(cancel context.CancelFunc, ip, user, passwd string, port, timeout int) {
+	defer func() {
+		recover() //只是捕获 panic，不做任何处理
+	}()
 	glog.SetLevel(5) //禁止日志输出
 	logger := log.New(os.Stdout, "", 0)
 	glog.SetLogger(logger)
