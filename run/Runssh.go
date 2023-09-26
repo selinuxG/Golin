@@ -31,7 +31,6 @@ func Runssh(sshname string, sshHost string, sshUser string, sshPasswrod string, 
 	sshClient, err := ssh.Dial("tcp", addr, configssh)
 	if err != nil {
 		errhost = append(errhost, sshHost)
-		//fmt.Println(err)
 		return
 	}
 	defer sshClient.Close()
@@ -96,6 +95,7 @@ func Runssh(sshname string, sshHost string, sshUser string, sshPasswrod string, 
 		ListUnit:     runCmd("systemctl list-unit-files|grep enabled", sshClient),
 		HeadLog:      runCmd(`head -n 10 /var/log/messages /var/log/secure /var/log/audit/audit.log  /var/log/yum.log /var/log/cron`, sshClient),
 		TailLog:      runCmd(`tail -n 10 /var/log/messages /var/log/secure /var/log/audit/audit.log  /var/log/yum.log /var/log/cron`, sshClient),
+		Logrotate:    runCmd(`awk 'FNR==1{if(NR!=1)print "\nFile: " FILENAME; else print "File: " FILENAME}{if ($0 !~ /^#/ && $0 !~ /^$/) print $0}' /etc/logrotate.conf /etc/logrotate.d/*`, sshClient),
 		User:         make([]LinUser, 0),
 		CreateUser:   make([]Logindefs, 0),
 		Port:         make([]PortList, 0),
@@ -114,7 +114,7 @@ func Runssh(sshname string, sshHost string, sshUser string, sshPasswrod string, 
 		if userinfo[6] == "/bin/bash" || userinfo[6] == "/bin/zsh" {
 			Login = true
 		}
-		shadow := strings.Split(runCmd(fmt.Sprintf("chage -l %s", userinfo[0]), sshClient), "\n")
+		shadow := strings.Split(strings.ReplaceAll(runCmd(fmt.Sprintf("chage -l %s", userinfo[0]), sshClient), "：", ":"), "\n")
 		if len(shadow) != 8 {
 			continue
 		}

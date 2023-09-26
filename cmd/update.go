@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"fmt"
 	"github.com/fatih/color"
+	"github.com/spf13/cobra"
 	"golin/global"
 	"io"
 	"net/http"
@@ -11,8 +12,6 @@ import (
 	"os"
 	"strconv"
 	"strings"
-
-	"github.com/spf13/cobra"
 )
 
 // updateCmd represents the update command
@@ -28,15 +27,18 @@ var updateCmd = &cobra.Command{
 		}
 
 		// 获取当前程序大小并对比远程仓库的大小
-		exePath, _ := os.Executable()
-		fileSize, _ := getFileSize(exePath)
-		if global.Version == newrelease.TagName && fileSize == newrelease.Assets[0].Size {
-			fmt.Println("当前版本已为最新版本,无需更新。")
-			return
-		}
-		fmt.Println(fmt.Sprintf("当前版本为:%s 大小为:%v/KB  -> 最新版本为:%s 大小为:%v/KB", global.Version, fileSize, newrelease.TagName, newrelease.Assets[0].Size))
+		//exePath, _ := os.Executable()
+		//fileSize, err := getFileSize(exePath)
+		//if err != nil {
+		//	fmt.Println("获取仓库信息失败:", err)
+		//}
+		//if global.Version == newrelease.TagName && fileSize == newrelease.Assets[0].Size {
+		//	fmt.Println("当前版本已为最新版本,无需更新。")
+		//	return
+		//}
+		//fmt.Println(fmt.Sprintf("当前版本为:%s 大小为:%v/KB  -> 最新版本为:%s 大小为:%v/KB", global.Version, fileSize, newrelease.TagName, newrelease.Assets[0].Size))
 		var input string
-		fmt.Print("是否更新？y/n: ")
+		fmt.Print("是否同步GitHub仓库最新版本程序？y/n: ")
 		for {
 			_, err := fmt.Scanln(&input)
 			if err != nil {
@@ -74,6 +76,7 @@ func getFileSize(path string) (int64, error) {
 	if err != nil {
 		return 0, err
 	}
+	fileInfo.ModTime()
 
 	return fileInfo.Size(), nil
 }

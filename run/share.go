@@ -149,6 +149,13 @@ func Onlyonerun(value string, spr string, runtype string) {
 			return
 		}
 	}
+
+	firepath := filepath.Join(succpath, runtype)
+	_, err = os.Stat(firepath)
+	if err != nil {
+		_ = os.MkdirAll(firepath, os.FileMode(global.FilePer))
+	}
+
 	switch runtype {
 	case "Linux":
 		wg.Add(1)

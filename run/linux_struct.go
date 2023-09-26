@@ -32,6 +32,7 @@ type Data struct {
 	ListUnit     string          //开机启动项
 	HeadLog      string          //前十行日志
 	TailLog      string          //后十行日志
+	Logrotate    string          //日志切割配置
 }
 
 type LinUser struct {
