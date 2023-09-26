@@ -39,10 +39,7 @@ func ParseFlags(cmd *cobra.Command, args []string) {
 	ipFile, _ := cmd.Flags().GetString("ipfile") //读取文件
 	parseFileIP(ipFile)
 	fofa, _ := cmd.Flags().GetString("fofa") //读取fofa数据
-	err := parseFoFa(fofa)
-	if err != nil {
-		fmt.Println(err)
-	}
+	_ = parseFoFa(fofa)
 
 	ip, _ := cmd.Flags().GetString("ip")
 	if ip == "" {
