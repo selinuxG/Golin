@@ -17,7 +17,7 @@ import (
 
 // FoFoData Fofa结构体
 type FoFoData struct {
-	err     bool       `json:"error"`
+	Err     bool       `json:"error"`
 	Results [][]string `json:"results"`
 }
 
@@ -179,7 +179,7 @@ func parseFoFa(cmd string) error {
 	if err != nil {
 		return err
 	}
-	if resfofa.err {
+	if resfofa.Err {
 		return errors.New("请求fofa失败")
 	}
 	portlist = []string{}

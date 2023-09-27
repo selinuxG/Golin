@@ -1,6 +1,7 @@
 package port
 
 import (
+	"crypto/tls"
 	"fmt"
 	"github.com/fatih/color"
 	"golin/global"
@@ -67,6 +68,9 @@ func IsPortOpen(host, port string) {
 		protocols := []string{"ssh", "mysql", "redis", "postgresql", "sqlserver", "ftp", "smb", "telnet", "tomcat", "rdp", "oracle"}
 		for _, proto := range protocols {
 			if strings.Contains(protocol, proto) { //不区分大小写
+				if proto == "rdp" && checkTLSVersion(host, port) != nil {
+					break
+				}
 				crack.Run(host, port, Timeout, chancount, proto)
 				break
 			}
@@ -81,6 +85,28 @@ func IsPortOpen(host, port string) {
 		}
 	}
 
+}
+
+// checkTLSVersion 如果tls版本低于1.2则不进行rdp扫描
+func checkTLSVersion(host, port string) error {
+	conf := &tls.Config{
+		InsecureSkipVerify: true,
+	}
+
+	conn, err := tls.Dial("tcp", fmt.Sprintf("%s:%s", host, port), conf)
+	if err != nil {
+		return fmt.Errorf("failed to establish connection: %w", err)
+	}
+	defer conn.Close()
+
+	state := conn.ConnectionState()
+
+	// 检查协议版本
+	if state.Version < tls.VersionTLS12 {
+		return fmt.Errorf("insecure protocol version")
+	}
+
+	return nil
 }
 
 // protocolExistsAndCount 接受一个协议特征返回总数
@@ -101,7 +127,8 @@ func printGreen(format string, a ...interface{}) string {
 
 // end 运行结束是输出,输出一些统计信息
 func end() {
-	fmt.Printf("\r[*] 存活主机:%v 存活端口:%v ssh:%v rdp:%v web服务:%v 数据库:%v 弱口令:%v 漏洞:%v \n",
+	fmt.Printf("\r+------------------------------------------------------------+\n"+
+		"[*] 存活主机:%v 存活端口:%v ssh:%v rdp:%v web:%v 数据库:%v 弱口令:%v 漏洞:%v \n",
 		printGreen("%v", len(iplist)),
 		printGreen("%v", len(infolist)),
 		printGreen("%v", protocolExistsAndCount("ssh")),
