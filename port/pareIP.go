@@ -182,6 +182,9 @@ func parseFoFa(cmd string) error {
 	if resfofa.Err {
 		return errors.New("请求fofa失败")
 	}
+	if len(resfofa.Results) == 0 {
+		return errors.New(fmt.Sprintf("[-] FOFA语句获取数据为空,调整一下吧！-》 %s", cmd))
+	}
 	portlist = []string{}
 	for _, v := range resfofa.Results {
 		iplist = append(iplist, v[1])

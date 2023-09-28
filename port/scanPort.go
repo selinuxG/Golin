@@ -127,8 +127,7 @@ func printGreen(format string, a ...interface{}) string {
 
 // end 运行结束是输出,输出一些统计信息
 func end() {
-	fmt.Printf("\r+------------------------------------------------------------+\n"+
-		"[*] 存活主机:%v 存活端口:%v ssh:%v rdp:%v web:%v 数据库:%v 弱口令:%v 漏洞:%v \n",
+	fmt.Printf("\r[*] 存活主机:%v 存活端口:%v ssh:%v rdp:%v web:%v 数据库:%v 弱口令:%v 漏洞:%v \n",
 		printGreen("%v", len(iplist)),
 		printGreen("%v", len(infolist)),
 		printGreen("%v", protocolExistsAndCount("ssh")),

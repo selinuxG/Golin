@@ -32,17 +32,22 @@ type Client struct {
 	vnc  *rfb.RFB
 }
 
+func NewClient(host string, logLevel glog.LEVEL) *Client {
+	glog.SetLevel(logLevel)
+	logger := log.New(os.Stdout, "", 0)
+	glog.SetLogger(logger)
+	return &Client{
+		Host: host,
+	}
+}
+
 func rdpcon(cancel context.CancelFunc, ip, user, passwd string, port, timeout int) {
 	defer func() {
 		if r := recover(); r != nil {
 		}
 	}()
-	glog.SetLevel(5) //禁止日志输出
-	//glog.SetLevel(glog.DEBUG)
-	logger := log.New(os.Stdout, "", 0)
-	glog.SetLogger(logger)
 
-	r := Client{Host: fmt.Sprintf("%s:%d", ip, port)}
+	r := NewClient(fmt.Sprintf("%s:%d", ip, port), glog.NONE)
 	err := r.Login("", user, passwd, timeout)
 	if err == nil {
 		end(ip, user, passwd, port, "RDP")
@@ -52,9 +57,15 @@ func rdpcon(cancel context.CancelFunc, ip, user, passwd string, port, timeout in
 
 func (g *Client) Login(domain, user, pwd string, timeout int) error {
 	conn, err := net.DialTimeout("tcp", g.Host, time.Duration(timeout)*time.Second)
+	defer func() {
+		if conn != nil {
+			_ = conn.Close()
+		}
+	}()
 	if err != nil {
 		return fmt.Errorf("[dial err] %v", err)
 	}
+	glog.Info(conn.LocalAddr().String())
 
 	g.tpkt = tpkt.New(core.NewSocketLayer(conn), nla.NewNTLMv2(domain, user, pwd))
 	g.x224 = x224.New(g.tpkt)

@@ -346,4 +346,7 @@ var RuleDatas = []RuleData{
 	{"Tencent-企业微信", "body", "(熟悉的沟通体验，多终端登录，随时随地沟通协作|<title>企业微信</title>|让每个企业都有自己的微信)"},
 	{"畅捷通-TPlus", "body", "<title>畅捷通 T"},
 	{"中国移动-禹路由", "headers", "GoAhead-Webs"},
+	{"SMARTBI", "headers", "CP=CAO PSA OUR"},
+	{"SMARTBI", "body", "/smartbi/index.jsp"},
+	{"广联达OA", "body", "/Services/Identification"},
 }

