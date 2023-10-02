@@ -79,12 +79,12 @@ func CheckXss(targetURL string, body []byte) (bool, string) {
 
 			xssDetected := false
 			respDoc.Find("script, img, div").Each(func(i int, s *goquery.Selection) {
-				if s.Is("script") && strings.Contains(s.Text(), "GYS") {
+				if s.Is("script") && strings.Contains(s.Text(), "Golin") {
 					xssDetected = true
 				} else {
 					for _, attr := range []string{"onerror", "onmouseover", "src"} {
 						attrValue, exists := s.Attr(attr)
-						if exists && strings.Contains(attrValue, "GYS") {
+						if exists && strings.Contains(attrValue, "Golin") {
 							xssDetected = true
 							break
 						}
