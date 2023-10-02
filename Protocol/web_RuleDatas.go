@@ -349,4 +349,7 @@ var RuleDatas = []RuleData{
 	{"SMARTBI", "headers", "CP=CAO PSA OUR"},
 	{"SMARTBI", "body", "/smartbi/index.jsp"},
 	{"广联达OA", "body", "/Services/Identification"},
+	{"EAA益和应用接入系统", "body", "EAA益和应用接入系统"},
+	{"深信服-应用交付管理系统", "body", "(这些在统一登录版本没用到 先注释掉 waf去掉白名单|/report/index.php)"},
+	{"网御星云-上网行为管理系统", "body", "<title>网御上网行为管理系统</title>"},
 }
