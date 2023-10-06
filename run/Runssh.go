@@ -14,7 +14,7 @@ import (
 )
 
 // Runssh 通过调用ssh协议执行命令，写入到文件,并减一个线程数
-func Runssh(sshname string, sshHost string, sshUser string, sshPasswrod string, sshPort int, cmd string) {
+func Runssh(sshname string, sshHost string, sshUser string, sshPasswrod string, sshPort int, cmd string) error {
 	defer wg.Done()
 	// 创建ssh登录配置
 	configssh := &ssh.ClientConfig{
@@ -30,8 +30,7 @@ func Runssh(sshname string, sshHost string, sshUser string, sshPasswrod string, 
 	addr := fmt.Sprintf("%s:%d", sshHost, sshPort)
 	sshClient, err := ssh.Dial("tcp", addr, configssh)
 	if err != nil {
-		errhost = append(errhost, sshHost)
-		return
+		return fmt.Errorf("%s:连接失败,请检查密码或网络问题。", sshHost)
 	}
 	defer sshClient.Close()
 
@@ -39,8 +38,7 @@ func Runssh(sshname string, sshHost string, sshUser string, sshPasswrod string, 
 	session, err := sshClient.NewSession()
 	defer session.Close()
 	if err != nil {
-		errhost = append(errhost, sshHost)
-		return
+		return fmt.Errorf("%s:创建session失败。", sshHost)
 	}
 
 	firepath := filepath.Join(succpath, "Linux")
@@ -49,8 +47,7 @@ func Runssh(sshname string, sshHost string, sshUser string, sshPasswrod string, 
 	if runcmd != "" {
 		combo, err := session.CombinedOutput(cmd)
 		if err != nil {
-			errhost = append(errhost, sshHost)
-			return
+			return fmt.Errorf("%s:执行自定义命令失败->%s。", sshHost, cmd)
 		}
 
 		//判断是否进行输出命令结果
@@ -60,10 +57,9 @@ func Runssh(sshname string, sshHost string, sshUser string, sshPasswrod string, 
 		datanew := []byte(string(combo))
 		err = os.WriteFile(filepath.Join(firepath, fmt.Sprintf("%s_%s.log", sshname, sshHost)), datanew, fs.FileMode(global.FilePer))
 		if err != nil {
-			errhost = append(errhost, sshHost)
-			return
+			return fmt.Errorf("%s:保存文件失败。", sshHost)
 		}
-		return
+		return nil
 	}
 
 	// 执行模板文件
@@ -215,23 +211,21 @@ func Runssh(sshname string, sshHost string, sshUser string, sshPasswrod string, 
 	// 读取模板文件
 	tmpl, err := template.ParseFS(templateFile, "linux_html.html")
 	if err != nil {
-		errhost = append(errhost, sshHost)
-		return
+		return fmt.Errorf("%s:读取HTML模板文件失败。", sshHost)
 	}
 	// 创建一个新的文件
 	newFile, err := os.Create(fmt.Sprintf("%s/%s_%s.html", firepath, sshname, sshHost))
 	if err != nil {
-		errhost = append(errhost, sshHost)
-		return
+		return fmt.Errorf("%s:创建文件失败。", sshHost)
+
 	}
 	defer newFile.Close()
 	// 将模板执行的结果写入新的文件
 	err = tmpl.Execute(newFile, data)
 	if err != nil {
-		errhost = append(errhost, sshHost)
-		return
+		return fmt.Errorf("%s:保存模板文件失败。", sshHost)
 	}
-
+	return nil
 }
 
 func runCmd(cmd string, Client *ssh.Client) string {

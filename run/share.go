@@ -6,7 +6,6 @@ import (
 	"golin/config"
 	"golin/global"
 	"io/fs"
-	"io/ioutil"
 	"net"
 	"os"
 	"path/filepath"
@@ -97,7 +96,13 @@ func Rangefile(path string, spr string, runtype string) {
 
 		switch runtype {
 		case "Linux":
-			go Runssh(Name, Host, User, Passwrod, Port, runcmd)
+			go func() {
+				sshErr := Runssh(Name, Host, User, Passwrod, Port, runcmd)
+				if sshErr != nil {
+					errhost = append(errhost, Host)
+					zlog.Warn("采集Linux安全配置失败:", zap.Error(sshErr))
+				}
+			}()
 		case "Mysql":
 			go RunMysql(Name, User, Passwrod, Host, strconv.Itoa(Port))
 		case "Redis":
@@ -107,7 +112,6 @@ func Rangefile(path string, spr string, runtype string) {
 		case "sqlserver":
 			go SqlServerrun(Name, Host, User, Passwrod, strconv.Itoa(Port))
 		case "oracle":
-			config.Log.Info("开启运行oracle模式", zap.String("名称:", Name), zap.String("IP", Host))
 			go OracleRun(Name, Host, User, Passwrod, strconv.Itoa(Port))
 		}
 	}
@@ -159,8 +163,13 @@ func Onlyonerun(value string, spr string, runtype string) {
 	switch runtype {
 	case "Linux":
 		wg.Add(1)
-		zlog.Info("开启运行Linux模式", zap.String("名称:", Name), zap.String("IP", Host))
-		go Runssh(Name, Host, User, Passwrod, Port, runcmd)
+		go func() {
+			sshErr := Runssh(Name, Host, User, Passwrod, Port, runcmd)
+			if sshErr != nil {
+				errhost = append(errhost, Host)
+				zlog.Warn("采集Linux安全配置失败:", zap.Error(sshErr))
+			}
+		}()
 	case "MySQL":
 		wg.Add(1)
 		config.Log.Info("开启运行Mysql模式", zap.String("名称:", Name), zap.String("IP", Host))
@@ -190,7 +199,7 @@ func Checkfile(name string, data string, pems int, path string) {
 	_, err := os.Stat(name)
 	if os.IsNotExist(err) {
 		datanew := []byte(string(data))
-		ioutil.WriteFile(path, datanew, fs.FileMode(pems))
+		os.WriteFile(path, datanew, fs.FileMode(pems))
 		config.Log.Warn("默认文件不存在", zap.String("默认文件", name))
 		config.Log.Info("已自动创建符合格式的默认文件，修改后再来吧！", zap.String("默认文件", name))
 		os.Exit(3)

@@ -26,6 +26,11 @@ func Start(cmd *cobra.Command, args []string) {
 	port, _ := cmd.Flags().GetString("port")
 	save, _ = cmd.Flags().GetBool("save")
 	r := gin.Default()
+	r.Use(func(c *gin.Context) {
+		c.Header("author", "gaoyeshang")
+		c.Header("VX", "SelinuxG")
+		c.Next()
+	})
 	r.NoRoute(func(c *gin.Context) {
 		GolinErrorhtml("404", "sorry~请求不存在哦!", c)
 	})

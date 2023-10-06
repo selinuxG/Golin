@@ -45,6 +45,6 @@ func init() {
 		color.GreenString("%s", golin),
 		color.GreenString("%s %s", global.Version, global.Releasenotes),
 		color.BlueString("%s", "https://github.com/selinuxG/Golin"),
-		color.MagentaString("%s", "gaoyeshang"),
+		color.MagentaString("%s", "gaoyeshang -> VX:SelinuxG"),
 	)
 }

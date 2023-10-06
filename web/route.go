@@ -86,7 +86,6 @@ func GolinSubmitFile(c *gin.Context) {
 			if mode == "h3c" || mode == "huawei" {
 				apendname = filepath.Join(global.Succpath, "Route", fmt.Sprintf("%s_%s.log", namesplit[0], namesplit[1]))
 			}
-			fmt.Println(apendname)
 			alliplist = append(alliplist, apendname)
 			//删除同名主机记录
 			os.Remove(apendname)
