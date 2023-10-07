@@ -58,6 +58,7 @@
 | 40 |     Apache-APISIX     |  √   | 仅验证默认账户  |
 | 41 |   Alibaba-Sentinel    |  √   | 仅验证默认账户  |
 | 42 |     飞致云-DateEase      |  √   | 仅验证默认账户  |
+| 43 |   Apache-Solr-Admin   |  √   | 仅验证未授权访问 |
 
 
 ## 资产扫描现阶段支持功能

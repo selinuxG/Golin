@@ -353,4 +353,7 @@ var RuleDatas = []RuleData{
 	{"深信服-应用交付管理系统", "body", "(这些在统一登录版本没用到 先注释掉 waf去掉白名单|/report/index.php)"},
 	{"网御星云-上网行为管理系统", "body", "<title>网御上网行为管理系统</title>"},
 	{"飞致云-DateEase", "body", "/css/chunk-0c21a9c5.34d69e98.css"},
+	{"斐讯路由器", "body", "(<title>K2</title>|LuCI - Lua Configuration Interface)"},
+	{"Apache-Solr-Admin", "body", "<title>Solr Admin</title>"},
+	{"用友-时空KSOA", "body", "(<title>企业信息系统门户</title>|innerlogin.jsp)"},
 }

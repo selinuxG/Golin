@@ -268,7 +268,7 @@ func IndexHtml() string {
                 <button type="button" id="helpBtn" class="help-btn">填写帮助</button>
             </div>
 
-            <h1>单主机采集模式</h1>
+            <h1>单主机安全核查</h1>
             <div class="input-row">
                 <input type="text" placeholder="名称" name="name" required>
                 <input type="text" placeholder="IP" name="ip" required>
@@ -416,7 +416,7 @@ func IndexFilehtml() string {
 </head>
 <body>
     <div class="container">
-        <h1>多主机模式</h1>
+        <h1>多主机安全核查</h1>
         <a href="/golin/index" class="single-host-mode-btn">单主机模式</a>
         <a href="/golin/modefile" class="download-btn">下载模板文件</a>
         <form action="/golin/submitfile" method="POST" enctype="multipart/form-data">
@@ -638,14 +638,14 @@ func GolinHomeHtml() string {
 
 <body>
     <div class="container">
-        <h1>Golin Web</h1>
+        <h1>Golin 网络安全等级保护核查工具</h1>
         <div class="btn-group">
-            <a href="/golin/indexfile" class="btn"  target="_blank" >多主机采集模式</a>
-            <a href="/golin/index"  class="btn"  target="_blank">单主机采集模式</a>
+            <a href="/golin/indexfile" class="btn"  target="_blank" >多主机核查</a>
+            <a href="/golin/index"  class="btn"  target="_blank">单主机核查</a>
  			<a href="/golin/history" target="_blank" class="btn">历史记录</a>
-            <a href="https://github.com/selinuxG/Golin-cli" class="btn"  target="_blank">帮助手册</a>
             <a href="/golin/dj"  class="btn"  target="_blank">模拟定级</a>
             <a href="/golin/update" class="btn" class="btn">检查更新</a>
+            <a href="https://z1.ax1x.com/2023/10/07/pPjnY4O.png" class="btn" target="_blank">联系作者</a>
         </div>
         <div class="footer">
             <p>version:版本 如觉得对自己有帮助点个星星吧~ <a href="https://github.com/selinuxG/Golin-cli" target="_blank">Github</a></p>
