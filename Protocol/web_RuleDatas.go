@@ -356,4 +356,6 @@ var RuleDatas = []RuleData{
 	{"斐讯路由器", "body", "(<title>K2</title>|LuCI - Lua Configuration Interface)"},
 	{"Apache-Solr-Admin", "body", "<title>Solr Admin</title>"},
 	{"用友-时空KSOA", "body", "(<title>企业信息系统门户</title>|innerlogin.jsp)"},
+	{"NUUO摄像头", "body", "<title>Network Video Recorder Login</title>"},
+	{"人力资源信息管理系统", "body", "(<title>人力资源信息管理系统</title>|<div class=\"hj-hy-all-one-logo)"},
 }
