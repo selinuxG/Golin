@@ -42,11 +42,6 @@ func NewClient(host string, logLevel glog.LEVEL) *Client {
 }
 
 func rdpcon(cancel context.CancelFunc, ip, user, passwd string, port, timeout int) {
-	defer func() {
-		if r := recover(); r != nil {
-		}
-	}()
-
 	r := NewClient(fmt.Sprintf("%s:%d", ip, port), glog.NONE)
 	err := r.Login("", user, passwd, timeout)
 	if err == nil {
@@ -56,6 +51,12 @@ func rdpcon(cancel context.CancelFunc, ip, user, passwd string, port, timeout in
 }
 
 func (g *Client) Login(domain, user, pwd string, timeout int) error {
+	var err error
+	defer func() {
+		if r := recover(); r != nil {
+			err = fmt.Errorf("panic: %v", r)
+		}
+	}()
 	conn, err := net.DialTimeout("tcp", g.Host, time.Duration(timeout)*time.Second)
 	defer func() {
 		if conn != nil {

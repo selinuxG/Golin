@@ -38,7 +38,7 @@ var updateCmd = &cobra.Command{
 		//}
 		//fmt.Println(fmt.Sprintf("当前版本为:%s 大小为:%v/KB  -> 最新版本为:%s 大小为:%v/KB", global.Version, fileSize, newrelease.TagName, newrelease.Assets[0].Size))
 		var input string
-		fmt.Print("是否同步GitHub仓库最新版本程序？y/n: ")
+		fmt.Print("是否下载GitHub仓库最新版本程序？y/n: ")
 		for {
 			_, err := fmt.Scanln(&input)
 			if err != nil {
@@ -51,7 +51,7 @@ var updateCmd = &cobra.Command{
 				proxy, _ := cmd.Flags().GetString("proxy")
 				err := downloadFile(newrelease.Assets[0].BrowserDownloadUrl, "golin.exe", proxy)
 				if err != nil {
-					fmt.Println("Failed!")
+					fmt.Println("更新失败->", err)
 					return
 				}
 				os.Exit(0)
@@ -117,6 +117,7 @@ func downloadFile(downurl, localPath, proxy string) error {
 		return nil
 	}
 	// 当前旧版程序重命名实现备份效果
+	os.Remove(exe + ".bak") //先移除之前的备份文件
 	err = os.Rename(exe, exe+".bak")
 	if err != nil {
 		return err
