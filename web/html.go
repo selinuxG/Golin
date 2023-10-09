@@ -557,7 +557,7 @@ func GolinHomeHtml() string {
 
         .container {
             width: 100%;
-            max-width: 960px;
+            max-width: 1000px;
             margin: 0 auto;
             padding: 20px;
             display: flex;
@@ -644,8 +644,9 @@ func GolinHomeHtml() string {
             <a href="/golin/index"  class="btn"  target="_blank">单主机核查</a>
  			<a href="/golin/history" target="_blank" class="btn">历史记录</a>
             <a href="/golin/dj"  class="btn"  target="_blank">模拟定级</a>
+            <a href="https://www.yuque.com/gaoys/dbcp/help"  class="btn"  target="_blank">等保常问</a>
             <a href="/golin/update" class="btn" class="btn">检查更新</a>
-            <a href="https://z1.ax1x.com/2023/10/07/pPjnY4O.png" class="btn" target="_blank">联系作者</a>
+            <a href="https://picdm.sunbangyan.cn/2023/10/09/r74hp1.png" class="btn" target="_blank">联系作者</a>
         </div>
         <div class="footer">
             <p>version:版本 如觉得对自己有帮助点个星星吧~ <a href="https://github.com/selinuxG/Golin-cli" target="_blank">Github</a></p>

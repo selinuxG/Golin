@@ -6,34 +6,36 @@ import "embed"
 var templateFile embed.FS
 
 type Data struct {
-	Name         string          //资产名
-	Info         ServerInfo      //服务器基本信息
-	User         []LinUser       //现有用户信息
-	CreateUser   []Logindefs     //新创建用户时信息
-	Port         []PortList      //开放端口信息
-	ConfigSSH    []SSH           //sshd_config安全配置信息
-	HostAllow    string          ///etc/hosts.allow
-	HostDeny     string          ///etc/hosts.Deny
-	FilePer      []FileListPer   //重要文件权限
-	FireWalld    []FireListWalld //防火墙/selinux
-	IptablesInfo string          //防护墙策略
-	Address      string          //网卡信息
-	Disk         string          //磁盘信息
-	PamSSH       string          ///etc/pam.d/sshd文件信息
-	PamSystem    string          ///etc/pam.d/system-auth文件信息
-	PamPasswd    string          ///etc/pam.d/passwd文件信息
-	PS           string          //ps aux命令结果
-	Sudoers      string          //etc/sudoers文件结果
-	Rsyslog      string          //etc/rsyslog.conf文件结果
-	CronTab      string          //定时任务
-	Share        string          //文件共享
-	Env          string          //环境变量
-	Version      string          //版本信息
-	Docker       string          //docker ps -a
-	ListUnit     string          //开机启动项
-	HeadLog      string          //前十行日志
-	TailLog      string          //后十行日志
-	Logrotate    string          //日志切割配置
+	Name          string          //资产名
+	Info          ServerInfo      //服务器基本信息
+	User          []LinUser       //现有用户信息
+	CreateUser    []Logindefs     //新创建用户时信息
+	Quality       Pwquality       ///etc/security/pwquality.conf安全配置
+	Port          []PortList      //开放端口信息
+	ConfigSSH     []SSH           //sshd_config安全配置信息
+	HostAllow     string          ///etc/hosts.allow
+	HostDeny      string          ///etc/hosts.Deny
+	FilePer       []FileListPer   //重要文件权限
+	FireWalld     []FireListWalld //防火墙/selinux
+	IptablesInfo  string          //防护墙策略
+	Address       string          //网卡信息
+	Disk          string          //磁盘信息
+	PamSSH        string          ///etc/pam.d/sshd文件信息
+	PamSystem     string          ///etc/pam.d/system-auth文件信息
+	PamPasswd     string          ///etc/pam.d/passwd文件信息
+	PwqualityConf string          ///etc/security/pwquality.conf文件信息
+	PS            string          //ps aux命令结果
+	Sudoers       string          //etc/sudoers文件结果
+	Rsyslog       string          //etc/rsyslog.conf文件结果
+	CronTab       string          //定时任务
+	Share         string          //文件共享
+	Env           string          //环境变量
+	Version       string          //版本信息
+	Docker        string          //docker ps -a
+	ListUnit      string          //开机启动项
+	HeadLog       string          //前十行日志
+	TailLog       string          //后十行日志
+	Logrotate     string          //日志切割配置
 }
 
 type LinUser struct {
@@ -58,6 +60,17 @@ type Logindefs struct {
 	PassWarnAge   string
 	UMASK         string
 	EncryptMethod string
+}
+
+type Pwquality struct {
+	Minlen      string
+	Dcredit     string
+	Ucredit     string
+	Lcredit     string
+	Ocredit     string
+	Minclass    string
+	Maxrepeat   string
+	Maxsequence string
 }
 
 type PortList struct {

