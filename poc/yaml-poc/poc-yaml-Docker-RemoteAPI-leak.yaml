@@ -1,0 +1,13 @@
+name: poc-yaml-Docker-RemoteAPI-leak
+description: "敏感信息泄露"
+method: GET
+path:
+  - /info
+  - /version
+  - /images/json
+expression:
+  status: 200
+  body_any:
+    - "ID"
+    - "Containers"
+    - "Version"

