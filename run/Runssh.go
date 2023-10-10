@@ -87,6 +87,7 @@ func Runssh(sshname string, sshHost string, sshUser string, sshPasswrod string, 
 		},
 		Address:       runCmd("ifconfig", sshClient),
 		Disk:          runCmd("df -h", sshClient),
+		Dns:           runCmd(`cat /etc/resolv.conf|grep -v "^#"|grep -v "^$"`, sshClient),
 		PamSSH:        runCmd(`cat /etc/pam.d/sshd|grep -v "^#"|grep -v "^$"`, sshClient),
 		PamSystem:     runCmd(`cat /etc/pam.d/system-auth|grep -v "^#"|grep -v "^$"`, sshClient),
 		PamPasswd:     runCmd(`cat /etc/pam.d/passwd|grep -v "^#"|grep -v "^$"`, sshClient),
@@ -195,7 +196,7 @@ func Runssh(sshname string, sshHost string, sshUser string, sshPasswrod string, 
 	data.HostDeny = runCmd(` cat /etc/hosts.Deny |grep -v "^#" |grep -v "^$"`, sshClient)
 
 	//中文文件权限
-	var FileList = []string{"/etc/passwd", "/etc/shadow", "/etc/group", "/etc/rsyslog.conf", "/etc/sudoers", "/etc/hosts.allow", "/etc/hosts.deny", "/etc/ssh/sshd_config", "/etc/pam.d/sshd", "/etc/pam.d/passwd", "/var/log/messages", "/var/log/audit/audit.log", "/etc/security/pwquality.conf", "/usr/lib64/security/pam_pwquality.so"}
+	var FileList = []string{"/etc/passwd", "/etc/shadow", "/etc/group", "/etc/rsyslog.conf", "/etc/sudoers", "/etc/hosts.allow", "/etc/hosts.deny", "/etc/ssh/sshd_config", "/etc/pam.d/sshd", "/etc/pam.d/passwd", "/var/log/messages", "/var/log/audit/audit.log", "/etc/security/pwquality.conf", "/usr/lib64/security/pam_pwquality.so", "/etc/resolv.conf", "/etc/fstab", "/etc/sysctl.conf", "/etc/selinux/config", "/etc/sysctl.conf", "/etc/audit/auditd.conf"}
 	for _, name := range FileList {
 		FilePer := FileListPer{
 			Name:          name,

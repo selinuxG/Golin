@@ -20,6 +20,7 @@ type Data struct {
 	IptablesInfo  string          //防护墙策略
 	Address       string          //网卡信息
 	Disk          string          //磁盘信息
+	Dns           string          /////etc/resolv.conf文件信息
 	PamSSH        string          ///etc/pam.d/sshd文件信息
 	PamSystem     string          ///etc/pam.d/system-auth文件信息
 	PamPasswd     string          ///etc/pam.d/passwd文件信息

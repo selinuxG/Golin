@@ -63,17 +63,23 @@
             border: 1px solid #dee2e6;
             border-radius: 5px;
             box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+            max-height: 800px; /* 目录高度 */
+            overflow-y: auto; /* 滚动条 */
+            width: 150px; /* 目录宽度 */
         }
 
         #toc ul {
             list-style-type: none;
             padding: 0;
+            margin: 0;
         }
 
         #toc a {
             text-decoration: none;
             color: #333;
             display: block;
+            word-wrap: break-word; /* 如果单词超过容器宽度，允许在单词内部换行 */
+            overflow-wrap: break-word; /* 同上，但更好的兼容性 */
         }
 
         #toc a:hover {
@@ -329,106 +335,64 @@
     </table>
 
     <h2 id="iptablesinfo">防火墙策略</h2>
-    <pre><code>
-{{.IptablesInfo}}
-    </code></pre>
+    <pre><code>{{.IptablesInfo}}</code></pre>
 
     <h2 id="allow">地址限制</h2>
-    <pre><code>
-<span style="color: rgb(32, 199, 29);font-size: 20px">/etc/hosts.allow:</span>
-{{.HostAllow}}
-<span style="color: rgb(32, 199, 29);font-size: 20px">/etc/hosts.deny:</span>
-{{.HostDeny}}
-    </code></pre>
+    <pre><code><span style="color: rgb(32, 199, 29);font-size: 20px">/etc/hosts.allow:</span><br>{{.HostAllow}}<br><span style="color: rgb(32, 199, 29);font-size: 20px">/etc/hosts.deny:</span><br>{{.HostDeny}}</code></pre>
 
     <h2 id="ipaddr">网卡信息</h2>
-    <pre><code>
-{{.Address}}
-    </code></pre>
+    <pre><code>{{.Address}}</code></pre>
 
     <h2 id="disk">磁盘信息</h2>
-    <pre><code>
-{{.Disk}}
-    </code></pre>
+    <pre><code>{{.Disk}}</code></pre>
+
+    <h2 id="dns">DNS配置信息(/etc/resolv.conf已去除注释行)</h2>
+    <pre><code>{{.Dns}}</code></pre>
 
     <h2 id="sudoers">/etc/sudoers</h2>
-    <pre><code>
-{{.Sudoers}}
-    </code></pre>
+    <pre><code>{{.Sudoers}}</code></pre>
 
     <h2 id="rsyslog">etc/rsyslog.conf(已去除注释行)</h2>
-    <pre><code>
-{{.Rsyslog}}
-    </code></pre>
+    <pre><code>{{.Rsyslog}}</code></pre>
 
     <h2 id="pamsshd">/etc/pam.d/sshd(已去除注释行)</h2>
-    <pre><code>
-{{.PamSSH}}
-    </code></pre>
+    <pre><code>{{.PamSSH}}</code></pre>
 
     <h2 id="pamsystem">/etc/pam.d/system-auth(已去除注释行)</h2>
-    <pre><code>
-{{.PamSystem}}
-    </code></pre>
+    <pre><code>{{.PamSystem}}</code></pre>
 
     <h2 id="pampasswd">/etc/pam.d/passwd(已去除注释行)</h2>
-    <pre><code>
-{{.PamPasswd}}
-    </code></pre>
+    <pre><code>{{.PamPasswd}}</code></pre>
 
     <h2 id="pwqualityconf">/etc/security/pwquality.conf(已去除注释行)</h2>
-    <pre><code>
-{{.PwqualityConf}}
-    </code></pre>
+    <pre><code>{{.PwqualityConf}}</code></pre>
 
     <h2 id="ps">正在运行的进程</h2>
-    <pre><code>
-{{.PS}}
-    </code></pre>
+    <pre><code>{{.PS}}</code></pre>
 
     <h2 id="cron">定时任务</h2>
-    <pre><code>
-{{.CronTab}}
-    </code></pre>
+    <pre><code>{{.CronTab}}</code></pre>
 
-    <h2 id="share">文件共享</h2>
-    <pre><code>
-{{.Share}}
-    </code></pre>
+    <h2 id="share">NFS服务(/etc/exports已去除注释行)</h2>
+    <pre><code>{{.Share}}</code></pre>
 
     <h2 id="env">环境变量</h2>
-    <pre><code>
-{{.Env}}
-    </code></pre>
+    <pre><code>{{.Env}}</code></pre>
 
     <h2 id="version">版本信息</h2>
-    <pre><code>
-{{.Version}}
-    </code></pre>
+    <pre><code>{{.Version}}</code></pre>
 
     <h2 id="docker">正在运行的docker</h2>
-    <pre><code>
-{{.Docker}}
-    </code></pre>
+    <pre><code>{{.Docker}}</code></pre>
 
     <h2 id="list-unit">开机启动项</h2>
-    <pre><code>
-{{.ListUnit}}
-    </code></pre>
+    <pre><code>{{.ListUnit}}</code></pre>
 
     <h2 id="log">部分关键日志信息</h2>
-    <pre><code>
-<span style="color: rgb(32, 199, 29);font-size: 20px">前十行：</span>
-{{.HeadLog}}
-
-<span style="color: rgb(32, 199, 29);font-size: 20px">后十行：</span>
-{{.TailLog}}
-    </code></pre>
+    <pre><code><span style="color: rgb(32, 199, 29);font-size: 20px">前十行：<br></span>{{.HeadLog}}><br><span style="color: rgb(32, 199, 29);font-size: 20px">后十行：<br></span>{{.TailLog}}</code></pre>
 
     <h2 id="logrotate">日志切割配置</h2>
-    <pre><code>
-{{.Logrotate}}
-    </code></pre>
+    <pre><code>{{.Logrotate}}</code></pre>
 
 </div>
 <div id="toc">
@@ -446,15 +410,16 @@
         <li><a href="#allow">地址限制</a></li>
         <li><a href="#ipaddr">网卡信息</a></li>
         <li><a href="#disk">磁盘信息</a></li>
+        <li><a href="#dns">DNS配置信息</a></li>
         <li><a href="#sudoers">/etc/sudoers</a></li>
-        <li><a href="#pamsshd">pam.d/sshd</a></li>
-        <li><a href="#pamsystem">pam.d/system-auth</a></li>
-        <li><a href="#pampasswd">pam.d/passwd</a></li>
-        <li><a href="#pwqualityconf">security/pwquality.conf</a></li>
+        <li><a href="#pamsshd">/etc/pam.d/sshd</a></li>
+        <li><a href="#pamsystem">/etc/pam.d/system-auth</a></li>
+        <li><a href="#pampasswd">/etc/pam.d/passwd</a></li>
+        <li><a href="#pwqualityconf">/etc/security/pwquality.conf</a></li>
         <li><a href="#rsyslog">/etc/rsyslog.conf</a></li>
         <li><a href="#ps">正常运行的进程</a></li>
         <li><a href="#cron">定时任务</a></li>
-        <li><a href="#share">文件共享</a></li>
+        <li><a href="#share">NFS服务(文件共享)</a></li>
         <li><a href="#env">环境变量</a></li>
         <li><a href="#version">版本信息</a></li>
         <li><a href="#docker">正在运行的docker</a></li>

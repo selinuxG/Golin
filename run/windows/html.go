@@ -69,17 +69,23 @@ func Windowshtml() string {
             border: 1px solid #dee2e6;
             border-radius: 5px;
             box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+            max-height: 800px; /* 目录高度 */
+            overflow-y: auto; /* 滚动条 */
+            width: 150px; /* 目录宽度 */
         }
 
         #toc ul {
             list-style-type: none;
             padding: 0;
+            margin: 0;
         }
 
         #toc a {
             text-decoration: none;
             color: #333;
             display: block;
+            word-wrap: break-word; /* 如果单词超过容器宽度，允许在单词内部换行 */
+            overflow-wrap: break-word; /* 同上，但更好的兼容性 */
         }
 
         #toc a:hover {
