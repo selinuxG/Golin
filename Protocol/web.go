@@ -11,6 +11,7 @@ import (
 	"golin/poc"
 	"io"
 	"net/http"
+	"os"
 	"regexp"
 	"strings"
 	"time"
@@ -124,6 +125,14 @@ func handleRequest(client *http.Client, info *WebInfo) ([]byte, error) {
 	info.ContentType = resp.Header.Get("Content-Type")
 	info.server = resp.Header.Get("Server")
 	info.app = CheckApp(string(body), resp.Header, resp.Cookies(), info.server) // 匹配组件
+
+	if os.Getenv("html") == "on" {
+		fmt.Printf("-----> URL: %s HTML正文:\n%s\n", info.url, string(body))
+		fmt.Printf("-----> Header:\n")
+		for k, v := range resp.Header {
+			fmt.Println(k, "->", v)
+		}
+	}
 
 	return body, nil
 }

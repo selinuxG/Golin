@@ -1,0 +1,10 @@
+name: poc-yaml-用友-移动系统管理-unauth
+description: "未授权访问"
+method: GET
+path:
+  - /maportal/
+expression:
+  status: 200
+  body_any:
+    - "欢迎你"
+    - "管理员"
