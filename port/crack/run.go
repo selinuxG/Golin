@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/fatih/color"
 	"golin/global"
+	"os"
 	"strconv"
 	"sync"
 	"time"
@@ -19,6 +20,13 @@ type SussCrack struct {
 	Port   int
 	Mode   string
 }
+
+type HostPort struct {
+	Host string
+	Port int
+}
+
+var MapCrackHost = make(map[HostPort]SussCrack) //使用 Host和Port作为键，SussCrack结构体作为值。对于每个 Host 和 Port 的组合，只会存储一次弱口令信息，避免并发遇到匿名用户输出。
 
 // ConnectionFunc 定义一个函数类型
 type ConnectionFunc func(cancel context.CancelFunc, host, user, passwd string, newport, timeout int)
@@ -67,7 +75,9 @@ func Run(host, port string, Timeout, chanCount int, mode string) {
 func end(host, user, passwd string, port int, mode string) {
 	global.PrintLock.Lock()
 	defer global.PrintLock.Unlock()
-	ListCrackHost = append(ListCrackHost, SussCrack{host, user, passwd, port, mode})
+	//ListCrackHost = append(ListCrackHost, SussCrack{host, user, passwd, port, mode})
+	MapCrackHost[HostPort{Host: host, Port: port}] = SussCrack{host, user, passwd, port, mode}
+
 }
 
 func done(ch <-chan struct{}, wg *sync.WaitGroup) {
@@ -88,8 +98,8 @@ func crackOnce(ctx context.Context, cancel context.CancelFunc, host, user, passw
 	case <-hasDone:
 		return
 	case <-ctx.Done():
-		if global.Debug {
-			fmt.Println(key, host, user, passwd, "time out")
+		if os.Getenv("crack") == "on" {
+			fmt.Println(key, host, user, passwd, "crack timeout.....done")
 		}
 		return
 	}

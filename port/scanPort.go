@@ -134,7 +134,7 @@ func end() {
 		printGreen("%v", protocolExistsAndCount("rdp")),
 		printGreen("%v", protocolExistsAndCount("WEB应用")),
 		printGreen("%v", protocolExistsAndCount("数据库")),
-		printGreen("%v", len(crack.ListCrackHost)),
+		printGreen("%v", len(crack.MapCrackHost)),
 		printGreen("%v", len(poc.ListPocInfo)),
 	)
 }

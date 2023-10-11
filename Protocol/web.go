@@ -125,11 +125,6 @@ func handleRequest(client *http.Client, info *WebInfo) ([]byte, error) {
 	info.server = resp.Header.Get("Server")
 	info.app = CheckApp(string(body), resp.Header, resp.Cookies(), info.server) // 匹配组件
 
-	if global.Debug {
-		fmt.Println(string(body))
-		fmt.Println(resp.Header)
-	}
-
 	return body, nil
 }
 

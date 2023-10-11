@@ -24,9 +24,6 @@ func Execute() {
 }
 
 func init() {
-	if os.Getenv("golin") == "on" {
-		global.Debug = true //调试信息
-	}
 	golin := fmt.Sprintf(`
 
   ▄████  ▒█████   ██▓     ██▓ ███▄    █ 

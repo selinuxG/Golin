@@ -12,13 +12,13 @@ import (
 
 // echoCrack 输出弱口令的资产信息
 func echoCrack() {
-	if len(crack.ListCrackHost) <= 0 {
+	if len(crack.MapCrackHost) <= 0 {
 		return
 	}
 
 	var data [][]string
 
-	for _, sussCrack := range crack.ListCrackHost {
+	for _, sussCrack := range crack.MapCrackHost {
 		data = append(data, []string{sussCrack.Host, strconv.Itoa(sussCrack.Port), sussCrack.User, sussCrack.Passwd, sussCrack.Mode})
 	}
 
