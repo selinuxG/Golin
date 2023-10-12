@@ -10,6 +10,7 @@ import (
 	"net/http"
 	"net/url"
 	"os"
+	"runtime"
 	"strconv"
 	"strings"
 )
@@ -25,18 +26,6 @@ var updateCmd = &cobra.Command{
 			fmt.Println("更新失败:", err)
 			return
 		}
-
-		// 获取当前程序大小并对比远程仓库的大小
-		//exePath, _ := os.Executable()
-		//fileSize, err := getFileSize(exePath)
-		//if err != nil {
-		//	fmt.Println("获取仓库信息失败:", err)
-		//}
-		//if global.Version == newrelease.TagName && fileSize == newrelease.Assets[0].Size {
-		//	fmt.Println("当前版本已为最新版本,无需更新。")
-		//	return
-		//}
-		//fmt.Println(fmt.Sprintf("当前版本为:%s 大小为:%v/KB  -> 最新版本为:%s 大小为:%v/KB", global.Version, fileSize, newrelease.TagName, newrelease.Assets[0].Size))
 		var input string
 		fmt.Print("是否下载GitHub仓库最新版本程序？y/n: ")
 		for {
@@ -49,7 +38,19 @@ var updateCmd = &cobra.Command{
 			switch input {
 			case "y", "yes":
 				proxy, _ := cmd.Flags().GetString("proxy")
-				err := downloadFile(newrelease.Assets[0].BrowserDownloadUrl, "golin.exe", proxy)
+				BrowserDownloadUrl, savaname := "", ""
+				switch runtime.GOOS {
+				case "windows":
+					savaname = "golin.exe"
+					BrowserDownloadUrl = fmt.Sprintf("https://github.com/selinuxG/Golin/releases/download/%s/%s", newrelease.TagName, savaname)
+				case "linux":
+					savaname = "golin_linux_amd64"
+					BrowserDownloadUrl = fmt.Sprintf("https://github.com/selinuxG/Golin/releases/download/%s/%s", newrelease.TagName, savaname)
+				case "drawin":
+					savaname = "golin_drawin_amd64"
+					BrowserDownloadUrl = fmt.Sprintf("https://github.com/selinuxG/Golin/releases/download/%s/%s", newrelease.TagName, savaname)
+				}
+				err := downloadFile(BrowserDownloadUrl, savaname, proxy)
 				if err != nil {
 					fmt.Println("更新失败->", err)
 					return

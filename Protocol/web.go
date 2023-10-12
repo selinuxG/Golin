@@ -66,6 +66,18 @@ func IsWeb(host, port string, timeout int, Poc bool) map[string]string {
 		if err != nil {
 			continue
 		}
+
+		// 保存截图
+		if global.SaveIMG {
+			go func() {
+				imgerr := global.CaptureScreenshot(info.url, 90, global.SsaveIMGDIR)
+				if imgerr != nil && strings.Contains(imgerr.Error(), "PATH") {
+					fmt.Printf("\033[2K\r%s\n", "[ERROR] 在系统变量中不存在Chrom浏览器,跳过WEB截图功能!")
+					global.SaveIMG = false
+				}
+			}()
+		}
+
 		// 验证漏洞，只允许运行30秒
 		if Poc {
 			ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)

@@ -85,6 +85,7 @@
 | 16 |   快速扫描格式   |  √   | 支持格式：https://192.168.1.1:9090、http://192.168.1.1:9090、192.168.1.1:9090/login/index.php |
 | 17 |  sql注入扫描   |  √   |                                                                                        |
 | 18 |   fofa数据   |  √   |                          需设置fofa_email、fofa_key、fofa_size环境变量                          |
+| 19 |    网站截图    |  √   |                                     需要本地具备chrom浏览器                                     |
 
 ## web目录扫描现阶段支持功能
 | 序号 |      功能       | 是否支持 |       备注        |
@@ -135,8 +136,9 @@ golin port -i http://www.test.com:18080 (扫描网站首页)
 golin port -i http://www.test.com:18080/info (扫描网站特定页)
 golin port -i 192.168.1.1/24 -c 1000 -t 10(仅扫描c段端口并设置并发数为1000,端口连接超时为10秒)
 golin port -i 192.168.1.1/24 --noping --nocrack --random(扫描c段端口但不探测存活不扫描弱口令,并且打乱主机顺序扫描)
+golin port -i 192.168.1.1/24 --noimg(不进行网站截图)
 golin port -i 192.168.1.1/24 --nopoc(扫描c段端口但禁用扫描漏洞)
-golin dirsearch -u https://test.com -f 字典.txt --code 200,404 (扫描状态码为200以及404的web目录)
+golin dirsearch -u https://tegitst.com -f 字典.txt --code 200,404 (扫描状态码为200以及404的web目录)
 golin [linux、mysql、oracle、sqlserver、redis、windows...] (按照3级等保要求核查各项安全配置生成html形式报告)
 golin update (检查是否可更新)
 ```

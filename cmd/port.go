@@ -23,6 +23,7 @@ func init() {
 	portCmd.Flags().IntP("chan", "c", 100, "并发数量")
 	portCmd.Flags().IntP("time", "t", 5, "超时等待时常/s")
 	portCmd.Flags().Bool("random", false, "打乱主机顺序")
+	portCmd.Flags().Bool("noimg", false, "此参数是不进行保存WEB截图")
 	portCmd.Flags().Bool("nocrack", false, "此参数是不进行弱口令扫描")
 	portCmd.Flags().Bool("nopoc", false, "此参数是不进行poc漏洞扫描")
 	portCmd.Flags().StringP("userfile", "", "", "此参数是自定义用户字典文件")

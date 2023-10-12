@@ -9,7 +9,7 @@ const (
 	XlsxTemplateName = "golin上传文件模板文件.xlsx"
 )
 
-// 文件相关公共变量
+// 公共变量
 var (
 	SuccessLog       = "log.log"                                            //运行记录
 	Split            = "~"                                                  //默认分割符号
@@ -26,6 +26,8 @@ var (
 	Denynametype     = []string{"\\", "\\/", "*", "?", "\"", "<", ">", "|"} //windos下不允许创建名称的特殊符号。
 	PrintLock        sync.RWMutex                                           //并发输出写入
 	WebURl           = ""                                                   //web扫描时临时后缀
+	SaveIMG          = true                                                 //web扫描时是否进行截图,本地需要有chrom浏览器
+	SsaveIMGDIR      = "WebScreenshot"
 )
 
 // AppendToFile 创建追加写入函数
