@@ -137,4 +137,12 @@ func end() {
 		printGreen("%v", len(crack.MapCrackHost)),
 		printGreen("%v", len(poc.ListPocInfo)),
 	)
+	if global.SaveIMG {
+		couunt, err := global.CountDirFiles(global.SsaveIMGDIR)
+		if err != nil {
+			couunt = 0
+		}
+		fmt.Printf("[*] Web扫描截图保存目录：%v 当前共计截图数量：%v\n",
+			printGreen("%v", global.SsaveIMGDIR), printGreen("%v", couunt))
+	}
 }

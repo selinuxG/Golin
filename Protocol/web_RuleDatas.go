@@ -363,4 +363,7 @@ var RuleDatas = []RuleData{
 	{"Docker-RemoteAPI", "headers", "(Api-Version|X-Docker-Registry-Version)"},
 	{"北斗主动安全云平台", "body", "url=808gps/login.html"},
 	{"用友-移动系统管理", "headers", "W/\"102-1379069896000\""},
+	{"腾讯-TDSQL", "cookie", "tdsqlchitusessid"},
+	{"腾讯-TDSQL", "body", "<title>TDSQL"},
+	{"Juniper", "body", "Juniper Web Device Manager"},
 }
