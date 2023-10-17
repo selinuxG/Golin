@@ -1,0 +1,83 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>提示信息</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Arial', sans-serif;
+      background-color: #f9f9f9;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      overflow: hidden;
+    }
+
+    .container {
+      position: relative;
+      text-align: center;
+    }
+
+    h1 {
+      font-size: 10em;
+      color: rgb(70, 179, 251);
+      text-shadow: 2px 4px 4px rgba(0, 0, 0, 0.15);
+      animation: bounce 1s ease infinite;
+    }
+
+    p {
+      font-size: 1.5em;
+      margin-top: -20px;
+      margin-bottom: 1em;
+      color: rgb(102, 102, 102);
+    }
+
+    a {
+      display: inline-block;
+      background-color: #3b97d3;
+      padding: 12px 24px;
+      font-size: 1em;
+      color: #fff;
+      text-decoration: none;
+      border-radius: 50px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+      transition: background-color 0.3s ease;
+    }
+
+    a:hover {
+      background-color: #3b87c3;
+    }
+
+    @keyframes bounce {
+      0%, 20%, 60%, 100% {
+        -webkit-transform: translateY(0);
+                transform: translateY(0);
+      }
+      40% {
+        -webkit-transform: translateY(-20px);
+                transform: translateY(-20px);
+      }
+      80% {
+        -webkit-transform: translateY(-10px);
+                transform: translateY(-10px);
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>status</h1>
+    <p>errbody</p>
+    <a href="/golin/gys">返回首页</a>
+  </div>
+</body>
+</html>

@@ -1,0 +1,169 @@
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>网络等级保护模拟定级</title>
+
+    <!-- CSS样式 -->
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            background: linear-gradient(to right, #6397ff, #f8a9ff);
+        }
+
+        h1 {
+            text-align: center;
+        }
+
+        form {
+            background-color: #ffffff;
+            /* 更改表单背景颜色 */
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            max-width: 1000px;
+            margin: 50px auto;
+            text-align: left;
+            /* 左对齐 */
+        }
+
+        .container {
+            display: flex;
+            justify-content: space-evenly;
+            /* 修改为平均分布 */
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            padding: 10px;
+            min-width: 52%;
+            /* 调整输入框宽度 */
+        }
+
+        label {
+            margin-bottom: 5px;
+            font-size: 18px;
+            font-weight: bold;
+            color: #000000;
+            /* 改变标签颜色 */
+        }
+
+        input[type="text"] {
+            padding: 12px;
+            border: 2px solid #ccc;
+            border-radius: 4px;
+            font-size: 16px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .question-text {
+            font-size: 20px;
+            /* 调整字体大小 */
+            font-weight: bold;
+            margin-bottom: 20px;
+            color: #000000;
+            /* 改变问题颜色 */
+        }
+
+        .checkbox-container,
+        .radio-container {
+            display: flex;
+            flex-direction: row;
+            /* 修改为一行显示多选框 */
+            flex-wrap: wrap;
+            /* 多行选择 */
+            align-items: flex-start;
+            margin-bottom: 20px;
+        }
+
+        .checkbox-container label,
+        .radio-container label {
+            width: 33.3%;
+            /* 调整到一行显示3个多选框 */
+            margin: 10px 0;
+            font-size: 18px;
+            /* 调整字体大小 */
+            font-weight: bold;
+            color: #5394e5;
+            text-align: left;
+        }
+
+        .submit-btn {
+            display: block;
+            width: 100%;
+            max-width: 200px;
+            padding: 12px;
+            margin: 0 auto;
+            background-color: #3e913a;
+            /* 更改背景颜色 */
+            color: white;
+            text-align: center;
+            font-size: 18px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .submit-btn:hover {
+            background-color: #006666;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+        }
+    </style>
+
+</head>
+
+<body>
+    <form action="/golin/djPost" method="POST">
+        <h1>网络等级保护模拟定级</h1><br>
+        <div class="container">
+            <div class="input-group">
+                <label for="unit-name">单位名称</label>
+                <input type="text" id="unit-name" name="unit-name" placeholder="请输入单位名称">
+            </div>
+            <div class="input-group">
+                <label for="system-name">系统名称</label>
+               <input type="text" id="system-name" name="system-name" placeholder="请输入系统名称">
+            </div>
+        </div>
+        <p class="question-text">备案系统(或出现问题后)涉及以下哪些场景（多选）</p>
+        <div class="checkbox-container">
+            <label><input type="checkbox" name="option[]" value="涉及到民用民生">涉及到民用民生</label>
+            <label><input type="checkbox" name="option[]" value="涉及金钱交易">涉及金钱交易</label>
+            <label><input type="checkbox" name="option[]" value="仅内部员工使用">仅内部员工使用</label>
+            <label><input type="checkbox" name="option[]" value="为社会成员提供服务">为社会成员提供服务</label>
+            <label><input type="checkbox" name="option[]" value="门户/官方网站">门户/官方网站</label>
+            <label><input type="checkbox" name="option[]" value="存储了涉密信息">存储了涉密信息</label>
+            <label><input type="checkbox" name="option[]" value="云计算平台">云计算平台</label>
+            <label><input type="checkbox" name="option[]" value="基础网络但承载三级系统">备案基础网络但承载三级系统</label>
+            <label><input type="checkbox" name="option[]" value="大数据平台">大数据平台</label>
+            <label><input type="checkbox" name="option[]" value="上级单位要求备案三级">上级单位要求备案三级</label>
+            <label><input type="checkbox" name="option[]" value="并网前需要测评报告">并网前需要测评报告</label>
+            <label><input type="checkbox" name="option[]" value="影响社会成员使用公共设施">影响社会成员使用公共设施</label>
+            <label><input type="checkbox" name="option[]" value="影响社会成员获取公开数据">影响社会成员获取公开数据</label>
+            <label><input type="checkbox" name="option[]" value="影响社会成员接收公共服务">影响社会成员接收公共服务</label>
+            <label><input type="checkbox" name="option[]" value="会引起法律纠纷">会引起法律纠纷</label>
+            <label><input type="checkbox" name="option[]" value="同行业定为2级">同行业定为2级</label>
+            <label><input type="checkbox" name="option[]" value="仅处理内部办公">仅处理内部办公</label>
+            <label><input type="checkbox" name="option[]" value="存储数据与其他系统共享">存储数据与其他系统共享</label>
+        </div>
+
+        <button type="submit" class="submit-btn">提交</button>
+    </form>
+</body>
+
+</html>

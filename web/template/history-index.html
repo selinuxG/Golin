@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>历史任务</title>
+	<style>
+	body {
+		font-family: Arial, sans-serif;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		height: 100vh;
+		background-color: #f1f1f1;
+		margin: 0;
+	}
+    .table-wrapper {
+        width: 80%;
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
+        transition: all 0.3s ease;
+    }
+    
+    table {
+        width: 100%;
+        border-collapse: separate;
+        background-color: white;
+        margin: auto;
+    }
+
+    th,
+    td {
+        padding: 12px 15px;
+        text-align: left;
+        border-bottom: 1px solid #e0e0e0;
+    }
+
+    th {
+        background-color: #3f51b5;
+        color: white;
+        font-weight: bold;
+    }
+
+    tr:nth-child(even) {
+        background-color: #f8f8f8;
+    }
+
+    tr:hover {
+        background-color: #e8f0ff;
+    }
+
+    tbody {
+        display: block;
+        max-height: 600px;
+        overflow-y: auto;
+    }
+
+    thead,
+    tbody tr {
+        display: table;
+        width: 100%;
+        table-layout: fixed;
+    }
+
+    .table-wrapper:hover {
+        box-shadow: 0 5px 10px rgba(0, 0, 0, 0.3);
+        transform: translateY(-5px);
+    }
+
+</style>
+</head>
+
+<body>
+    <div class="table-wrapper">
+    <table>
+        <thead>
+            <tr>
+                <th>序号</th>
+                <th>名称</th>
+                <th>IP</th>
+                <th>用户</th>
+                <th>端口</th>
+                <th>类型</th>
+                <th>时间</th>
+                <th>状态</th>
+            </tr>
+        </thead>
+        <tbody>
+		主机列表
+        </tbody>
+    </table>
+</body>
+</html>

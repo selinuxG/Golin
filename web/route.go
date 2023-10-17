@@ -36,7 +36,7 @@ func GolinIndex(c *gin.Context) {
 // GolinIndexFile 多主机首页
 func GolinIndexFile(c *gin.Context) {
 	c.Header("Content-Type", "text/html; charset=utf-8")
-	indexhtml := strings.Replace(IndexFilehtml(), "版本", global.Version, -1)
+	indexhtml := strings.Replace(IndexFileHtml(), "版本", global.Version, -1)
 	c.String(http.StatusOK, indexhtml)
 }
 
@@ -256,7 +256,7 @@ func GolinHistory(c *gin.Context) {
 		status := allserver[i].Status
 		allserverhtml += fmt.Sprintf("<tr><td>%d</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td></tr>", id, name, ip, user, port, Type, Time, status)
 	}
-	html := GolinHistoryIndex()
+	html := GolinHistoryIndexHtml()
 	c.String(200, strings.Replace(html, "主机列表", allserverhtml, -1))
 }
 
