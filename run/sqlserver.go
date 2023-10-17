@@ -77,7 +77,7 @@ type ConfigTimeout struct {
 // SqlServerrun 连接SQLServer运行内置命令
 func SqlServerrun(name, host, user, passwd, port string) {
 	defer wg.Done()
-	dsn := fmt.Sprintf("sqlserver://%s:%s@%s:%s?database=master&timeout=1.5s", user, passwd, host, port)
+	dsn := fmt.Sprintf("sqlserver://%s:%s@%s:%s?database=master&timeout=1.5s&encrypt=disable", user, passwd, host, port)
 	db, err := gorm.Open(sqlserver.Open(dsn), &gorm.Config{})
 	if err != nil {
 		errhost = append(errhost, host)
