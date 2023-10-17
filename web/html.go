@@ -44,5 +44,4 @@ func DjHtml() string {
 func DjLevelHtml() string {
 	data, _ := f.ReadFile("tpl/djLevel.html")
 	return string(data)
-
 }
