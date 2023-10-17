@@ -8,17 +8,6 @@ import (
 	"os"
 )
 
-/*
-   <th>序号</th>
-   <th>名称</th>
-   <th>IP</th>
-   <th>用户</th>
-   <th>端口</th>
-   <th>类型</th>
-   <th>状态</th>
-   <th>时间</th>
-*/
-
 type Service struct {
 	Name   string `json:"name"`
 	Ip     string `json:"ip"`

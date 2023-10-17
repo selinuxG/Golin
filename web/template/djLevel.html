@@ -69,19 +69,27 @@
 
 <body>
     <div class="container">
-        <h1>替换单位</h1>
-        <p>系统名称：替换系统</p>
-        <p>建议等级：替换等级（级）</p>
+        <h1>{{ .UnitName }}</h1>
+        <p>系统名称：{{ .Name }}</p>
+        <p>建议等级：{{ .Level }}（级）</p>
         <p>判断依据：<a href="https://openstd.samr.gov.cn/bzgk/gb/newGbInfo?hcno=63B89FFF7CC97EBBBED8A403396F0F00">标准号：GB/T
                 22240-2020《信息安全技术 网络安全等级保护定级指南》
             </a></a>
         </p>
-        <h2>您选择的以下特征是替换等级（级）系统具备的特征:</h2>
+        <h2>您选择的以下特征是{{ .Level }}（级）系统具备的特征:</h2>
         <table>
+            <thead>
+                <tr>
+                    <th>Feature</th>
+                </tr>
+            </thead>
+            <tbody>
+            {{range .Feature}}
             <tr>
-                <th>Feature</th>
+                <td>{{.}}</td>
             </tr>
-            替换特征
+            {{end}}
+            </tbody>
         </table>
     </div>
 </body>

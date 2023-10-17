@@ -88,8 +88,20 @@
             </tr>
         </thead>
         <tbody>
-		主机列表
+        {{range .Data}}
+        <tr>
+            <td>{{.Id}}</td>
+            <td>{{.Name}}</td>
+            <td>{{.IP}}</td>
+            <td>{{.User}}</td>
+            <td>{{.Port}}</td>
+            <td>{{.Mode}}</td>
+            <td>{{.Time}}</td>
+            <td>{{.Status}}</td>
+        </tr>
+        {{end}}
         </tbody>
     </table>
+    </div>
 </body>
 </html>

@@ -6,6 +6,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/spf13/cobra"
 	"golin/global"
+	"html/template"
 	"net/http"
 	"os/exec"
 	"runtime"
@@ -15,6 +16,9 @@ var save bool
 
 //go:embed favicon.ico
 var faviconFS embed.FS
+
+//go:embed template/*
+var f embed.FS
 
 func Start(cmd *cobra.Command, args []string) {
 
@@ -26,6 +30,8 @@ func Start(cmd *cobra.Command, args []string) {
 	port, _ := cmd.Flags().GetString("port")
 	save, _ = cmd.Flags().GetBool("save")
 	r := gin.Default()
+	tmpl := template.Must(template.New("").ParseFS(f, "template/*"))
+	r.SetHTMLTemplate(tmpl)
 	r.Use(func(c *gin.Context) {
 		c.Header("author", "gaoyeshang")
 		c.Header("VX", "SelinuxG")

@@ -8,36 +8,29 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
-	"strconv"
 	"strings"
 	"time"
 )
 
 // GolinDj 模拟定级
 func GolinDj(c *gin.Context) {
-	c.Header("Content-Type", "text/html; charset=utf-8")
-	c.String(http.StatusOK, DjHtml())
+	c.HTML(http.StatusOK, "dj.html", "")
 }
 
 // GolinHome GolinIndex 单主机首页
 func GolinHome(c *gin.Context) {
-	c.Header("Content-Type", "text/html; charset=utf-8")
-	indexhtml := strings.Replace(GolinHomeHtml(), "版本", global.Version, -1)
-	c.String(http.StatusOK, indexhtml)
+	c.HTML(http.StatusOK, "golinHome.html", gin.H{"Version": global.Version})
+
 }
 
 // GolinIndex 单主机首页
 func GolinIndex(c *gin.Context) {
-	c.Header("Content-Type", "text/html; charset=utf-8")
-	indexhtml := strings.Replace(IndexHtml(), "版本", global.Version, -1)
-	c.String(http.StatusOK, indexhtml)
+	c.HTML(http.StatusOK, "index.html", gin.H{"Version": global.Version})
 }
 
 // GolinIndexFile 多主机首页
 func GolinIndexFile(c *gin.Context) {
-	c.Header("Content-Type", "text/html; charset=utf-8")
-	indexhtml := strings.Replace(IndexFileHtml(), "版本", global.Version, -1)
-	c.String(http.StatusOK, indexhtml)
+	c.HTML(http.StatusOK, "indexFile.html", gin.H{"Version": global.Version})
 }
 
 // GolinSubmitFile 先获取上传的文件；判断格式是否为xlsx；转换为临时txt文件；通过share函数执行多主机模式
@@ -191,10 +184,7 @@ func GolinSubmit(c *gin.Context) {
 func GolinMondeFileGet(c *gin.Context) {
 	//如果本地没有模板文件则生成一个
 	if !global.PathExists(global.XlsxTemplateName) && !CreateTemplateXlsx() {
-		c.Header("Content-Type", "text/html; charset=utf-8")
-		errhtml := strings.Replace(ErrorHtml(), "status", "error", -1) //替换状态码
-		errhtml = strings.Replace(errhtml, "errbody", "模板文件生成失败!", -1) //替换实际错误描述
-		c.String(http.StatusOK, errhtml)
+		GolinErrorhtml("error", "模板文件生成失败!", c)
 	}
 	// 返回模板文件
 	sendFile(global.XlsxTemplateName, c)
@@ -202,10 +192,7 @@ func GolinMondeFileGet(c *gin.Context) {
 
 // GolinErrorhtml 返回提示页面
 func GolinErrorhtml(status, errbody string, c *gin.Context) {
-	c.Header("Content-Type", "text/html; charset=utf-8")
-	errhtml := strings.Replace(ErrorHtml(), "status", status, -1) //替换状态码
-	errhtml = strings.Replace(errhtml, "errbody", errbody, -1)    //替换实际错误描述
-	c.String(http.StatusOK, errhtml)
+	c.HTML(http.StatusOK, "error.html", gin.H{"Status": status, "Message": errbody})
 }
 
 // sendFile 发送文件
@@ -242,22 +229,38 @@ func GolinHistory(c *gin.Context) {
 		c.Abort()
 		return
 	}
-	//fmt.Println(allserver)
-	allserverhtml := ""
+	type ServerData struct {
+		Id     int
+		Name   string
+		IP     string
+		User   string
+		Port   string
+		Mode   string
+		Time   string
+		Status string
+	}
+	var dataSlice []ServerData
+
 	// 倒序循环遍历切片
 	for i := len(allserver) - 1; i >= 0; i-- {
 		id := len(allserver) - i
-		name := allserver[i].Name
-		ip := allserver[i].Ip
-		user := allserver[i].User
-		port := allserver[i].Port
-		Type := allserver[i].Type
-		Time := allserver[i].Time
-		status := allserver[i].Status
-		allserverhtml += fmt.Sprintf("<tr><td>%d</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td></tr>", id, name, ip, user, port, Type, Time, status)
+		server := allserver[i]
+
+		// 创建并初始化 ServerData 结构体
+		data := ServerData{
+			Id:     id,
+			Name:   server.Name,
+			IP:     server.Ip,
+			User:   server.User,
+			Port:   server.Port,
+			Mode:   server.Type,
+			Time:   server.Time,
+			Status: server.Status,
+		}
+		// 将数据添加到 dataSlice
+		dataSlice = append(dataSlice, data)
 	}
-	html := GolinHistoryIndexHtml()
-	c.String(200, strings.Replace(html, "主机列表", allserverhtml, -1))
+	c.HTML(http.StatusOK, "golinHistoryIndex.html", gin.H{"Data": dataSlice})
 }
 
 // GolinDjPost 处理提交表单信息
@@ -297,18 +300,13 @@ func GolinDjPost(c *gin.Context) {
 		check.level = 3
 		check.feature = append(check.feature, commonElements...)
 	}
-	html := DjLevelHtml()
-	html = strings.ReplaceAll(html, "替换单位", check.name)
-	html = strings.ReplaceAll(html, "替换系统", check.system)
-	html = strings.ReplaceAll(html, "替换等级", strconv.Itoa(check.level))
-	echofeature := ""
-	for _, v := range check.feature {
-		echofeature += fmt.Sprintf("<tr><td>%s</td></tr>", v)
-	}
-	html = strings.ReplaceAll(html, "替换特征", echofeature)
-	c.Header("Content-Type", "text/html; charset=utf-8")
-	c.String(http.StatusOK, html)
 
+	c.HTML(http.StatusOK, "djLevel.html", gin.H{
+		"Level":    check.level,    //等级
+		"Name":     check.system,   //系统名称
+		"UnitName": check.name,     //单位名称
+		"Feature":  check.feature}, //特征
+	)
 }
 
 // FileAppendJson 将成功主机对比allserver主机，写入到json文件中
