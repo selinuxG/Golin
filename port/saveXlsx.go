@@ -7,6 +7,7 @@ import (
 	"golin/poc"
 	"golin/port/crack"
 	"regexp"
+	"strconv"
 	"time"
 )
 
@@ -82,7 +83,7 @@ func createIpSheet(f *excelize.File, sheet string, ipList []string) error {
 
 // createCrack 创建弱口令sheet
 func createCrack(f *excelize.File, sheet string) error {
-	if len(crack.ListCrackHost) <= 0 {
+	if len(crack.MapCrackHost) <= 0 {
 		return errors.New("弱口令资产为空")
 	}
 	_, err := f.NewSheet(sheet)
@@ -97,9 +98,10 @@ func createCrack(f *excelize.File, sheet string) error {
 
 	setHeaderValues(f, sheet, []string{"序号", "主机", "端口", "用户", "密码", "模式"})
 
-	for i, v := range crack.ListCrackHost {
-		cell := i + 2
-		setCellValues(f, sheet, cell, []interface{}{i + 1, v.Host, v.Port, v.User, v.Passwd, v.Mode})
+	cell := 1
+	for _, sussCrack := range crack.MapCrackHost {
+		cell += 1
+		setCellValues(f, sheet, cell, []interface{}{cell - 1, sussCrack.Host, strconv.Itoa(sussCrack.Port), sussCrack.User, sussCrack.Passwd, sussCrack.Mode})
 	}
 
 	return nil
