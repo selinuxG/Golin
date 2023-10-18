@@ -1,0 +1,257 @@
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Oracle安全配置核查</title>
+    <link rel="icon" href="https://s1.ax1x.com/2023/07/19/pC7B5sx.jpg" sizes="16x16">
+    <style>
+
+        body {
+            display: grid;
+            grid-template-columns: 1fr 200px;
+            gap: 10px;
+            font-family: Arial, sans-serif;
+            position: relative;
+        }
+
+        table {
+            border-collapse: collapse;
+            margin-bottom: 20px;
+            width: 100%;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+            table-layout: fixed;
+            word-wrap: break-word;
+        }
+
+        th,
+        td {
+            border: 1px solid #ddd;
+            padding: 15px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #007BFF;
+            color: white;
+            font-weight: bold;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        tr:hover {
+            background-color: #e6f2ff;
+        }
+
+        .watermark {
+            font-size: 36px;
+            color: rgba(128, 128, 128, 0.2);
+            position: absolute;
+            z-index: -1;
+            transform: rotate(-30deg);
+        }
+
+        #toc {
+            position: fixed;
+            top: 20px;
+            right: 30px;
+            padding-left: 10px;
+            background-color: #f8f9fa;
+            padding: 10px;
+            border: 1px solid #dee2e6;
+            border-radius: 5px;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+            max-height: 800px; /* 目录高度 */
+            overflow-y: auto; /* 滚动条 */
+            width: 150px; /* 目录宽度 */
+        }
+
+        #toc ul {
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        #toc a {
+            text-decoration: none;
+            color: #333;
+            display: block;
+            word-wrap: break-word; /* 如果单词超过容器宽度，允许在单词内部换行 */
+            overflow-wrap: break-word; /* 同上，但更好的兼容性 */
+        }
+
+        #toc a:hover {
+            color: #007BFF;
+        }
+        .watermark {
+            font-size: 36px;
+            color: rgba(128, 128, 128, 0.2);
+            position: absolute;
+            z-index: 1000;
+            transform: rotate(-30deg);
+        }
+        pre {
+            background-color: #f8f9fa;
+            border: 1px solid #dee2e6;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+            font-family: "Courier New", Courier, monospace;
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
+        .permissions {
+            width: 350px;
+            white-space: nowrap;
+            overflow-x: auto;
+        }
+    </style>
+
+<body>
+
+<div id="content">
+    <div style="text-align: center;"><h1>{{.Name}}_Oracle安全策略核查</h1></div>
+
+    <h2 id="info">数据库版本信息</h2>
+    <table>
+        <thead>
+        <tr>
+            <th>Version</th>
+        </tr>
+        </thead>
+        <tbody>
+        {{range .Version}}
+        <tr>
+            <td>{{.}}</td>
+        </tr>
+        {{end}}
+        </tbody>
+    </table>
+
+    <h2 id="dbauser">用户及状态</h2>
+    <table>
+        <thead>
+        <tr>
+            <th>名称</th>
+            <th>配置文件</th>
+            <th>状态</th>
+            <th>密码过期时间</th>
+        </tr>
+        </thead>
+        <tbody>
+        {{range .DBAUSERS}}
+        <tr>
+            <td>{{.User}}</td>
+            <td>{{.Profile}}</td>
+            <td>{{.Status}}</td>
+            <td>{{if .Expiry.Valid}}{{.Expiry.Time}}{{else}}{{end}}</td>
+        </tr>
+        {{end}}
+        </tbody>
+    </table>
+
+    <h2 id="sys">sys用户视图信息</h2>
+    <table>
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>名称</th>
+            <th>用户类型</th>
+            <th>用户的密码</th>
+            <th>创建时间</th>
+            <th>最后一次更改密码时间</th>
+            <th>密码过期时间</th>
+            <th>上次登录时间</th>
+        </tr>
+        </thead>
+        <tbody>
+        {{range .UserInfo}}
+        <tr>
+            <td>{{.UserNum.Int64}}</td>
+            <td>{{.Name.String}}</td>
+            <td>{{.TypeNum.Int64}}</td>
+            <td>{{.Password.String}}</td>
+            <td>{{.CTime.Time}}</td>
+            <td>{{if .PTime.Valid}}{{.PTime.Time}}{{else}}{{end}}</td>
+            <td>{{if .ExpTime.Valid}}{{.ExpTime.Time}}{{else}}{{end}}</td>
+            <td>{{if .LTime.Valid}}{{.LTime.Time}}{{else}}{{end}}</td>
+        </tr>
+        {{end}}
+        </tbody>
+    </table>
+
+    <h2 id="parameter">parameter部分安全配置信息</h2>
+    <table>
+        <thead>
+        <tr>
+            <th>安全配置名称</th>
+            <th>参数</th>
+            <th>配置</th>
+        </tr>
+        </thead>
+        <tbody>
+        {{range .ListParameter}}
+        <tr>
+            {{if eq .Name "remote_os_authent"}}
+            <td>是否开启远程登录</td>
+            <td>{{.Name}}</td>
+            <td>{{.Value}}</td>
+            {{end}}
+            {{if eq .Name "sec_case_sensitive_logon"}}
+            <td>是否允许基于操作系统认证的远程登录</td>
+            <td>{{.Name}}</td>
+            <td>{{.Value}}</td>
+            {{end}}
+            {{if eq .Name "remote_login_passwordfile"}}
+            <td>是否对密码进行大小写敏感的比较</td>
+            <td>{{.Name}}</td>
+            <td>{{.Value}}</td>
+            {{end}}
+            {{if eq .Name "audit_trail"}}
+            <td>确定是否记录数据库的审计信息</td>
+            <td>{{.Name}}</td>
+            <td>{{.Value}}</td>
+            {{end}}
+        </tr>
+        {{end}}
+        </tbody>
+    </table>
+
+</div>
+<div id="toc">
+    <h3>目录</h3>
+    <ul>
+        <li><a href="#info">数据库版本信息</a></li>
+        <li><a href="#dbauser">用户及状态</a></li>
+        <li><a href="#sys">sys用户视图信息</a></li>
+        <li><a href="#parameter">parameter部分安全配置信息</a></li>
+    </ul>
+</div>
+<div id="watermark"></div>
+</body>
+
+</html>
+<script>
+    const watermarkNum = 30 // 生成水印数量
+    build()
+
+    function build(){
+        for(var i = 0; i < watermarkNum; i++){
+            addWatermark(i);
+        }
+    }
+
+    function addWatermark(i){
+        var watermark = document.getElementById("watermark");
+        const top = i
+        const left = random();
+        const  html = '<div class="watermark" style="top: '+(top/watermarkNum)*100+'%; left: '+left+'%;">高业尚-SelinuxG</div>'
+        watermark.insertAdjacentHTML('afterend',html);
+    }
+
+    function random(){
+        return Math.floor(Math.random() * 70) ;
+    }
+</script>

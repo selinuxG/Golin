@@ -112,7 +112,13 @@ func Rangefile(path string, spr string, runtype string) {
 		case "sqlserver":
 			go SqlServerrun(Name, Host, User, Passwrod, strconv.Itoa(Port))
 		case "oracle":
-			go OracleRun(Name, Host, User, Passwrod, strconv.Itoa(Port))
+			go func() {
+				Err := OracleRun(Name, Host, User, Passwrod, strconv.Itoa(Port))
+				if Err != nil {
+					errhost = append(errhost, Host)
+					zlog.Warn("采集Oracle安全配置失败:", zap.Error(Err))
+				}
+			}()
 		}
 	}
 	wg.Wait()
@@ -189,7 +195,13 @@ func Onlyonerun(value string, spr string, runtype string) {
 	case "oracle":
 		wg.Add(1)
 		config.Log.Info("开启运行oracle模式", zap.String("名称:", Name), zap.String("IP", Host))
-		go OracleRun(Name, Host, User, Passwrod, strconv.Itoa(Port))
+		go func() {
+			Err := OracleRun(Name, Host, User, Passwrod, strconv.Itoa(Port))
+			if Err != nil {
+				errhost = append(errhost, Host)
+				zlog.Warn("采集Oracle安全配置失败:", zap.Error(Err))
+			}
+		}()
 	}
 	wg.Wait() //等待运行结束
 }
