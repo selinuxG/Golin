@@ -64,6 +64,7 @@ func Runssh(sshname string, sshHost string, sshUser string, sshPasswrod string, 
 
 	// 执行模板文件
 	data := Data{
+		CSS:  css,
 		Name: fmt.Sprintf("%s_%s", sshname, sshHost),
 		Info: ServerInfo{
 			HostName:    runCmd("hostname", sshClient),
@@ -221,16 +222,23 @@ func Runssh(sshname string, sshHost string, sshUser string, sshPasswrod string, 
 	})
 
 	// 读取模板文件
-	tmpl, err := template.ParseFS(templateFile, "linux_html.html")
+	tmpl, err := template.ParseFS(templateFile, "template/linux_html.html")
 	if err != nil {
 		return fmt.Errorf("%s:读取HTML模板文件失败。", sshHost)
 	}
+
+	//目录是否存在
+	_, err = os.Stat(firepath)
+	if err != nil {
+		_ = os.MkdirAll(firepath, os.FileMode(global.FilePer))
+	}
+
 	// 创建一个新的文件
 	newFile, err := os.Create(fmt.Sprintf("%s/%s_%s.html", firepath, sshname, sshHost))
 	if err != nil {
 		return fmt.Errorf("%s:创建文件失败。", sshHost)
-
 	}
+
 	defer newFile.Close()
 	// 将模板执行的结果写入新的文件
 	err = tmpl.Execute(newFile, data)

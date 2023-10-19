@@ -1,11 +1,9 @@
 package run
 
-import "embed"
-
-//go:embed linux_html.html
-var templateFile embed.FS
+import "html/template"
 
 type Data struct {
+	CSS           template.CSS    //CSS样式
 	Name          string          //资产名
 	Info          ServerInfo      //服务器基本信息
 	User          []LinUser       //现有用户信息

@@ -60,18 +60,13 @@ func OracleRun(name, host, user, passwd, port string) error {
 	if len(oidlist) == 2 {
 		sid = oidlist[1]
 	}
-	dsn := fmt.Sprintf("oracle://%s:%s@%s:%s/%s", user, passwd, host, port, sid)
+	dsn := fmt.Sprintf("oracle://%s:%s@%s:%s/%s?timeout=15", user, passwd, host, port, sid)
 	db, err := sql.Open("oracle", dsn)
 	if err != nil {
 		return fmt.Errorf("%s:连接失败！检查网络或用户密码或SID吧！", host)
 	}
 
-	//确认采集完成目录是否存在
 	fullPath := filepath.Join(succpath, "oracle")
-	_, err = os.Stat(fullPath)
-	if os.IsNotExist(err) {
-		os.MkdirAll(fullPath, os.FileMode(global.FilePer))
-	}
 	firenmame := filepath.Join(fullPath, fmt.Sprintf("%s_%s.html", name, host))
 	//先删除之前的同名记录文件
 	os.Remove(firenmame)
@@ -79,15 +74,19 @@ func OracleRun(name, host, user, passwd, port string) error {
 	data := DataOracle{}
 	data.Name = fmt.Sprintf("%s_%s", name, host)
 	//版本信息
-	banners, _ := QueryAndParse(db, "select BANNER from v$version", func(rows *sql.Rows) (string, error) {
+	banners, err := QueryAndParse(db, "select BANNER from v$version", func(rows *sql.Rows) (string, error) {
 		var banner string
 		err := rows.Scan(&banner)
 		return banner, err
 	})
+	if err != nil && len(banners) == 0 {
+		return fmt.Errorf("%s:执行version命令失败,检查网络或用户密码或SID吧！%v", host, err)
+	}
+	data.CSS = css
 	data.Version = banners
 
 	//读取sys.user的视图信息
-	users, err := QueryAndParse(db, "SELECT USER#, NAME, TYPE#, PASSWORD, CTIME, PTIME, EXPTIME, LTIME FROM sys.user$", func(rows *sql.Rows) (SysUser, error) {
+	users, _ := QueryAndParse(db, "SELECT USER#, NAME, TYPE#, PASSWORD, CTIME, PTIME, EXPTIME, LTIME FROM sys.user$", func(rows *sql.Rows) (SysUser, error) {
 		var userinfo SysUser
 		err := rows.Scan(&userinfo.UserNum, &userinfo.Name, &userinfo.TypeNum, &userinfo.Password, &userinfo.CTime, &userinfo.PTime, &userinfo.ExpTime, &userinfo.LTime)
 		return userinfo, err
@@ -108,18 +107,83 @@ func OracleRun(name, host, user, passwd, port string) error {
 	data.ListParameter = par
 
 	//DBA_USERS部分信息
-	dbauser, _ := QueryAndParse(db, `SELECT USERNAME,PROFILE,ACCOUNT_STATUS,EXPIRY_DATE FROM DBA_USERS`, func(rows *sql.Rows) (DBA_USERS, error) {
+	dbauser, _ := QueryAndParse(db, `SELECT USERNAME,PROFILE,ACCOUNT_STATUS,EXPIRY_DATE,LOCK_DATE,CREATED FROM DBA_USERS`, func(rows *sql.Rows) (DBA_USERS, error) {
 		var info DBA_USERS
-		err := rows.Scan(&info.User, &info.Profile, &info.Status, &info.Expiry)
+		err := rows.Scan(&info.User, &info.Profile, &info.Status, &info.Expiry, &info.LockTime, &info.CreateTime)
 		return info, err
 	})
 	data.DBAUSERS = dbauser
 
+	//确认配置文件的安全策略规则
+	Passwdverify, _ := QueryAndParse(db, `SELECT * FROM DBA_PROFILES`, func(rows *sql.Rows) (VerifyFunc, error) {
+		var info VerifyFunc
+		err := rows.Scan(&info.Profile, &info.Resp, &info.Type, &info.Limit)
+		return info, err
+	})
+	data.PasswdVerify = Passwdverify
+
+	//用户系统权限
+	systemuser, _ := QueryAndParse(db, `SELECT u.USERNAME, sp.PRIVILEGE, sp.ADMIN_OPTION
+FROM DBA_USERS u
+JOIN DBA_SYS_PRIVS sp ON u.USERNAME = sp.GRANTEE
+WHERE u.ACCOUNT_STATUS = 'OPEN'`, func(rows *sql.Rows) (AUTHORITY, error) {
+		var info AUTHORITY
+		err := rows.Scan(&info.Name, &info.Privilege, &info.Opthion)
+		return info, err
+	})
+	data.SYSTEMAUTHORITY = systemuser
+
+	//用户对象权限
+	Objectuser, _ := QueryAndParse(db, `SELECT u.USERNAME, tp.TABLE_NAME, tp.PRIVILEGE
+FROM DBA_USERS u
+JOIN DBA_TAB_PRIVS tp ON u.USERNAME = tp.GRANTEE
+WHERE u.ACCOUNT_STATUS = 'OPEN'`, func(rows *sql.Rows) (AUTHORITY, error) {
+		var info AUTHORITY
+		err := rows.Scan(&info.Name, &info.Privilege, &info.Opthion)
+		return info, err
+	})
+	data.ObjectPermissions = Objectuser
+
+	//审计日志配置
+	audit, _ := QueryAndParse(db, `SELECT NAME,VALUE,ISSES_MODIFIABLE,ISSYS_MODIFIABLE,ISINSTANCE_MODIFIABLE,DESCRIPTION
+FROM V$PARAMETER
+WHERE NAME LIKE '%audit%'`, func(rows *sql.Rows) (Audit, error) {
+		var info Audit
+		err := rows.Scan(&info.NAME, &info.VALUE, &info.ISSES_MODIFIABLE, &info.ISSYS_MODIFIABLE, &info.ISINSTANCE_MODIFIABLE, &info.DESCRIPTION)
+		return info, err
+	})
+	data.AuditPARAMETER = audit
+
+	//超时
+	timeout, _ := QueryAndParse(db, `SELECT PROFILE, RESOURCE_NAME, LIMIT
+FROM dba_profiles
+WHERE resource_name = 'IDLE_TIME'`, func(rows *sql.Rows) (TimeoutidleTime, error) {
+		var info TimeoutidleTime
+		err := rows.Scan(&info.Profile, &info.ResourceNam, &info.Limit)
+		return info, err
+	})
+	data.IdleTime = timeout
+
+	//所有函数
+	funcpass, _ := QueryAndParse(db, `SELECT OWNER,NAME,LINE,TEXT FROM dba_source WHERE TYPE= 'FUNCTION'`, func(rows *sql.Rows) (DbaSource, error) {
+		var info DbaSource
+		err := rows.Scan(&info.OWNER, &info.NAME, &info.LINE, &info.TEXT)
+		return info, err
+	})
+	data.FuncPass = funcpass
+
 	// 读取模板文件
-	tmpl, err := template.ParseFS(templateFileOracle, "oracle_html.html")
+	tmpl, err := template.ParseFS(templateFileOracle, "template/oracle_html.html")
 	if err != nil {
-		fmt.Printf("%s:读取HTML模板文件失败。", host)
+		return fmt.Errorf("%s:读取HTML模板文件失败。", host)
 	}
+
+	//确认采集完成目录是否存在
+	_, err = os.Stat(fullPath)
+	if os.IsNotExist(err) {
+		os.MkdirAll(fullPath, os.FileMode(global.FilePer))
+	}
+
 	// 创建一个新的文件
 	newFile, err := os.Create(firenmame)
 	if err != nil {

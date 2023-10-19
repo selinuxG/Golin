@@ -8,7 +8,6 @@ import (
 	"io/fs"
 	"net"
 	"os"
-	"path/filepath"
 	"runtime"
 	"strconv"
 	"strings"
@@ -88,12 +87,6 @@ func Rangefile(path string, spr string, runtype string) {
 			}
 		}
 
-		firepath := filepath.Join(succpath, runtype)
-		_, err = os.Stat(firepath)
-		if err != nil {
-			_ = os.MkdirAll(firepath, os.FileMode(global.FilePer))
-		}
-
 		switch runtype {
 		case "Linux":
 			go func() {
@@ -158,12 +151,6 @@ func Onlyonerun(value string, spr string, runtype string) {
 			zlog.Warn("错误！保存文件包含特殊字符,无法保存,请修改在执行！")
 			return
 		}
-	}
-
-	firepath := filepath.Join(succpath, runtype)
-	_, err = os.Stat(firepath)
-	if err != nil {
-		_ = os.MkdirAll(firepath, os.FileMode(global.FilePer))
 	}
 
 	switch runtype {

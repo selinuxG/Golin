@@ -5,112 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Oracle安全配置核查</title>
     <link rel="icon" href="https://s1.ax1x.com/2023/07/19/pC7B5sx.jpg" sizes="16x16">
-    <style>
-
-        body {
-            display: grid;
-            grid-template-columns: 1fr 200px;
-            gap: 10px;
-            font-family: Arial, sans-serif;
-            position: relative;
-        }
-
-        table {
-            border-collapse: collapse;
-            margin-bottom: 20px;
-            width: 100%;
-            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
-            table-layout: fixed;
-            word-wrap: break-word;
-        }
-
-        th,
-        td {
-            border: 1px solid #ddd;
-            padding: 15px;
-            text-align: left;
-        }
-
-        th {
-            background-color: #007BFF;
-            color: white;
-            font-weight: bold;
-        }
-
-        tr:nth-child(even) {
-            background-color: #f9f9f9;
-        }
-
-        tr:hover {
-            background-color: #e6f2ff;
-        }
-
-        .watermark {
-            font-size: 36px;
-            color: rgba(128, 128, 128, 0.2);
-            position: absolute;
-            z-index: -1;
-            transform: rotate(-30deg);
-        }
-
-        #toc {
-            position: fixed;
-            top: 20px;
-            right: 30px;
-            padding-left: 10px;
-            background-color: #f8f9fa;
-            padding: 10px;
-            border: 1px solid #dee2e6;
-            border-radius: 5px;
-            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
-            max-height: 800px; /* 目录高度 */
-            overflow-y: auto; /* 滚动条 */
-            width: 150px; /* 目录宽度 */
-        }
-
-        #toc ul {
-            list-style-type: none;
-            padding: 0;
-            margin: 0;
-        }
-
-        #toc a {
-            text-decoration: none;
-            color: #333;
-            display: block;
-            word-wrap: break-word; /* 如果单词超过容器宽度，允许在单词内部换行 */
-            overflow-wrap: break-word; /* 同上，但更好的兼容性 */
-        }
-
-        #toc a:hover {
-            color: #007BFF;
-        }
-        .watermark {
-            font-size: 36px;
-            color: rgba(128, 128, 128, 0.2);
-            position: absolute;
-            z-index: 1000;
-            transform: rotate(-30deg);
-        }
-        pre {
-            background-color: #f8f9fa;
-            border: 1px solid #dee2e6;
-            padding: 15px;
-            border-radius: 5px;
-            overflow-x: auto;
-            font-family: "Courier New", Courier, monospace;
-            white-space: pre-wrap;
-            word-break: break-word;
-        }
-        .permissions {
-            width: 350px;
-            white-space: nowrap;
-            overflow-x: auto;
-        }
-    </style>
-
+    <style>{{.CSS}}</style>
+</head>
 <body>
-
 <div id="content">
     <div style="text-align: center;"><h1>{{.Name}}_Oracle安全策略核查</h1></div>
 
@@ -138,6 +35,8 @@
             <th>配置文件</th>
             <th>状态</th>
             <th>密码过期时间</th>
+            <th>锁定时间</th>
+            <th>创建时间</th>
         </tr>
         </thead>
         <tbody>
@@ -147,10 +46,54 @@
             <td>{{.Profile}}</td>
             <td>{{.Status}}</td>
             <td>{{if .Expiry.Valid}}{{.Expiry.Time}}{{else}}{{end}}</td>
+            <td>{{if .LockTime.Valid}}{{.LockTime.Time}}{{else}}{{end}}</td>
+            <td>{{if .CreateTime.Valid}}{{.CreateTime.Time}}{{else}}{{end}}</td>
         </tr>
         {{end}}
         </tbody>
     </table>
+
+
+    <h2 id="SYSTEMAUTHORITY">可登录用户系统权限</h2>
+    <table>
+        <thead>
+        <tr>
+            <th>用户名称</th>
+            <th>系统权限名称</th>
+            <th>是否可以把此权限赋予其他用户</th>
+        </tr>
+        </thead>
+        <tbody>
+        {{range .SYSTEMAUTHORITY}}
+        <tr>
+            <td>{{.Name}}</td>
+            <td>{{.Privilege}}</td>
+            <td>{{.Opthion}}</td>
+        </tr>
+        {{end}}
+        </tbody>
+    </table>
+
+    <h2 id="ObjectPermissions">可登录用户对象权限</h2>
+    <table>
+        <thead>
+        <tr>
+            <th>用户名称</th>
+            <th>对象（如表或视图）名称</th>
+            <th>权限名称</th>
+        </tr>
+        </thead>
+        <tbody>
+        {{range .ObjectPermissions}}
+        <tr>
+            <td>{{.Name}}</td>
+            <td>{{.Privilege}}</td>
+            <td>{{.Opthion}}</td>
+        </tr>
+        {{end}}
+        </tbody>
+    </table>
+
 
     <h2 id="sys">sys用户视图信息</h2>
     <table>
@@ -219,14 +162,111 @@
         </tbody>
     </table>
 
+    <h2 id="timeout">超时退出设置</h2>
+    <table>
+        <thead>
+        <tr>
+            <th>安全配置名称</th>
+            <th>参数</th>
+            <th>配置</th>
+        </tr>
+        </thead>
+        <tbody>
+        {{range .IdleTime}}
+        <tr>
+            <td>{{.Profile}}</td>
+            <td>{{.ResourceNam}}</td>
+            <td>{{.Limit}}</td>
+        </tr>
+        {{end}}
+        </tbody>
+    </table>
+
+    <h2 id="DBA_PROFILES">配置文件中的策略规则</h2>
+    <table>
+        <thead>
+        <tr>
+            <th>配置文件的名称</th>
+            <th>资源名称</th>
+            <th>资源类型</th>
+            <th>资源名称的限制或值</th>
+        </tr>
+        </thead>
+        <tbody>
+        {{range .PasswdVerify}}
+        <tr>
+            <td>{{.Profile}}</td>
+            <td>{{.Resp}}</td>
+            <td>{{.Type}}</td>
+            <td>{{.Limit}}</td>
+        </tr>
+        {{end}}
+        </tbody>
+    </table>
+
+    <h2 id="audit">审计日志配置</h2>
+    <table>
+        <thead>
+        <tr>
+            <th>名称</th>
+            <th>当前值</th>
+            <th>是否可以在会话级别进行修改</th>
+            <th>是否可以在系统级别进行修改</th>
+            <th>是否可以在实例级别进行修改</th>
+            <th>关于参数的描述</th>
+        </tr>
+        </thead>
+        <tbody>
+        {{range .AuditPARAMETER}}
+        <tr>
+            <td>{{.NAME}}</td>
+            <td>{{.VALUE.String}}</td>
+            <td>{{.ISSES_MODIFIABLE}}</td>
+            <td>{{.ISSYS_MODIFIABLE}}</td>
+            <td>{{.ISINSTANCE_MODIFIABLE}}</td>
+            <td>{{.DESCRIPTION}}</td>
+        </tr>
+        {{end}}
+        </tbody>
+    </table>
+
+    <h2 id="FUNCTION">所有函数文本</h2>
+    <table>
+        <thead>
+        <tr>
+            <th>对象的所有者</th>
+            <th>对象名称</th>
+            <th>源代码的行号</th>
+            <th>源代码的文本</th>
+        </tr>
+        </thead>
+        <tbody>
+        {{range .FuncPass}}
+        <tr>
+            <td>{{.OWNER}}</td>
+            <td>{{.NAME}}</td>
+            <td>{{.LINE}}</td>
+            <td>{{.TEXT}}</td>
+        </tr>
+        {{end}}
+        </tbody>
+    </table>
+
 </div>
 <div id="toc">
     <h3>目录</h3>
     <ul>
         <li><a href="#info">数据库版本信息</a></li>
         <li><a href="#dbauser">用户及状态</a></li>
+        <li><a href="#SYSTEMAUTHORITY">可登录用户系统权限</a></li>
+        <li><a href="#ObjectPermissions">可登录对象系统权限</a></li>
         <li><a href="#sys">sys用户视图信息</a></li>
         <li><a href="#parameter">parameter部分安全配置信息</a></li>
+        <li><a href="#DBA_PROFILES">配置文件中的策略规则</a></li>
+        <li><a href="#timeout">超时退出</a></li>
+        <li><a href="#audit">审计日志策略</a></li>
+        <li><a href="#FUNCTION">所有函数文本</a></li>
+
     </ul>
 </div>
 <div id="watermark"></div>
