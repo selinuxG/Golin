@@ -54,7 +54,7 @@ tr:hover {
     border: 1px solid #dee2e6;
     border-radius: 5px;
     box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
-    max-height: 800px; /* 目录高度 */
+    height: calc(100% - 40px); /* 考虑到 top 的 20px 和底部的留白 20px */
     overflow-y: auto; /* 滚动条 */
     width: 150px; /* 目录宽度 */
 }

@@ -41,7 +41,7 @@
     </table>
 
 
-    <h2 id="userinfo">现有用户信息</h2>
+    <h2 id="userinfo">用户信息</h2>
     <table>
         <thead>
         <tr>
@@ -80,6 +80,28 @@
             <td>{{.Lose}}</td>
             <td>{{.UserExpired}}</td>
             <td>{{.MaxPasswd}}</td>
+        </tr>
+        {{end}}
+        </tbody>
+    </table>
+
+    <h2 id="group">组信息</h2>
+    <table>
+        <thead>
+        <tr>
+            <th>用户</th>
+            <th>密码</th>
+            <th>GID</th>
+            <th>组成员</th>
+        </tr>
+        </thead>
+        <tbody>
+        {{range .Group}}
+        <tr>
+            <td>{{.Name}}</td>
+            <td>{{.Password}}</td>
+            <td>{{.Gid}}</td>
+            <td>{{.UserList}}</td>
         </tr>
         {{end}}
         </tbody>
@@ -297,7 +319,8 @@
     <h3>目录</h3>
     <ul>
         <li><a href="#info">服务器基本信息</a></li>
-        <li><a href="#userinfo">现有用户信息</a></li>
+        <li><a href="#userinfo">用户信息</a></li>
+        <li><a href="#group">组信息</a></li>
         <li><a href="#newuserinfo">新建用户安全配置</a></li>
         <li><a href="#pwquality">密码复杂度策略</a></li>
         <li><a href="#sshd">sshd安全配置</a></li>

@@ -7,6 +7,7 @@ type Data struct {
 	Name          string          //资产名
 	Info          ServerInfo      //服务器基本信息
 	User          []LinUser       //现有用户信息
+	Group         []LinGroup      //现有组信息
 	CreateUser    []Logindefs     //新创建用户时信息
 	Quality       Pwquality       ///etc/security/pwquality.conf安全配置
 	Port          []PortList      //开放端口信息
@@ -51,6 +52,13 @@ type LinUser struct {
 	Lose          string //失效时间
 	UserExpired   string //账户过期时间
 	MaxPasswd     string //两次改变密码之间相距的最大天数
+}
+
+type LinGroup struct {
+	Name     string
+	Password string
+	Gid      string
+	UserList string
 }
 
 type Logindefs struct {

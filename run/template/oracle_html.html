@@ -137,17 +137,17 @@
         <tbody>
         {{range .ListParameter}}
         <tr>
+            {{if eq .Name "remote_login_passwordfile"}}
+            <td>如何使用密码文件进行远程身份验证</td>
+            <td>{{.Name}}</td>
+            <td>{{.Value}}</td>
+            {{end}}
             {{if eq .Name "remote_os_authent"}}
-            <td>是否开启远程登录</td>
+            <td>是否允许基于操作系统的远程认证</td>
             <td>{{.Name}}</td>
             <td>{{.Value}}</td>
             {{end}}
             {{if eq .Name "sec_case_sensitive_logon"}}
-            <td>是否允许基于操作系统认证的远程登录</td>
-            <td>{{.Name}}</td>
-            <td>{{.Value}}</td>
-            {{end}}
-            {{if eq .Name "remote_login_passwordfile"}}
             <td>是否对密码进行大小写敏感的比较</td>
             <td>{{.Name}}</td>
             <td>{{.Value}}</td>

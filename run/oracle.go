@@ -61,6 +61,7 @@ func OracleRun(name, host, user, passwd, port string) error {
 		sid = oidlist[1]
 	}
 	dsn := fmt.Sprintf("oracle://%s:%s@%s:%s/%s?timeout=15", user, passwd, host, port, sid)
+	dsn = strings.ReplaceAll(dsn, "#", "%23")
 	db, err := sql.Open("oracle", dsn)
 	if err != nil {
 		return fmt.Errorf("%s:连接失败！检查网络或用户密码或SID吧！", host)

@@ -146,6 +146,20 @@ func Runssh(sshname string, sshHost string, sshUser string, sshPasswrod string, 
 		data.User = append(data.User, user)
 	}
 
+	//组信息
+	for _, v := range strings.Split(runCmd("cat /etc/group", sshClient), "\n") {
+		if len(strings.Split(v, ":")) != 4 {
+			continue
+		}
+		group := LinGroup{
+			Name:     strings.Split(v, ":")[0],
+			Password: strings.Split(v, ":")[1],
+			Gid:      strings.Split(v, ":")[2],
+			UserList: strings.Split(v, ":")[3],
+		}
+		data.Group = append(data.Group, group)
+	}
+
 	//读取/etc/login.defs获取新创建用户时的信息
 	CreateUserLogindefs := Logindefs{
 		PassMaxDays:   runCmd(`cat /etc/login.defs |grep -v "^#" |grep "PASS_MAX_DAYS"|awk -F " " '{print $2}'`, sshClient),
