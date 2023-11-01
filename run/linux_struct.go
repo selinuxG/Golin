@@ -30,6 +30,7 @@ type Data struct {
 	CronTab       string          //定时任务
 	Share         string          //文件共享
 	Env           string          //环境变量
+	RpmInstall    string          //rpm安装包
 	Version       string          //版本信息
 	Docker        string          //docker ps -a
 	ListUnit      string          //开机启动项
@@ -40,16 +41,15 @@ type Data struct {
 
 type LinUser struct {
 	Name          string //用户
-	Passwd        string //密码
+	Passwd        string //密码状态
+	Remark        string //密码描述
 	Uid           string //UID
 	Gid           string //GID
-	Description   string //注释
 	Pwd           string //主目录
 	Bash          string //命令解释器
 	Login         bool   //是否可登录
 	LastPasswd    string //上次修改密码时间
 	PasswdExpired string //密码过期时间
-	Lose          string //失效时间
 	UserExpired   string //账户过期时间
 	MaxPasswd     string //两次改变密码之间相距的最大天数
 }
@@ -121,8 +121,8 @@ type ServerInfo struct {
 	Free        string
 }
 
-// NewSSH 初始化SSH默认配置
-func NewSSH() SSH {
+// SSHConfig 初始化SSH默认配置
+func SSHConfig() SSH {
 	return SSH{
 		PermitRootLogin:        true,
 		PasswordAuthentication: true,

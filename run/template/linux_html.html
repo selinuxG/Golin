@@ -46,17 +46,16 @@
         <thead>
         <tr>
             <th>用户</th>
-            <th>密码</th>
+            <th><a href="#" onclick="return showPasswdStatus()">密码状态</a></th>
+            <th>状态描述</th>
             <th>UID</th>
             <th>GID</th>
-            <th>描述</th>
             <th>主目录</th>
             <th>Bash</th>
             <th>可登录</th>
-            <th>最近修改密码</th>
-            <th>密码过期密码</th>
-            <th>密码失效密码</th>
-            <th>帐户过期时间</th>
+            <th>上次修改密码时间</th>
+            <th><a href="#" onclick="return showPasswordExpiryNote()">密码过期的日期</a></th>
+            <th><a href="#" onclick="return showAccountExpiryNote()">账号过期的日期</a></th>
             <th>密码最大使用天数</th>
         </tr>
         </thead>
@@ -64,10 +63,14 @@
         {{range .User}}
         <tr>
             <td>{{.Name}}</td>
-            <td>{{.Passwd}}</td>
+            {{if eq .Passwd "PS"}}
+            <td style="color: rgb(32, 199, 29)">{{.Passwd}}</td>
+            {{else}}
+            <td style="color: rgb(255, 0, 0)">{{.Passwd}}</td>
+            {{end}}
+            <td>{{.Remark}}</td>
             <td>{{.Uid}}</td>
             <td>{{.Gid}}</td>
-            <td>{{.Description}}</td>
             <td>{{.Pwd}}</td>
             <td>{{.Bash}}</td>
             {{if .Login}}
@@ -77,7 +80,6 @@
             {{end}}
             <td>{{.LastPasswd}}</td>
             <td>{{.PasswdExpired}}</td>
-            <td>{{.Lose}}</td>
             <td>{{.UserExpired}}</td>
             <td>{{.MaxPasswd}}</td>
         </tr>
@@ -299,6 +301,9 @@
     <h2 id="env">环境变量</h2>
     <pre><code>{{.Env}}</code></pre>
 
+    <h2 id="rpm">rpm安装包</h2>
+    <pre><code>{{.RpmInstall}}</code></pre>
+
     <h2 id="version">版本信息</h2>
     <pre><code>{{.Version}}</code></pre>
 
@@ -342,6 +347,7 @@
         <li><a href="#cron">定时任务</a></li>
         <li><a href="#share">NFS服务(文件共享)</a></li>
         <li><a href="#env">环境变量</a></li>
+        <li><a href="#rpm">rpm安装包</a></li>
         <li><a href="#version">版本信息</a></li>
         <li><a href="#docker">正在运行的docker</a></li>
         <li><a href="#list-unit">开机启动项</a></li>
@@ -374,5 +380,19 @@
 
     function random(){
         return Math.floor(Math.random() * 70) ;
+    }
+
+    function showPasswordExpiryNote() {
+        alert('密码过期日期：这个字段表示用户的密码何时过期。当密码过期后，用户可能需要更换密码才能继续登录系统。');
+        return false;  // 阻止链接的默认行为
+    }
+
+    function showAccountExpiryNote() {
+        alert('账号过期日期：这个字段表示用户账号何时过期。当账号过期后，无论密码是否正确，用户都无法登录该账号。');
+        return false;  // 阻止链接的默认行为
+    }
+    function showPasswdStatus() {
+        alert('PS代表已设置密码;\nLK代表密码锁定;\nNP代表空密码;');
+        return false;  // 阻止链接的默认行为
     }
 </script>

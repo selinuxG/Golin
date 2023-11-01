@@ -57,6 +57,7 @@ tr:hover {
     height: calc(100% - 40px); /* 考虑到 top 的 20px 和底部的留白 20px */
     overflow-y: auto; /* 滚动条 */
     width: 150px; /* 目录宽度 */
+    max-height: 600px;
 }
 
 #toc ul {
@@ -74,7 +75,7 @@ tr:hover {
 }
 
 #toc a:hover {
-    color: #007BFF;
+    color: #25fa8c;
 }
 .watermark {
     font-size: 36px;
@@ -97,4 +98,8 @@ pre {
     width: 350px;
     white-space: nowrap;
     overflow-x: auto;
+}
+
+a:visited {
+    color: #ffffff;
 }

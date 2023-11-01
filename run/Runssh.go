@@ -106,6 +106,7 @@ func Runssh(sshname string, sshHost string, sshUser string, sshPasswrod string, 
 		HeadLog:       runCmd(`head -n 10 /var/log/messages /var/log/secure /var/log/audit/audit.log  /var/log/yum.log /var/log/cron`, sshClient),
 		TailLog:       runCmd(`tail -n 10 /var/log/messages /var/log/secure /var/log/audit/audit.log  /var/log/yum.log /var/log/cron`, sshClient),
 		Logrotate:     runCmd(`awk 'FNR==1{if(NR!=1)print "\nFile: " FILENAME; else print "File: " FILENAME}{if ($0 !~ /^#/ && $0 !~ /^$/) print $0}' /etc/logrotate.conf /etc/logrotate.d/*`, sshClient),
+		RpmInstall:    runCmd("rpm -qa", sshClient),
 		User:          make([]LinUser, 0),
 		CreateUser:    make([]Logindefs, 0),
 		Port:          make([]PortList, 0),
@@ -128,18 +129,20 @@ func Runssh(sshname string, sshHost string, sshUser string, sshPasswrod string, 
 		if len(shadow) != 8 {
 			continue
 		}
+		passwdstatus := strings.Split(runCmd(fmt.Sprintf("passwd -S %s", userinfo[0]), sshClient), " ")
+		passwdremark := strings.Join(passwdstatus[7:], "")
+		passwdremark = strings.ReplaceAll(passwdremark, "\n", "")
 		user := LinUser{
 			Name:          userinfo[0],
-			Passwd:        userinfo[1],
+			Passwd:        passwdstatus[1],
+			Remark:        passwdremark,
 			Uid:           userinfo[2],
 			Gid:           userinfo[3],
-			Description:   userinfo[4],
 			Pwd:           userinfo[5],
 			Bash:          userinfo[6],
 			Login:         Login,
 			LastPasswd:    strings.Split(shadow[0], ":")[1],
 			PasswdExpired: strings.Split(shadow[1], ":")[1],
-			Lose:          strings.Split(shadow[2], ":")[1],
 			UserExpired:   strings.Split(shadow[3], ":")[1],
 			MaxPasswd:     strings.Split(shadow[5], ":")[1],
 		}
@@ -188,7 +191,7 @@ func Runssh(sshname string, sshHost string, sshUser string, sshPasswrod string, 
 	}
 
 	//获取sshd_config配置
-	sshdconfig := NewSSH()
+	sshdconfig := SSHConfig()
 	if runCmd(`cat /etc/ssh/sshd_config|grep -v "^#" |grep "PasswordAuthentication"|awk -F " " '{print $2}'`, sshClient) == "no" {
 		sshdconfig.PasswordAuthentication = false
 	}
