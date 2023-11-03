@@ -263,52 +263,6 @@ func GolinHistory(c *gin.Context) {
 	c.HTML(http.StatusOK, "golinHistoryIndex.html", gin.H{"Data": dataSlice})
 }
 
-// GolinDjPost 处理提交表单信息
-func GolinDjPost(c *gin.Context) {
-	type echo struct {
-		name    string   //单位名称
-		system  string   //系统名称
-		level   int      //建议等级
-		feature []string //特征
-	}
-	check := echo{}
-	yesList := []string{"涉及到民用民生", "涉及金钱交易", "为社会成员提供服务", "存储了涉密信息", "云计算平台", "基础网络但承载三级系统", "大数据平台", "上级单位要求备案三级", "并网前需要测评报告", "影响社会成员使用公共设施", "影响社会成员获取公开数据", "影响社会成员接收公共服务", "会引起法律纠纷", "存储数据与其他系统共享"}
-	name, _ := c.GetPostForm("unit-name")     //单位名称
-	system, _ := c.GetPostForm("system-name") //系统名称
-	check.name = name
-	check.system = system
-	check.level = 2
-	options, _ := c.GetPostFormArray("option[]") //多选框选择结果
-	var commonElements []string                  //存储选择的三级特征
-	yesListSet := make(map[string]bool)
-
-	for _, yes := range yesList {
-		yesListSet[yes] = true
-	}
-
-	for _, opt := range options {
-		if yesListSet[opt] {
-			commonElements = append(commonElements, opt)
-		}
-	}
-
-	if len(commonElements) == 0 { // 如果符合特征是0个，则是二级
-		check.feature = append(check.feature, options...)
-	}
-
-	if len(commonElements) > 0 { // 如果符合特征大于0个，则是三级
-		check.level = 3
-		check.feature = append(check.feature, commonElements...)
-	}
-
-	c.HTML(http.StatusOK, "djLevel.html", gin.H{
-		"Level":    check.level,    //等级
-		"Name":     check.system,   //系统名称
-		"UnitName": check.name,     //单位名称
-		"Feature":  check.feature}, //特征
-	)
-}
-
 // FileAppendJson 将成功主机对比allserver主机，写入到json文件中
 // success = 采集完成目录\mode\name_ip.log,
 // 留存了个bug，正常使用不会触发，所以不修复了没意义。

@@ -1,169 +1,300 @@
-
 <!DOCTYPE html>
-<html lang="en">
-
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>网络等级保护模拟定级</title>
-
-    <!-- CSS样式 -->
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>模拟定级-网络安全等级保护(高业尚)</title>
     <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
-
         body {
+            font-family: Arial, sans-serif;
             margin: 0;
             padding: 0;
-            font-family: Arial, sans-serif;
-            background: linear-gradient(to right, #6397ff, #f8a9ff);
-        }
-
-        h1 {
-            text-align: center;
-        }
-
-        form {
-            background-color: #ffffff;
-            /* 更改表单背景颜色 */
-            padding: 30px;
-            border-radius: 10px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-            max-width: 1000px;
-            margin: 50px auto;
-            text-align: left;
-            /* 左对齐 */
+            background: #ffffff;
         }
 
         .container {
+            height: 70vh;
+            width: 30%;
+            margin: 0 30px;
+            background: linear-gradient(to right, #f6acc4, rgb(105, 218, 255));
+            padding: 20px;
+            box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.1);
+            margin-top: 30px;
+            border-radius: 8px;
+            color: #fff;
+            overflow: auto;
+        }
+
+        .notes {
+            height: 90vh;
+            background-color: rgb(196, 238, 255);
+            padding: 20px;
+            width: 30%;
+            margin: 0 30px;
+            padding: 20px;
+            box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.1);
+            margin-top: 30px;
+            border-radius: 8px;
+            overflow: auto;
+        }
+
+
+        .checkbox-group {
+            margin-bottom: 10px;
             display: flex;
-            justify-content: space-evenly;
-            /* 修改为平均分布 */
-            align-items: center;
-            margin-bottom: 20px;
-        }
-
-        .input-group {
-            display: flex;
-            flex-direction: column;
-            padding: 10px;
-            min-width: 52%;
-            /* 调整输入框宽度 */
-        }
-
-        label {
-            margin-bottom: 5px;
-            font-size: 18px;
-            font-weight: bold;
-            color: #000000;
-            /* 改变标签颜色 */
-        }
-
-        input[type="text"] {
-            padding: 12px;
-            border: 2px solid #ccc;
-            border-radius: 4px;
-            font-size: 16px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        }
-
-        .question-text {
-            font-size: 20px;
-            /* 调整字体大小 */
-            font-weight: bold;
-            margin-bottom: 20px;
-            color: #000000;
-            /* 改变问题颜色 */
-        }
-
-        .checkbox-container,
-        .radio-container {
-            display: flex;
-            flex-direction: row;
-            /* 修改为一行显示多选框 */
-            flex-wrap: wrap;
-            /* 多行选择 */
+            justify-content: flex-start;
             align-items: flex-start;
-            margin-bottom: 20px;
         }
 
-        .checkbox-container label,
-        .radio-container label {
-            width: 33.3%;
-            /* 调整到一行显示3个多选框 */
-            margin: 10px 0;
-            font-size: 18px;
-            /* 调整字体大小 */
-            font-weight: bold;
-            color: #5394e5;
-            text-align: left;
+        .checkbox-group label {
+            width: 90%;
         }
 
-        .submit-btn {
-            display: block;
-            width: 100%;
-            max-width: 200px;
-            padding: 12px;
-            margin: 0 auto;
-            background-color: #3e913a;
-            /* 更改背景颜色 */
+        .checkbox-group select {
+            width: 45%;
+            margin-left: auto;
+            background: rgb(196, 238, 255);
+        }
+
+        button {
+            padding: 10px;
+            background: linear-gradient(to right, #457b9d, #1d3557);
             color: white;
-            text-align: center;
-            font-size: 18px;
             border: none;
-            border-radius: 4px;
+            border-radius: 5px;
             cursor: pointer;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            margin-top: 20px;
+            display: block;
+            margin: 0 auto;
+            width: 40%;
         }
 
-        .submit-btn:hover {
-            background-color: #006666;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+        button:hover {
+            background: linear-gradient(to right, #123456, #1d3557);
+        }
+
+        .button-container {
+            text-align: right;
+            margin-top: 20px;
+        }
+
+        .button-container button {
+            margin-left: 20px;
+        }
+
+        input[type="checkbox"] {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .parent {
+            display: flex;
         }
     </style>
-
 </head>
 
 <body>
-    <form action="/golin/djPost" method="POST">
-        <h1>网络等级保护模拟定级</h1><br>
-        <div class="container">
-            <div class="input-group">
-                <label for="unit-name">单位名称</label>
-                <input type="text" id="unit-name" name="unit-name" placeholder="请输入单位名称">
-            </div>
-            <div class="input-group">
-                <label for="system-name">系统名称</label>
-               <input type="text" id="system-name" name="system-name" placeholder="请输入系统名称">
-            </div>
-        </div>
-        <p class="question-text">备案系统(或出现问题后)涉及以下哪些场景（多选）</p>
-        <div class="checkbox-container">
-            <label><input type="checkbox" name="option[]" value="涉及到民用民生">涉及到民用民生</label>
-            <label><input type="checkbox" name="option[]" value="涉及金钱交易">涉及金钱交易</label>
-            <label><input type="checkbox" name="option[]" value="仅内部员工使用">仅内部员工使用</label>
-            <label><input type="checkbox" name="option[]" value="为社会成员提供服务">为社会成员提供服务</label>
-            <label><input type="checkbox" name="option[]" value="门户/官方网站">门户/官方网站</label>
-            <label><input type="checkbox" name="option[]" value="存储了涉密信息">存储了涉密信息</label>
-            <label><input type="checkbox" name="option[]" value="云计算平台">云计算平台</label>
-            <label><input type="checkbox" name="option[]" value="基础网络但承载三级系统">备案基础网络但承载三级系统</label>
-            <label><input type="checkbox" name="option[]" value="大数据平台">大数据平台</label>
-            <label><input type="checkbox" name="option[]" value="上级单位要求备案三级">上级单位要求备案三级</label>
-            <label><input type="checkbox" name="option[]" value="并网前需要测评报告">并网前需要测评报告</label>
-            <label><input type="checkbox" name="option[]" value="影响社会成员使用公共设施">影响社会成员使用公共设施</label>
-            <label><input type="checkbox" name="option[]" value="影响社会成员获取公开数据">影响社会成员获取公开数据</label>
-            <label><input type="checkbox" name="option[]" value="影响社会成员接收公共服务">影响社会成员接收公共服务</label>
-            <label><input type="checkbox" name="option[]" value="会引起法律纠纷">会引起法律纠纷</label>
-            <label><input type="checkbox" name="option[]" value="同行业定为2级">同行业定为2级</label>
-            <label><input type="checkbox" name="option[]" value="仅处理内部办公">仅处理内部办公</label>
-            <label><input type="checkbox" name="option[]" value="存储数据与其他系统共享">存储数据与其他系统共享</label>
+<div class="parent">
+
+    <div class="notes">
+        <h1>定级方法概述</h1>
+        <p>
+            定级对象的安全主要包括业务信息安全和系统服务安全,与之相关的受侵害客体和对客体的侵害程度可能不同,因此,安全保护等级由业务信息安全和系统服务安全两方面确定。<br>
+            从业务信息安全角度反映的定级对象安全保护等级称为业务信息安全保护等级;<br>从系统服务安全角度反映的定级对象安全保护等级称为系统服务安全保护等级。
+        </p>
+
+        <h1>定级方法流程</h1>
+        <p>
+
+            <strong>确定受到破坏时所侵害的客体</strong><br>
+            1) 确定业务信息受到破坏时所侵害的客体;<br>
+            2) 确定系统服务受到侵害时所侵害的客体。<br>
+            <strong>确定对客体的侵害程度</strong><br>
+            1) 根据不同的受侵害客体,分别评定业务信息安全被破坏对客体的侵害程度;<br>
+            2) 根据不同的受侵害客体,分别评定系统服务安全被破坏对客体的侵害程度。<br>
+            <strong>确定安全保护等级</strong><br>
+            1) 确定业务信息安全保护等级;<br>
+            2) 确定系统服务安全保护等级;<br>
+            3) 将业务信息安全保护等级和系统服务安全保护等级的较高者确定为定级对象的安全保护等级。
+        </p>
+    </div>
+
+    <div class="container">
+
+        <h1>请选择客体及其损害级别</h1>
+
+        <h2>系统服务</h2>
+        <div class="checkbox-group">
+            <input type="checkbox" id="entity1" value="1" checked>
+            <label for="entity1">公民法人和其他组织的合法权益</label>
+            <select id="damage1">
+                <option value="-1">请选择损害级别</option>
+                <option value="0">一般损害</option>
+                <option value="1">严重损害</option>
+                <option value="2">特别严重损害</option>
+            </select>
         </div>
 
-        <button type="submit" class="submit-btn">提交</button>
-    </form>
+        <div class="checkbox-group">
+            <input type="checkbox" id="entity2" value="2" checked>
+            <label for="entity2">社会秩序公共利益</label>
+            <select id="damage2">
+                <option value="-1">请选择损害级别</option>
+                <option value="0">一般损害</option>
+                <option value="1">严重损害</option>
+                <option value="2">特别严重损害</option>
+            </select>
+        </div>
+
+        <div class="checkbox-group">
+            <input type="checkbox" id="entity3" value="3" checked>
+            <label for="entity3">国家安全</label>
+            <select id="damage3">
+                <option value="-1">请选择损害级别</option>
+                <option value="0">一般损害</option>
+                <option value="1">严重损害</option>
+                <option value="2">特别严重损害</option>
+            </select>
+        </div>
+
+        <h2>业务信息</h2>
+        <div class="checkbox-group">
+            <input type="checkbox" id="entity4" value="1" checked>
+            <label for="entity4">公民法人和其他组织的合法权益</label>
+            <select id="damage4">
+                <option value="-1">请选择损害级别</option>
+                <option value="0">一般损害</option>
+                <option value="1">严重损害</option>
+                <option value="2">特别严重损害</option>
+            </select>
+        </div>
+
+        <div class="checkbox-group">
+            <input type="checkbox" id="entity5" value="2" checked>
+            <label for="entity5">社会秩序公共利益</label>
+            <select id="damage5">
+                <option value="-1">请选择损害级别</option>
+                <option value="0">一般损害</option>
+                <option value="1">严重损害</option>
+                <option value="2">特别严重损害</option>
+            </select>
+        </div>
+
+        <div class="checkbox-group">
+            <input type="checkbox" id="entity6" value="3" checked>
+            <label for="entity6">国家安全</label>
+            <select id="damage6">
+                <option value="-1">请选择损害级别</option>
+                <option value="0">一般损害</option>
+                <option value="1">严重损害</option>
+                <option value="2">特别严重损害</option>
+            </select>
+        </div>
+        <br><br>
+        <button id="query">查询结果</button>
+        <p id="systemResult"></p>
+        <p id="businessResult"></p>
+        <p id="finalResult"></p>
+    </div>
+
+    <div class="notes">
+        <h1>确认受侵害的客体</h1>
+        <p>
+            <strong>侵害国家安全的事项包括以下方面: </strong><br>
+            影响国家政权稳固和领土主权、海洋权益完整;<br>
+            影响国家统一、民族团结和社会稳定;<br>
+            影响国家社会主义市场经济秩序和文化实力;<br>
+            其他影响国家安全的事项。
+        </p>
+        <p>
+            <strong>侵害社会秩序的事项包括以下方面:</strong><br>
+            影响国家机关、企事业单位、社会团体的生产秩序、经营秩序、教学科研秩序、医疗卫生秩序:<br>
+            影响公共场所的活动秩序、公共交通秩序;<br>
+            影响人民群众的生活秩序;<br>
+            其他影响社会秩序的事项
+        </p>
+        <p>
+            <strong>侵害公共利益的事项包括以下方面:</strong><br>
+            影响社会成员使用公共设施;<br>
+            影响社会成员获取公开数据资源;<br>
+            影响社会成员接受公共服务等方面 ;<br>
+            其他影响公共利益的事项。
+        </p>
+
+        <p>
+            侵害公民法人和其他组织的合法权益是指受法律保护的公民、法人和其他组织所享有的社会权利和利益等受到损害。<br>
+            确定受侵害的客体时,首先判断是否侵害国家安全,然后判断是否侵害社会秩序或公众利益,最后判断是否侵害公民、法人和其他组织的合法权益。<br>
+        </p>
+
+        <h1>确认受侵害的程度</h1>
+        <p>
+            <strong>一般损害:</strong><br>
+            工作职能受到局部影响，业务能力有所降低但不影响主要功能的执行，出现较轻的法律问题,较低的财产损失,有限的社会不良影响,对其他组织和个人造成较低损害;
+        </p>
+        <p>
+            <strong>严重损害:</strong><br>
+            工作职能受到严重影响,业务能力显著下降且严重影响主要功能执行,出现较严重的法律问题,较高的财产损失,较大范围的社会不良影响,对其他组织和个人造成较高损害;
+        </p>
+        <p>
+            <strong>特别严重损害:</strong><br>
+            工作职能受到特别严重影响或丧失行使能力,业务能力严重下降且或功能无法执行,出现极其严重的法律问题,极高的财产损失,大范围的社会不良影响,对其他组织和个人造成非常高损害。
+        </p>
+
+    </div>
+</div>
+
+<script>
+    var levels = {
+        1: [1, 2, 2],
+        2: [2, 3, 4],
+        3: [3, 4, 5]
+    };
+
+    var queryButton = document.getElementById('query');
+    queryButton.onclick = function () {
+        var systemMaxLevel = 0;
+        var businessMaxLevel = 0;
+
+        for (var i = 1; i <= 3; i++) {
+            var entityCheckbox = document.getElementById('entity' + i);
+            var damageSelect = document.getElementById('damage' + i);
+            console.log('entityCheckbox:', entityCheckbox.checked);
+            console.log('damageSelect:', damageSelect.value);
+
+            if (entityCheckbox.checked && damageSelect.value !== '-1') {
+                var level = levels[entityCheckbox.value][parseInt(damageSelect.value)];
+                console.log('level:', level);
+
+                systemMaxLevel = Math.max(systemMaxLevel, level);
+            }
+        }
+
+        for (var i = 4; i <= 6; i++) {
+            var entityCheckbox = document.getElementById('entity' + i);
+            var damageSelect = document.getElementById('damage' + i);
+
+            if (entityCheckbox.checked && damageSelect.value !== '-1') {
+                var level = levels[entityCheckbox.value][parseInt(damageSelect.value)];
+                businessMaxLevel = Math.max(businessMaxLevel, level);
+            }
+        }
+
+        var finalMaxLevel = Math.max(systemMaxLevel, businessMaxLevel);
+
+        // document.getElementById('systemResult').textContent = '系统服务的最大级别：' + (systemMaxLevel > 0 ? systemMaxLevel : '无');
+        // document.getElementById('businessResult').textContent = '业务信息的最大级别：' + (businessMaxLevel > 0 ? businessMaxLevel : '无');
+        // document.getElementById('finalResult').textContent = '最终的最大级别：' + (finalMaxLevel > 0 ? finalMaxLevel : '无');
+
+        var message = '';
+        message += '系统服务的最大级别：' + (systemMaxLevel > 0 ? systemMaxLevel : '无') + '\n';
+        message += '业务信息的最大级别：' + (businessMaxLevel > 0 ? businessMaxLevel : '无') + '\n';
+        message += '最终的最大级别：' + (finalMaxLevel > 0 ? finalMaxLevel : '无');
+        alert(message);
+
+    };
+</script>
+</div>
+
 </body>
 
 </html>

@@ -56,8 +56,6 @@ func Start(cmd *cobra.Command, args []string) {
 		golin.GET("/history", GolinHistory)        //历史记录
 		golin.GET("/update", GolinUpdate)          //检查更新
 		golin.GET("/dj", GolinDj)                  //模拟定级首页
-		golin.POST("/djPost", GolinDjPost)         //提交定级结果
-
 	}
 	// Windows、Mac下在默认浏览器中打开网页
 	go func() {
