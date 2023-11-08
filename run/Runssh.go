@@ -14,8 +14,13 @@ import (
 )
 
 // Runssh 通过调用ssh协议执行命令，写入到文件,并减一个线程数
-func Runssh(sshname string, sshHost string, sshUser string, sshPasswrod string, sshPort int, cmd string) error {
-	defer wg.Done()
+func Runssh(sshname string, sshHost string, sshUser string, sshPasswrod string, sshPort int, cmd string) (err error) {
+	defer func() {
+		if r := recover(); r != nil {
+			err = fmt.Errorf("ssh panic: %v", r)
+		}
+		wg.Done()
+	}()
 	// 创建ssh登录配置
 	configssh := &ssh.ClientConfig{
 		Timeout:         time.Second * 3, // ssh连接timeout时间
