@@ -280,6 +280,9 @@
     <h2 id="pamsshd">/etc/pam.d/sshd(已去除注释行)</h2>
     <pre><code>{{.PamSSH}}</code></pre>
 
+    <h2 id="authorized_keys">/root/.ssh/authorized_keys</h2>
+    <pre><code>{{.SSHAuthorized}}</code></pre>
+
     <h2 id="pamsystem">/etc/pam.d/system-auth(已去除注释行)</h2>
     <pre><code>{{.PamSystem}}</code></pre>
 
@@ -339,6 +342,7 @@
         <li><a href="#dns">DNS配置信息</a></li>
         <li><a href="#sudoers">/etc/sudoers</a></li>
         <li><a href="#pamsshd">/etc/pam.d/sshd</a></li>
+        <li><a href="#authorized_keys">SSH免密主机</a></li>
         <li><a href="#pamsystem">/etc/pam.d/system-auth</a></li>
         <li><a href="#pampasswd">/etc/pam.d/passwd</a></li>
         <li><a href="#pwqualityconf">/etc/security/pwquality.conf</a></li>

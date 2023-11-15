@@ -21,6 +21,7 @@ type Data struct {
 	Disk          string          //磁盘信息
 	Dns           string          /////etc/resolv.conf文件信息
 	PamSSH        string          ///etc/pam.d/sshd文件信息
+	SSHAuthorized string          ///root/.ssh/authorized_keys文件信息
 	PamSystem     string          ///etc/pam.d/system-auth文件信息
 	PamPasswd     string          ///etc/pam.d/passwd文件信息
 	PwqualityConf string          ///etc/security/pwquality.conf文件信息
