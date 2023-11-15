@@ -169,6 +169,7 @@
             <th>是否可以root登录</th>
             <th>是否允许密码进行验证</th>
             <th>是否允许空密码进行认证</th>
+            <th>是否允许密钥免密登录</th>
             <th>版本协议</th>
             <th>关闭连接之前允许的最大身份验证尝试次数</th>
         </tr>
@@ -179,6 +180,7 @@
             <td>{{.PermitRootLogin}}</td>
             <td>{{.PasswordAuthentication}}</td>
             <td>{{.PermitEmptyPasswords}}</td>
+            <td>{{.PubkeyAuthentication}}</td>
             <td>{{.Protocol}}</td>
             <td>{{.MaxAuthTries}}</td>
         </tr>

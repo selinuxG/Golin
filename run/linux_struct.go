@@ -94,6 +94,7 @@ type SSH struct {
 	PermitEmptyPasswords   bool   //是否允许空密码进行认证
 	Protocol               string //协议
 	MaxAuthTries           string //关闭连接之前允许的最大身份验证尝试次数
+	PubkeyAuthentication   bool   //是否允许免密登录
 }
 
 type FileListPer struct {
@@ -130,5 +131,6 @@ func SSHConfig() SSH {
 		PermitEmptyPasswords:   false,
 		Protocol:               "SSHV2",
 		MaxAuthTries:           "6",
+		PubkeyAuthentication:   true,
 	}
 }

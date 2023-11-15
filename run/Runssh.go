@@ -198,13 +198,13 @@ func Runssh(sshname string, sshHost string, sshUser string, sshPasswrod string, 
 
 	//获取sshd_config配置
 	sshdconfig := SSHConfig()
-	if runCmd(`cat /etc/ssh/sshd_config|grep -v "^#" |grep "PasswordAuthentication"|awk -F " " '{print $2}'`, sshClient) == "no" {
+	if strings.Contains(runCmd(`cat /etc/ssh/sshd_config|grep -v "^#" |grep "PasswordAuthentication"|awk -F " " '{print $2}'`, sshClient), "no") {
 		sshdconfig.PasswordAuthentication = false
 	}
-	if runCmd(`cat /etc/ssh/sshd_config|grep -v "^#" |grep "PermitRootLogin"|awk -F " " '{print $2}'`, sshClient) == "no" {
+	if strings.Contains(runCmd(`cat /etc/ssh/sshd_config|grep -v "^#" |grep "PermitRootLogin"|awk -F " " '{print $2}'`, sshClient), "no") {
 		sshdconfig.PermitRootLogin = false
 	}
-	if runCmd(`cat /etc/ssh/sshd_config|grep -v "^#" |grep "PermitEmptyPasswords"|awk -F " " '{print $2}'`, sshClient) == "yes" {
+	if strings.Contains(runCmd(`cat /etc/ssh/sshd_config|grep -v "^#" |grep "PermitEmptyPasswords"|awk -F " " '{print $2}'`, sshClient), "yes") {
 		sshdconfig.PermitEmptyPasswords = true
 	}
 	if runCmd(`cat /etc/ssh/sshd_config|grep -v "^#" |grep "Protocol"|awk -F " " '{print $2}'`, sshClient) != "" {
@@ -212,6 +212,9 @@ func Runssh(sshname string, sshHost string, sshUser string, sshPasswrod string, 
 	}
 	if runCmd(`cat /etc/ssh/sshd_config|grep -v "^#" |grep "MaxAuthTries"|awk -F " " '{print $2}'`, sshClient) != "" {
 		sshdconfig.MaxAuthTries = runCmd(`cat /etc/ssh/sshd_config|grep -v "^#" |grep "MaxAuthTries"|awk -F " " '{print $2}'`, sshClient)
+	}
+	if strings.Contains(runCmd(`cat /etc/ssh/sshd_config|grep -v "^#" |grep "PubkeyAuthentication"|awk -F " " '{print $2}'`, sshClient), "no") {
+		sshdconfig.PubkeyAuthentication = false
 	}
 	data.ConfigSSH = append(data.ConfigSSH, sshdconfig)
 
