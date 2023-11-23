@@ -24,6 +24,7 @@
             <th>共计内存/G</th>
             <th>硬件型号</th>
             <th>系统版本</th>
+            <th>联网检测</th>
         </tr>
         </thead>
         <tbody>
@@ -36,6 +37,7 @@
             <td>{{.Info.Free}}</td>
             <td>{{.Info.ProductName}}</td>
             <td>{{.Info.Version}}</td>
+            <td>{{.Info.Ping}}</td>
         </tr>
         </tbody>
     </table>
@@ -318,6 +320,9 @@
     <h2 id="list-unit">开机启动项</h2>
     <pre><code>{{.ListUnit}}</code></pre>
 
+    <h2 id="AuditCtl">审计日志规则(auditctl -l)</h2>
+    <pre><code>{{.AuditCtl}}</code></pre>
+
     <h2 id="log">部分关键日志信息</h2>
     <pre><code><span style="color: rgb(32, 199, 29);font-size: 20px">前十行：<br></span>{{.HeadLog}}><br><span style="color: rgb(32, 199, 29);font-size: 20px">后十行：<br></span>{{.TailLog}}</code></pre>
 
@@ -357,6 +362,7 @@
         <li><a href="#version">版本信息</a></li>
         <li><a href="#docker">正在运行的docker</a></li>
         <li><a href="#list-unit">开机启动项</a></li>
+        <li><a href="#AuditCtl">审计日志规则</a></li>
         <li><a href="#log">部分关键日志信息</a></li>
         <li><a href="#logrotate">日志切割配置</a></li>
 

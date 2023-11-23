@@ -38,6 +38,7 @@ type Data struct {
 	HeadLog       string          //前十行日志
 	TailLog       string          //后十行日志
 	Logrotate     string          //日志切割配置
+	AuditCtl      string          //审计日志规则
 }
 
 type LinUser struct {
@@ -121,6 +122,7 @@ type ServerInfo struct {
 	Version     string
 	ProductName string
 	Free        string
+	Ping        bool
 }
 
 // SSHConfig 初始化SSH默认配置
