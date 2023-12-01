@@ -1,0 +1,13 @@
+name: poc-yaml-Gerapy-admin-default
+description: "登录方式:admin/admin"
+method: POST
+headers:
+  Content-Type: "application/json"
+body: >
+  {"username":"admin","password":"admin"}
+path:
+  - /api/user/auth
+expression:
+  status: 200
+  body_any:
+    - "token"

