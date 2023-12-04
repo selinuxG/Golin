@@ -374,4 +374,6 @@ var RuleDatas = []RuleData{
 	{"pikachu漏洞靶场", "body", "Get the pikachu"},
 	{"IIS", "body", "IIS Windows Server"},
 	{"联软网络智能准入系统", "body", "Error 50x (Not Found)!!!"},
+	{"Tenda路由器", "body", "<title>Tenda | LOGIN</title>"},
+	{"狮子鱼CMS", "body", "/seller\\.php\\?s=/Public/login"},
 }

