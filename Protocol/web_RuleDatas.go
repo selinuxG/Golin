@@ -376,4 +376,5 @@ var RuleDatas = []RuleData{
 	{"联软网络智能准入系统", "body", "Error 50x (Not Found)!!!"},
 	{"Tenda路由器", "body", "<title>Tenda | LOGIN</title>"},
 	{"狮子鱼CMS", "body", "/seller\\.php\\?s=/Public/login"},
+	{"泛微-EOffice", "body", "(海泰key验证|泛微软件)"},
 }

