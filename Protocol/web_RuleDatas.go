@@ -184,7 +184,6 @@ var RuleDatas = []RuleData{
 	{"泛微E-mobile", "body", "(Weaver E-mobile|weaver,e-mobile)"},
 	{"齐治堡垒机", "body", "(logo-icon-ico72.png|resources/themes/images/logo-login.png)"},
 	{"ThinkPHP", "body", "(/Public/static/js/)"},
-	{"weaver-ebridge", "body", "(e-Bridge,http://wx.weaver)"},
 	{"DWR", "body", "(dwr/engine.js)"},
 	{"swagger_ui", "body", "(swagger-ui/css|\"swagger\":|swagger-ui.min.js)"},
 	{"大汉版通发布系统", "body", "(大汉版通发布系统|大汉网络)"},
@@ -377,4 +376,6 @@ var RuleDatas = []RuleData{
 	{"Tenda路由器", "body", "<title>Tenda | LOGIN</title>"},
 	{"狮子鱼CMS", "body", "/seller\\.php\\?s=/Public/login"},
 	{"泛微-EOffice", "body", "(海泰key验证|泛微软件)"},
+	{"CellinxNVT摄像机", "body", "(NVT-string\\.js)"},
+	{"泛微云桥e-Bridge", "body", "(<title>泛微云桥e-Bridge</title>)"},
 }
