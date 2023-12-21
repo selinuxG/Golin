@@ -6,6 +6,7 @@ type Data struct {
 	CSS           template.CSS    //CSS样式
 	Name          string          //资产名
 	Info          ServerInfo      //服务器基本信息
+	SystemState   SystemInfo      //系统状态信息
 	User          []LinUser       //现有用户信息
 	Group         []LinGroup      //现有组信息
 	CreateUser    []Logindefs     //新创建用户时信息
@@ -39,6 +40,15 @@ type Data struct {
 	TailLog       string          //后十行日志
 	Logrotate     string          //日志切割配置
 	AuditCtl      string          //审计日志规则
+	HomeLimits    string          //家目录权限检查
+	LastLog       string          //上次登录信息
+}
+
+type SystemInfo struct {
+	Cpu    string
+	Memory string
+	Load   string
+	Time   string
 }
 
 type LinUser struct {

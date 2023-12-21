@@ -41,6 +41,27 @@
         </tr>
         </tbody>
     </table>
+    <h2 id="systemstate">系统状态</h2>
+    <table>
+        <thead>
+        <tr>
+            <th>CPU空闲率</th>
+            <th>内存使用率</th>
+            <th>系统平均负载</th>
+            <th>系统时间</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <td>{{.SystemState.Cpu}}</td>
+            <td>{{.SystemState.Memory}}</td>
+            <td>{{.SystemState.Load}}</td>
+            <td>{{.SystemState.Time}}</td>
+        </tr>
+        </tbody>
+    </table>
+
+
 
 
     <h2 id="userinfo">用户信息</h2>
@@ -259,6 +280,8 @@
 
         </tbody>
     </table>
+    <h2 id="home">用户目录权限</h2>
+    <pre><code>{{.HomeLimits}}</code></pre>
 
     <h2 id="iptablesinfo">防火墙策略</h2>
     <pre><code>{{.IptablesInfo}}</code></pre>
@@ -329,11 +352,15 @@
     <h2 id="logrotate">日志切割配置</h2>
     <pre><code>{{.Logrotate}}</code></pre>
 
+    <h2 id="lastlog">用户上次登录信息</h2>
+    <pre><code>{{.LastLog}}</code></pre>
+
 </div>
 <div id="toc">
     <h3>目录</h3>
     <ul>
         <li><a href="#info">服务器基本信息</a></li>
+        <li><a href="#systemstate">系统状态</a></li>
         <li><a href="#userinfo">用户信息</a></li>
         <li><a href="#group">组信息</a></li>
         <li><a href="#newuserinfo">新建用户安全配置</a></li>
@@ -341,6 +368,7 @@
         <li><a href="#sshd">sshd安全配置</a></li>
         <li><a href="#port">端口开放状态</a></li>
         <li><a href="#FilePer">重要文件信息</a></li>
+        <li><a href="#home">用户目录权限</a></li>
         <li><a href="#iptables">防火墙/selinux状态</a></li>
         <li><a href="#iptablesinfo">防火墙策略</a></li>
         <li><a href="#allow">地址限制</a></li>
@@ -365,7 +393,7 @@
         <li><a href="#AuditCtl">审计日志规则</a></li>
         <li><a href="#log">部分关键日志信息</a></li>
         <li><a href="#logrotate">日志切割配置</a></li>
-
+        <li><a href="#lastlog">上次登录信息</a></li>
     </ul>
 </div>
 <div id="watermark"></div>
