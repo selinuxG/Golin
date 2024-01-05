@@ -16,7 +16,7 @@ func osinfo() {
 	re := regexp.MustCompile(`\d+`)
 	arch = re.FindAllString(arch, -1)[0]
 	InstallDate := cmdvalue(`wmic os get InstallDate /value`)
-	html = strings.ReplaceAll(html, "操作系统详细信息", fmt.Sprintf("<tr><td>%s</td><td>%s</td><td>%s</td><td>%s</td></tr>", name, Version, arch, InstallDate))
+	html = strings.ReplaceAll(html, "操作系统详细信息", fmt.Sprintf("<tr><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td</tr>", name, Version, arch, InstallDate, ExecCommandsPowershll(` typeperf "\Processor(_Total)\% Processor Time" -sc 1 | Select-String -Pattern '"(\d+\.\d+)"\s*' | ForEach-Object { [math]::Round([double]$_.Matches.Groups[1].Value, 2) }`), ExecCommandsPowershll(`typeperf "\Memory\% Committed Bytes In Use" -sc 1 | Select-String -Pattern '"(\d+\.\d+)"\s*' | ForEach-Object { [math]::Round([double]$_.Matches.Groups[1].Value, 2) }`), ExecCommandsPowershll("date")))
 	systeminfo := ExecCommands("systeminfo")
 	html = strings.ReplaceAll(html, "系统信息结果", systeminfo)
 

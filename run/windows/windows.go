@@ -99,6 +99,9 @@ func Windows() {
 		{"防病毒结果", `Get-MpComputerStatus`, true},
 		{"安装驱动结果", `driverquery`, false},
 		{"环境变量结果", `set`, false},
+		{"家目录权限结果", `Get-ChildItem "C:\Users\" -Directory | ForEach-Object { $acl = Get-Acl $_.FullName; $properties = @{Path=$_.FullName; Owner=$acl.Owner; Access=$acl.Access | ForEach-Object { $_.FileSystemRights.ToString() + ', ' + $_.AccessControlType.ToString() + ', ' + $_.IdentityReference.ToString() }}; New-Object -TypeName PSCustomObject -Property $properties } | Format-List`, true},
+		{"开机启动结果", `wmic startup get caption,command`, true},
+		{"日志信息结果", `Get-ChildItem "C:\Windows\System32\winevt\Logs"`, true},
 	}
 	wg.Add(len(commands))
 	for _, cmd := range commands {

@@ -13,101 +13,112 @@ func Windowshtml() string {
     <title>Windows安全策略核查</title>
 	<link rel="icon" href="https://s1.ax1x.com/2023/07/19/pC7B5sx.jpg" sizes="16x16">
     <style>
-        body {
-            display: grid;
-            grid-template-columns: 1fr 200px;
-            gap: 10px;
-            font-family: Arial, sans-serif;
-            position: relative;
-        }
-
-        table {
-    		border-collapse: collapse;
-   		 	margin-bottom: 20px;
-    		width: 100%;
-    		box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
-    		table-layout: fixed;
-    		word-wrap: break-word;
-        }
-
-        th,
-        td {
-            border: 1px solid #ddd;
-            padding: 15px;
-            text-align: left;
-        }
-
-        th {
-            background-color: #007BFF;
-            color: white;
-            font-weight: bold;
-        }
-
-        tr:nth-child(even) {
-            background-color: #f9f9f9;
-        }
-
-        tr:hover {
-            background-color: #e6f2ff;
-        }
-
-        .watermark {
-            font-size: 36px;
-            color: rgba(128, 128, 128, 0.2);
-            position: absolute;
-            z-index: -1;
-            transform: rotate(-30deg);
-        }
-
-        #toc {
-            position: fixed;
-            top: 20px;
-            right: 30px;
-            padding-left: 10px;
-            background-color: #f8f9fa;
-            padding: 10px;
-            border: 1px solid #dee2e6;
-            border-radius: 5px;
-            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
-            max-height: 800px; /* 目录高度 */
-            overflow-y: auto; /* 滚动条 */
-            width: 150px; /* 目录宽度 */
-        }
-
-        #toc ul {
-            list-style-type: none;
-            padding: 0;
-            margin: 0;
-        }
-
-        #toc a {
-            text-decoration: none;
-            color: #333;
-            display: block;
-            word-wrap: break-word; /* 如果单词超过容器宽度，允许在单词内部换行 */
-            overflow-wrap: break-word; /* 同上，但更好的兼容性 */
-        }
-
-        #toc a:hover {
-            color: #007BFF;
-        }
+		body {
+			display: grid;
+			grid-template-columns: 1fr 200px;
+			gap: 10px;
+			font-family: Arial, sans-serif;
+			position: relative;
+		}
+		
+		table {
+			border-collapse: collapse;
+			margin-bottom: 20px;
+			width: 100%;
+			box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+			table-layout: fixed;
+			word-wrap: break-word;
+		}
+		
+		th,
+		td {
+			border: 1px solid #ddd;
+			padding: 15px;
+			text-align: left;
+		}
+		
+		th {
+			background-color: #007BFF;
+			color: white;
+			font-weight: bold;
+		}
+		
+		tr:nth-child(even) {
+			background-color: #f9f9f9;
+		}
+		
+		tr:hover {
+			background-color: #e6f2ff;
+		}
+		
+		.watermark {
+			font-size: 36px;
+			color: rgba(128, 128, 128, 0.2);
+			position: absolute;
+			z-index: -1;
+			transform: rotate(-30deg);
+		}
+		
+		#toc {
+			position: fixed;
+			top: 20px;
+			right: 30px;
+			padding-left: 10px;
+			background-color: #f8f9fa;
+			padding: 10px;
+			border: 1px solid #dee2e6;
+			border-radius: 5px;
+			box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+			height: calc(100% - 40px); /* 考虑到 top 的 20px 和底部的留白 20px */
+			overflow-y: auto; /* 滚动条 */
+			width: 150px; /* 目录宽度 */
+			max-height: 600px;
+		}
+		
+		#toc ul {
+			list-style-type: none;
+			padding: 0;
+			margin: 0;
+		}
+		
+		#toc a {
+			text-decoration: none;
+			color: #333;
+			display: block;
+			word-wrap: break-word; /* 如果单词超过容器宽度，允许在单词内部换行 */
+			overflow-wrap: break-word; /* 同上，但更好的兼容性 */
+		}
+		
+		#toc a:hover {
+			color: #25fa8c;
+		}
 		.watermark {
 			font-size: 36px;
 			color: rgba(128, 128, 128, 0.2);
 			position: absolute;
 			z-index: 1000;
 			transform: rotate(-30deg);
-    	}
-        pre {
-            background-color: #f8f9fa;
-            border: 1px solid #dee2e6;
-            padding: 15px;
-            border-radius: 5px;
-            overflow-x: auto;
-            font-family: "Courier New", Courier, monospace;
+		}
+		pre {
+			background-color: #f8f9fa;
+			border: 1px solid #dee2e6;
+			padding: 15px;
+			border-radius: 5px;
+			overflow-x: auto;
+			font-family: "Courier New", Courier, monospace;
 			white-space: pre-wrap;
 			word-break: break-word;
-        }
+		}
+		.permissions {
+			width: 350px;
+			white-space: nowrap;
+			overflow-x: auto;
+		}
+		
+		a:visited {
+			color: #ffffff;
+		}
+
     </style>
 
 <body>
@@ -122,6 +133,9 @@ func Windowshtml() string {
                     <th>版本</th>
                     <th>架构</th>
                     <th>安装日期</th>
+					<th>CPU使用率</th>
+					<th>内存使用率</th>
+					<th>当前时间</th>
                 </tr>
             </thead>
             <tbody>
@@ -261,7 +275,7 @@ func Windowshtml() string {
             </tbody>
         </table>
 
-		<h2 id="auditattribute">日志属性</h2>
+		<h2 id="auditattribute">日志属性以及信息</h2>
         <pre><code>日志属性结果
 字段解释：
 name: 标识配置文件的名称
@@ -277,8 +291,9 @@ autoBackup: 是否自动备份日志文件
 maxSize: 日志文件的最大大小（以字节为单位）
 publishing: 包含发布相关设置的信息：
 fileMax: 最大文件数量
+--------------------------------------------------------------------------
+日志信息结果
 		</code></pre>
-
 
         <h2 id="screen">屏幕保护核查</h2>
         <table>
@@ -341,6 +356,9 @@ QuickScanStartTime: 快速扫描的开始时间。
 		<h2 id="network">联网测试</h2>
         <pre><code>联网测试结果</code></pre>
 
+		<h2 id="homelimits">家目录权限</h2>
+        <pre><code>家目录权限结果</code></pre>
+
 		<h2 id="OptionalFeature">系统默认可选功能及其状态</h2>
         <pre><code>安装组件结果</code></pre>
 
@@ -364,6 +382,9 @@ QuickScanStartTime: 快速扫描的开始时间。
 
 		<h2 id="schtasks">定时任务</h2>
         <pre><code>定时任务结果</code></pre>
+
+		<h2 id="bootup">开机启动项</h2>
+        <pre><code>开机启动结果</code></pre>
 
 		<h2 id="patch">已安装补丁信息</h2>
         <pre><code>补丁相关结果</code></pre>
@@ -407,8 +428,10 @@ QuickScanStartTime: 快速扫描的开始时间。
             <li><a href="#Service">Service</a></li>
             <li><a href="#schtasks">定时任务</a></li>
             <li><a href="#patch">安装补丁信息</a></li>
+            <li><a href="#bootup">开机启动项</a></li>
             <li><a href="#driverquery">安装驱动信息</a></li>
             <li><a href="#network">联网测试</a></li>
+            <li><a href="#homelimits">家目录权限</a></li>
             <li><a href="#iptables">防火墙状态</a></li>
             <li><a href="#domainrlue">域防火墙规则</a></li>
             <li><a href="#privaterlue">专网防火墙规则</a></li>
