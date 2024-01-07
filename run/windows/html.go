@@ -129,7 +129,8 @@ func Windowshtml() string {
         <table>
             <thead>
                 <tr>
-                    <th>操作系统名称</th>
+					<th>主机名称</th>
+                    <th>操作系统版本</th>
                     <th>版本</th>
                     <th>架构</th>
                     <th>安装日期</th>

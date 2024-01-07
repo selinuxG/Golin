@@ -9,7 +9,7 @@ import (
 )
 
 func auditd() {
-	auditlist := []Policyone{}
+	var auditlist []Policyone
 	one := Policyone{}
 	for key, value := range auditmap {
 		v, ok := Policy[key] //是否审核系统事件

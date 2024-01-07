@@ -23,7 +23,7 @@ var (
 	Policy   = make(map[string]string) //安全策略map
 	html     = Windowshtml()           //html字符串
 	mu       sync.Mutex                //加锁
-	auditmap = map[string]string{      //审计相关
+	auditmap = map[string]string{ //审计相关
 		"AuditSystemEvents":           "是否审核系统事件",
 		"AuditLogonEvents":            "是否审核登录事件",
 		"AuditObjectAccess":           "是否审核对象访问事件",
@@ -118,8 +118,6 @@ func Windows() {
 		}(v)
 	}
 	wg.Wait()
-
-	//驱动
 
 	//给结果增加颜色并写入文件
 	html = strings.ReplaceAll(html, "<td>是</td>", `<td style="color: rgb(32, 199, 29)">是</td>`)
