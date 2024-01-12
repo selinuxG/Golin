@@ -203,6 +203,7 @@ func Windowshtml() string {
                 <tr>
                     <th>检查项</th>
                     <th>是否关闭</th>
+                    <th>开启端口</th>
                     <th>建议结果</th>
                 </tr>
             </thead>
@@ -210,6 +211,7 @@ func Windowshtml() string {
 				<tr>
 					<td>是否开启远程桌面</td>
 					<td>开启远程桌面结果</td>
+					<td>开启远程桌面端口结果</td>
 					<td>根据业务场景判断是否有必要开启</td>
 				</tr>
             </tbody>
@@ -244,6 +246,20 @@ func Windowshtml() string {
             </thead>
             <tbody>
                 失败锁定结果
+            </tbody>
+        </table>
+
+        <h2 id="ms17010">永恒之蓝漏洞检查</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>检查名称</th>
+                    <th>检查结果</th>
+                </tr>
+            </thead>
+            <tbody>
+					<td>MS17010(永恒之蓝)</td>
+                    <td>永恒之蓝结果</td>
             </tbody>
         </table>
 
@@ -414,6 +430,7 @@ QuickScanStartTime: 快速扫描的开始时间。
             <li><a href="#password-check">密码复杂度</a></li>
             <li><a href="#lockout-check">失败锁定</a></li>
             <li><a href="#mstsc">远程桌面</a></li>
+            <li><a href="#ms17010">永恒之蓝</a></li>
             <li><a href="#auditd">审计策略</a></li>
             <li><a href="#highauditd">高级审计策略</a></li>
             <li><a href="#auditattribute">日志属性</a></li>

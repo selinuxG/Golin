@@ -61,6 +61,14 @@ func IsPortOpen(host, port string) {
 	fmt.Printf(portformatString, printGreen("%v", "✓"), thisINFO.Host, thisINFO.Port, thisINFO.Protocol) //端口存活信息
 	infolist = append(infolist, INFO{host, port, thisINFO.Protocol})
 	outputMux.Unlock()
+	// 永恒之蓝检测
+	if port == "445" {
+		if crack.MS17010Scan(host) {
+			outputMux.Lock()
+			poc.ListPocInfo = append(poc.ListPocInfo, poc.Flagcve{Url: host, Cve: "MSF17010", Flag: "永恒之蓝"})
+			outputMux.Unlock()
+		}
+	}
 
 	if Carck {
 		protocol := strings.ToLower(thisINFO.Protocol)

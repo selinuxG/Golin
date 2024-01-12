@@ -8,8 +8,10 @@ import (
 	"golang.org/x/text/encoding/simplifiedchinese"
 	"golang.org/x/text/transform"
 	"golin/global"
+	"golin/port/crack"
 	"os"
 	"os/exec"
+	"regexp"
 	"strings"
 	"sync"
 	"syscall"
@@ -23,7 +25,7 @@ var (
 	Policy   = make(map[string]string) //安全策略map
 	html     = Windowshtml()           //html字符串
 	mu       sync.Mutex                //加锁
-	auditmap = map[string]string{ //审计相关
+	auditmap = map[string]string{      //审计相关
 		"AuditSystemEvents":           "是否审核系统事件",
 		"AuditLogonEvents":            "是否审核登录事件",
 		"AuditObjectAccess":           "是否审核对象访问事件",
@@ -55,7 +57,6 @@ type Policyone struct {
 }
 
 func Windows() {
-
 	//使用 secedit 工具导出本地安全策略
 	cmd := exec.Command("secedit", "/export", "/cfg", "policy.txt")
 	err := cmd.Run()
@@ -119,16 +120,28 @@ func Windows() {
 	}
 	wg.Wait()
 
+	// 永恒之蓝
+	if crack.MS17010Scan("127.0.0.1") {
+		html = strings.ReplaceAll(html, "永恒之蓝结果", "存在漏洞")
+	} else {
+		html = strings.ReplaceAll(html, "永恒之蓝结果", "不存在漏洞")
+	}
+
 	//给结果增加颜色并写入文件
 	html = strings.ReplaceAll(html, "<td>是</td>", `<td style="color: rgb(32, 199, 29)">是</td>`)
 	html = strings.ReplaceAll(html, "<td>否</td>", `<td style="color: rgb(255, 0, 0)">否</td>`)
 	html = strings.ReplaceAll(html, "生成日期", fmt.Sprintf("%s", time.Now().Format(time.DateTime)))
-	os.Remove("windows.html")
-	os.WriteFile("windows.html", []byte(html), os.FileMode(global.FilePer))
-	if global.PathExists("windows.html") {
-		_ = ExecCommands("start windows.html")
+	name := ExecCommandsPowershll(`ipconfig | findstr /i "IPv4" | findstr /v "\.1$"`)
+	// 查找字符串中的IP地址
+	ipRegEx := `(\b(?:[0-9]{1,3}\.){3}[0-9]{1,3}\b)`
+	re := regexp.MustCompile(ipRegEx)
+	ipAddress := re.FindString(name)
+	name = fmt.Sprintf("%s_windows.html", ipAddress)
+	os.Remove(name)
+	os.WriteFile(name, []byte(html), os.FileMode(global.FilePer))
+	if global.PathExists(name) {
+		_ = ExecCommands(fmt.Sprintf("start %s", name))
 	}
-
 	return
 }
 

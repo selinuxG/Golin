@@ -18,7 +18,7 @@ func iptables() {
 		if domainState == "Enabled" {
 			onePolicyone = Policyone{Name: "核查域网络防火墙状态", Value: "已开启", Static: Yes, Steer: "开启"}
 		} else {
-			onePolicyone = Policyone{Name: "核查域网络防火墙状态", Value: "未开启", Static: No, Steer: "未启"}
+			onePolicyone = Policyone{Name: "核查域网络防火墙状态", Value: "未开启", Static: No, Steer: "开启"}
 		}
 	} else {
 		onePolicyone = Policyone{Name: "核查域网络防火墙状态", Value: "未开启", Static: No, Steer: "开启"}
