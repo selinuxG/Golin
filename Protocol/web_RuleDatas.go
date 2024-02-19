@@ -378,4 +378,5 @@ var RuleDatas = []RuleData{
 	{"泛微-EOffice", "body", "(海泰key验证|泛微软件)"},
 	{"CellinxNVT摄像机", "body", "(NVT-string\\.js)"},
 	{"泛微云桥e-Bridge", "body", "(<title>泛微云桥e-Bridge</title>)"},
+	{"Mongo-express", "body", "(<title>Home - Mongo Express</title>)"},
 }
