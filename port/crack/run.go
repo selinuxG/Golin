@@ -7,6 +7,7 @@ import (
 	"golin/global"
 	"os"
 	"strconv"
+	"strings"
 	"sync"
 	"time"
 )
@@ -55,7 +56,8 @@ func Run(host, port string, Timeout, chanCount int, mode string) {
 
 	for _, user := range Userlist(mode) {
 		for _, passwd := range Passwdlist() {
-			fmt.Printf("\033[2K\r") // 擦除整行
+			passwd = strings.Replace(passwd, "%user%", user, -1) //支持在密码中使用%user%来代替用户名
+			fmt.Printf("\033[2K\r")                              // 擦除整行
 			fmt.Printf("\r%s", color.MagentaString("\r[...] 正在进行弱口令扫描 -> %s", fmt.Sprintf("%s://%s:%s?user=%s?passwd=%s", mode, host, port, user, passwd)))
 
 			ch <- struct{}{}
