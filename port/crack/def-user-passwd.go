@@ -13,16 +13,16 @@ var (
 )
 
 var userMap = map[string][]string{
-	"ssh":        {"root"},
+	"ssh":        {"root", "admin", "oracle"},
 	"mysql":      {"root"},
 	"redis":      {"", "root"},
 	"postgresql": {"postgres", "root"},
-	"sqlserver":  {"sa", "administrator"},
-	"ftp":        {"ftp", "admin"},
-	"smb":        {"administrator", "guest"},
+	"sqlserver":  {"sa", "administrator", "admin"},
+	"ftp":        {"ftp", "admin", "root"},
+	"smb":        {"administrator", "guest", "admin"},
 	"telnet":     {"admin", "root"},
 	"tomcat":     {"tomcat", "manager", "admin"},
-	"rdp":        {"administrator"},
+	"rdp":        {"administrator", "admin"},
 	"oracle":     {"orcl", "sys", "system"},
 }
 
