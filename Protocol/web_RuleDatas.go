@@ -360,7 +360,7 @@ var RuleDatas = []RuleData{
 	{"人力资源信息管理系统", "body", "(<title>人力资源信息管理系统</title>|<div class=\"hj-hy-all-one-logo)"},
 	{"EasyCVR视频管理平台", "body", "<title>EasyCVR</title>"},
 	{"Docker-RemoteAPI", "headers", "(Api-Version|X-Docker-Registry-Version)"},
-	{"北斗主动安全云平台", "body", "url=808gps/login.html"},
+	{"通天星CMS", "body", "url=808gps/login.html"},
 	{"用友-移动系统管理", "headers", "W/\"102-1379069896000\""},
 	{"腾讯-TDSQL", "cookie", "tdsqlchitusessid"},
 	{"腾讯-TDSQL", "body", "<title>TDSQL"},
@@ -379,4 +379,5 @@ var RuleDatas = []RuleData{
 	{"CellinxNVT摄像机", "body", "(NVT-string\\.js)"},
 	{"泛微云桥e-Bridge", "body", "(<title>泛微云桥e-Bridge</title>)"},
 	{"Mongo-express", "body", "(<title>Home - Mongo Express</title>)"},
+	{"福建科立迅通信调度平台", "body", "(app/structure/departments.php)"},
 }

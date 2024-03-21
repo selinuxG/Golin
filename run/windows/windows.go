@@ -8,7 +8,7 @@ import (
 	"golang.org/x/text/encoding/simplifiedchinese"
 	"golang.org/x/text/transform"
 	"golin/global"
-	"golin/port/crack"
+	"golin/scan/crack"
 	"os"
 	"os/exec"
 	"regexp"

@@ -1,10 +1,10 @@
-package port
+package scan
 
 import (
 	"fmt"
 	"github.com/olekukonko/tablewriter"
 	"golin/poc"
-	"golin/port/crack"
+	"golin/scan/crack"
 	"os"
 	"strconv"
 	"strings"

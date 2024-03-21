@@ -1,4 +1,4 @@
-package port
+package scan
 
 import (
 	"encoding/base64"

@@ -135,7 +135,7 @@ func executeRequest(URL string, config Config, wg *sync.WaitGroup) {
 		}
 
 		if config.Expression.Time > 0 {
-			if elapsedtime < config.Expression.Time { //实际请求如果小于规定的时间则不存在延迟注入
+			if elapsedtime > config.Expression.Time { //实际请求如果小于规定的时间则不存在延迟注入
 				continue
 			}
 		}

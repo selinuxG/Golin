@@ -291,6 +291,10 @@ func runCmd(cmd string, Client *ssh.Client) string {
 		return ""
 	}
 	defer newClient.Close()
+	if sudorun {
+		cmd = "sudo " + cmd
+		fmt.Println(cmd)
+	}
 	combo, err := newClient.CombinedOutput(cmd)
 	if err != nil {
 		return ""

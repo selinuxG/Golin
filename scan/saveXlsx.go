@@ -1,14 +1,20 @@
-package port
+package scan
 
 import (
 	"errors"
 	"fmt"
 	"github.com/xuri/excelize/v2"
 	"golin/poc"
-	"golin/port/crack"
+	"golin/scan/crack"
+	"os"
+	"path/filepath"
 	"regexp"
 	"strconv"
 	"time"
+)
+
+var (
+	dir = "ScanLog" //扫描结果保存目录
 )
 
 func saveXlsx(infoList []INFO, ipList []string) {
@@ -25,7 +31,16 @@ func saveXlsx(infoList []INFO, ipList []string) {
 	_ = createPoc(f, "漏洞资产")
 	_ = createCrack(f, "弱口令资产")
 
-	filename := time.Now().Format("20060102") + "-GoLin.xlsx"
+	if _, err := os.Stat(dir); os.IsNotExist(err) {
+		err = os.MkdirAll(dir, 0755)
+		if err != nil {
+			fmt.Println("[-] 创建ScanLog目录失败!")
+			return
+		}
+	}
+
+	filename := time.Now().Format("200601021504") + "-GoLin.xlsx"
+	filename = filepath.Join("ScanLog", filename)
 	if err := f.SaveAs(filename); err != nil {
 		fmt.Printf("[-] 保存文件失败！1、文件是否已打开？ 2、是否有权限\n")
 		fmt.Println(err)

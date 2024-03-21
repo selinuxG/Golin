@@ -1,4 +1,4 @@
-package port
+package scan
 
 import (
 	"crypto/tls"
@@ -6,7 +6,7 @@ import (
 	"github.com/fatih/color"
 	"golin/global"
 	"golin/poc"
-	"golin/port/crack"
+	"golin/scan/crack"
 	"net"
 	"strings"
 	"sync/atomic"

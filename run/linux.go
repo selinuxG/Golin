@@ -9,9 +9,19 @@ import (
 	"strings"
 )
 
-var echorun bool
+var (
+	echorun bool
+	sudorun bool
+)
 
 func Linux(cmd *cobra.Command, args []string) {
+	//是否sudo权限执行
+	sudo, err := cmd.Flags().GetBool("sudo")
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	sudorun = sudo
 
 	//确认结果是否输出
 	echotype, err := cmd.Flags().GetBool("echo")

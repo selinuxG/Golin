@@ -1,10 +1,10 @@
-package port
+package scan
 
 import (
 	"fmt"
 	"github.com/spf13/cobra"
 	"golin/global"
-	"golin/port/crack"
+	"golin/scan/crack"
 	"os"
 	"sync"
 )
@@ -86,8 +86,8 @@ func ParseFlags(cmd *cobra.Command, args []string) {
 
 	random, _ = cmd.Flags().GetBool("random") //打乱顺序
 
-	imgsave, _ := cmd.Flags().GetBool("noimg") //保存网页截图
-	global.SaveIMG = !imgsave
+	imgsave, _ := cmd.Flags().GetBool("img") //保存网页截图
+	global.SaveIMG = imgsave
 
 	userfile, _ = cmd.Flags().GetString("userfile")
 	passwdfile, _ = cmd.Flags().GetString("passwdfile")
