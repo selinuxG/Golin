@@ -230,7 +230,7 @@ func Runssh(sshname string, sshHost string, sshUser string, sshPasswrod string, 
 
 	//读取地址限制
 	data.HostAllow = runCmd(` cat /etc/hosts.allow |grep -v "^#" |grep -v "^$"`, sshClient)
-	data.HostDeny = runCmd(` cat /etc/hosts.Deny |grep -v "^#" |grep -v "^$"`, sshClient)
+	data.HostDeny = runCmd(` cat /etc/hosts.deny |grep -v "^#" |grep -v "^$"`, sshClient)
 
 	//中文文件权限
 	var FileList = []string{"/etc/passwd", "/etc/shadow", "/etc/group", "/etc/rsyslog.conf", "/etc/sudoers", "/etc/hosts.allow", "/etc/hosts.deny", "/etc/ssh/sshd_config", "/etc/pam.d/sshd", "/etc/pam.d/passwd", "/var/log/messages", "/var/log/audit/audit.log", "/etc/security/pwquality.conf", "/usr/lib64/security/pam_pwquality.so", "/etc/resolv.conf", "/etc/fstab", "/etc/sysctl.conf", "/etc/selinux/config", "/etc/sysctl.conf", "/etc/audit/auditd.conf"}
