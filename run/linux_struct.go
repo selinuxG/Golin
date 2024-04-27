@@ -42,6 +42,7 @@ type Data struct {
 	AuditCtl      string          //审计日志规则
 	HomeLimits    string          //家目录权限检查
 	LastLog       string          //上次登录信息
+	XZ            bool            //xz-5.6.0 以及xz-5.6.1 存在CVE-2024-3094后门漏洞
 }
 
 type SystemInfo struct {

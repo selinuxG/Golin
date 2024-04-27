@@ -131,6 +131,16 @@ func Runssh(sshname string, sshHost string, sshUser string, sshPasswrod string, 
 		FireWalld:     make([]FireListWalld, 0),
 	}
 
+	data.XZ = func() bool {
+		if strings.Contains(data.RpmInstall, "xz-5.6.0") {
+			return true
+		}
+		if strings.Contains(data.RpmInstall, "xz-5.6.1") {
+			return true
+		}
+		return false
+	}()
+
 	// 通过/etc/passwd 以及结合chage命令获取用户基本信息
 	for _, v := range strings.Split(runCmd("cat /etc/passwd", sshClient), "\n") {
 		userinfo := strings.Split(v, ":")

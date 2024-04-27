@@ -234,6 +234,30 @@
         </tbody>
     </table>
 
+    <h2 id="xz">xz后门检测(CVE-2024-3094)</h2>
+    <table>
+        <thead>
+        <tr>
+            <th>是否存在漏洞</th>
+            <th>影响版本</th>
+            <th>漏洞说明</th>
+            <th>修复建议</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+            {{if .XZ}}
+            <td style="color: rgb(255, 0, 0)">是</td>
+            {{else}}
+            <td style="color: rgb(32, 199, 29)">否</td>
+            {{end}}
+            <td>5.6.0、5.6.1</td>
+            <td>攻击者可利用此漏洞在受影响的系统上绕过SSH的认证获得未授权的访问权限，从而执行任意代码。</td>
+            <td>目前 GitHub 已关停整个 xz 项目，官方尚无最新版本，需对软件版本进行降级5.4.X，请关注官方新版本发布并及时更新。</td>
+        </tr>
+        </tbody>
+    </table>
+
     <h2 id="FilePer">重要文件信息</h2>
     <table>
         <thead>
@@ -367,6 +391,7 @@
         <li><a href="#pwquality">密码复杂度策略</a></li>
         <li><a href="#sshd">sshd安全配置</a></li>
         <li><a href="#port">端口开放状态</a></li>
+        <li><a href="#xz">xz后门检测</a></li>
         <li><a href="#FilePer">重要文件信息</a></li>
         <li><a href="#home">用户目录权限</a></li>
         <li><a href="#iptables">防火墙/selinux状态</a></li>
