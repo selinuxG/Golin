@@ -392,7 +392,22 @@ QuickScanStartTime: 快速扫描的开始时间。
         <pre><code>进程列表结果</code></pre>
 
         <h2 id="port">开放端口</h2>
-        <pre><code>端口相关结果</code></pre>
+        <table>
+            <thead>
+                <tr>
+                    <th>协议</th>
+                    <th>状态</th>
+                    <th>监听地址</th>
+                    <th>监听端口</th>
+                    <th>PID</th>
+                    <th>程序位置</th>
+                </tr>
+            </thead>
+            <tbody>
+                端口相关结果
+            </tbody>
+        </table>
+
 
 		<h2 id="Service">Service</h2>
         <pre><code>Service结果</code></pre>

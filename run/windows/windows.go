@@ -88,7 +88,6 @@ func Windows() {
 	runserver := []func(){mstsc, osinfo, iptables, usercheck, checkpasswd, lock, auditd, screen, patch, iptables, disk}
 	wg.Add(len(runserver))
 	commands := []replaceCommand{
-		{"端口相关结果", "netstat -ano", false},
 		{"进程列表结果", `tasklist | sort`, false},
 		{"定时任务结果", `schtasks /query /fo LIST`, false},
 		{"安装组件结果", `Dism /online /Get-Features /format:table`, true},
@@ -126,6 +125,8 @@ func Windows() {
 	} else {
 		html = strings.ReplaceAll(html, "永恒之蓝结果", "不存在漏洞")
 	}
+	//开放端口
+	html = strings.ReplaceAll(html, "端口相关结果", netstat())
 
 	//给结果增加颜色并写入文件
 	html = strings.ReplaceAll(html, "<td>是</td>", `<td style="color: rgb(32, 199, 29)">是</td>`)
