@@ -396,8 +396,8 @@ QuickScanStartTime: 快速扫描的开始时间。
             <thead>
                 <tr>
                     <th>协议</th>
-                    <th>状态</th>
                     <th>监听地址</th>
+                    <th>监听状态</th>
                     <th>监听端口</th>
                     <th>PID</th>
                     <th>程序位置</th>
