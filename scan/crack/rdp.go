@@ -1,4 +1,4 @@
-//go:build windows || darwin
+//go:build rdp
 
 package crack
 

@@ -391,12 +391,13 @@ QuickScanStartTime: 快速扫描的开始时间。
 		<h2 id="tasklist">进程列表</h2>
         <pre><code>进程列表结果</code></pre>
 
-        <h2 id="port">开放端口</h2>
+        <h2 id="port">监听端口信息</h2>
         <table>
             <thead>
                 <tr>
                     <th>协议</th>
-                    <th>监听地址</th>
+                    <th>本地地址</th>
+                    <th>对端地址</th>
                     <th>监听状态</th>
                     <th>监听端口</th>
                     <th>PID</th>
@@ -450,7 +451,7 @@ QuickScanStartTime: 快速扫描的开始时间。
             <li><a href="#highauditd">高级审计策略</a></li>
             <li><a href="#auditattribute">日志属性</a></li>
             <li><a href="#screen">屏幕保护</a></li>
-            <li><a href="#port">开放端口</a></li>
+            <li><a href="#port">监听端口信息</a></li>
             <li><a href="#computer">防病毒</a></li>
             <li><a href="#netshare">共享资源</a></li>
             <li><a href="#systeminfo">系统信息</a></li>
