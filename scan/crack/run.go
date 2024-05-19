@@ -77,6 +77,7 @@ func end(host, user, passwd string, port int, mode string) {
 	defer global.PrintLock.Unlock()
 	//ListCrackHost = append(ListCrackHost, SussCrack{host, user, passwd, port, mode})
 	MapCrackHost[HostPort{Host: host, Port: port}] = SussCrack{host, user, passwd, port, mode}
+	global.LogToFile(global.LevelInfo, fmt.Sprintf("%s:%d(%s) %s %s", host, port, mode, user, passwd))
 
 }
 

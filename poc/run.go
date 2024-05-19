@@ -179,4 +179,6 @@ func echoFlag(flag Flagcve) {
 	global.PrintLock.Lock()
 	defer global.PrintLock.Unlock()
 	ListPocInfo = append(ListPocInfo, Flagcve{flag.Url, flag.Cve, flag.Flag})
+	global.LogToFile(global.LevelInfo, fmt.Sprintf("%s 漏洞名称: %s 漏洞描述: %s", flag.Url, flag.Cve, flag.Flag))
+
 }
