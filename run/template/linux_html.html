@@ -169,6 +169,7 @@
             <th>最小类别数量</th>
             <th>重复字符最大位数</th>
             <th>连续重复字符位数</th>
+            <th>建议配置</th>
         </tr>
         </thead>
         <tbody>
@@ -181,6 +182,13 @@
             <td>{{.Quality.Minclass}}</td>
             <td>{{.Quality.Maxrepeat}}</td>
             <td>{{.Quality.Maxsequence}}</td>
+            <td>
+                在/etc/security/pwquality.conf配置文件中:<br />
+                minlen = 8<br />
+                minclass = 4<br />
+                maxrepeat = 2<br />
+                maxsequence =2
+            </td>
         </tr>
         </tbody>
     </table>
@@ -195,6 +203,7 @@
             <th>是否允许密钥免密登录</th>
             <th>版本协议</th>
             <th>关闭连接之前允许的最大身份验证尝试次数</th>
+            <th>建议配置</th>
         </tr>
         </thead>
         <tbody>
@@ -206,6 +215,15 @@
             <td>{{.PubkeyAuthentication}}</td>
             <td>{{.Protocol}}</td>
             <td>{{.MaxAuthTries}}</td>
+            <td>
+                在/etc/ssh/sshd_config配置文件中:<br />
+                PermitRootLogin no<br />
+                PasswordAuthentication yes<br />
+                PermitEmptyPasswords no<br />
+                PubkeyAuthentication yes<br />
+                Protocol 2<br />
+                MaxAuthTries 3
+            </td>
         </tr>
         {{end}}
         </tbody>

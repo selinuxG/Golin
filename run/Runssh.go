@@ -297,13 +297,11 @@ func Runssh(sshname string, sshHost string, sshUser string, sshPasswrod string, 
 func runCmd(cmd string, Client *ssh.Client) string {
 	newClient, err := Client.NewSession()
 	if err != nil {
-		fmt.Println(err)
 		return ""
 	}
 	defer newClient.Close()
 	if sudorun {
 		cmd = "sudo " + cmd
-		fmt.Println(cmd)
 	}
 	combo, err := newClient.CombinedOutput(cmd)
 	if err != nil {
