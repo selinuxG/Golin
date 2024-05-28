@@ -4,6 +4,7 @@ go 1.20
 
 require (
 	github.com/PuerkitoBio/goquery v1.8.1
+	github.com/atotto/clipboard v0.1.4
 	github.com/chromedp/cdproto v0.0.0-20231011050154-1d073bb38998
 	github.com/chromedp/chromedp v0.9.3
 	github.com/fatih/color v1.15.0
@@ -14,6 +15,7 @@ require (
 	github.com/olekukonko/tablewriter v0.0.5
 	github.com/parnurzeal/gorequest v0.2.16
 	github.com/shirou/gopsutil/v3 v3.24.3
+	github.com/shirou/w32 v0.0.0-20160930032740-bb4de0191aa4
 	github.com/sijms/go-ora/v2 v2.7.6
 	github.com/spf13/cobra v1.6.1
 	github.com/stacktitan/smb v0.0.0-20190531122847-da9a425dceb8
