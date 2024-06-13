@@ -50,6 +50,7 @@ func parsePort(port string) {
 var (
 	default_port = []string{
 		"22",  // SSH
+		"66",  //HFS
 		"80",  // HTTP
 		"81",  // HTTP
 		"82",  // HTTP

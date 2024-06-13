@@ -380,4 +380,5 @@ var RuleDatas = []RuleData{
 	{"泛微云桥e-Bridge", "body", "(<title>泛微云桥e-Bridge</title>)"},
 	{"Mongo-express", "body", "(<title>Home - Mongo Express</title>)"},
 	{"福建科立迅通信调度平台", "body", "(app/structure/departments.php)"},
+	{"HFS", "cookie", "HFS_SID_"},
 }
