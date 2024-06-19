@@ -381,4 +381,5 @@ var RuleDatas = []RuleData{
 	{"Mongo-express", "body", "(<title>Home - Mongo Express</title>)"},
 	{"福建科立迅通信调度平台", "body", "(app/structure/departments.php)"},
 	{"HFS", "cookie", "HFS_SID_"},
+	{"Serv-U", "headers", "(Serv-U)"},
 }
