@@ -141,6 +141,8 @@ func Runssh(sshname string, sshHost string, sshUser string, sshPasswrod string, 
 		return false
 	}()
 
+	data.CVE20246387 = CVE_2024_6387(sshClient)
+
 	// 通过/etc/passwd 以及结合chage命令获取用户基本信息
 	for _, v := range strings.Split(runCmd("cat /etc/passwd", sshClient), "\n") {
 		userinfo := strings.Split(v, ":")
@@ -308,4 +310,50 @@ func runCmd(cmd string, Client *ssh.Client) string {
 		return ""
 	}
 	return string(combo)
+}
+
+// CVE_2024_6387  OpenSSH远程代码执行漏洞
+func CVE_2024_6387(s *ssh.Client) bool {
+	sshVersion := runCmd("ssh -V", s)
+	re := regexp.MustCompile(`OpenSSH_([0-9\.]+[a-zA-Z]?[0-9]*)`)
+	matches := re.FindStringSubmatch(sshVersion)
+	if len(matches) < 2 {
+		return false
+	}
+
+	version := matches[1]
+	// Define version bounds
+	lowVersion := "8.5p1"
+	highVersion := "9.8p1"
+
+	// Compare versions
+	if compareVersions(version, lowVersion) >= 0 && compareVersions(version, highVersion) <= 0 {
+		return true
+	}
+	return false
+}
+
+// compareVersions compares two OpenSSH versions.
+// It returns 0 if v1 == v2, -1 if v1 < v2, and 1 if v1 > v2.
+func compareVersions(v1, v2 string) int {
+	v1Parts := strings.Split(v1, "p")
+	v2Parts := strings.Split(v2, "p")
+
+	// Compare the main version parts
+	for i := 0; i < len(v1Parts) && i < len(v2Parts); i++ {
+		if v1Parts[i] < v2Parts[i] {
+			return -1
+		} else if v1Parts[i] > v2Parts[i] {
+			return 1
+		}
+	}
+
+	// If all parts are equal but one version has more parts, it is considered greater
+	if len(v1Parts) < len(v2Parts) {
+		return -1
+	} else if len(v1Parts) > len(v2Parts) {
+		return 1
+	}
+
+	return 0
 }

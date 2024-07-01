@@ -276,6 +276,30 @@
         </tbody>
     </table>
 
+    <h2 id="CVE-2024-6387">OpenSSH远程代码执行漏洞(CVE-2024-6387)</h2>
+    <table>
+        <thead>
+        <tr>
+            <th>是否存在漏洞</th>
+            <th>影响版本</th>
+            <th>漏洞说明</th>
+            <th>修复建议</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+            {{if .CVE20246387}}
+            <td style="color: rgb(255, 0, 0)">是</td>
+            {{else}}
+            <td style="color: rgb(32, 199, 29)">否</td>
+            {{end}}
+            <td>8.5p1 <= OpenSSH < 9.8p1</td>
+            <td>默认配置下的OpenSSH Server (sshd)中存在信号处理程序竞争条件漏洞，如果客户端未在LoginGraceTime 秒内（默认情况下为 120 秒，旧版 OpenSSH 中为 600 秒）进行身份验证，则 sshd 的 SIGALRM 处理程序将被异步调用，但该信号处理程序会调用各种非async-signal-safe的函数（例如syslog()），威胁者可利用该漏洞在基于 glibc 的 Linux 系统上以root 身份实现未经身份验证的远程代码执行。</td>
+            <td>目前官方已有可更新版本，建议受影响用户升级至最新版本： OpenSSH > 9.8p1 官方补丁下载地址： https://www.openssh.com/releasenotes.html</td>
+        </tr>
+        </tbody>
+    </table>
+
     <h2 id="FilePer">重要文件信息</h2>
     <table>
         <thead>
@@ -409,7 +433,8 @@
         <li><a href="#pwquality">密码复杂度策略</a></li>
         <li><a href="#sshd">sshd安全配置</a></li>
         <li><a href="#port">端口开放状态</a></li>
-        <li><a href="#xz">xz后门检测</a></li>
+        <li><a href="#xz">CVE-2024-3094</a></li>
+        <li><a href="#CVE-2024-6387">CVE-2024-6387</a></li>
         <li><a href="#FilePer">重要文件信息</a></li>
         <li><a href="#home">用户目录权限</a></li>
         <li><a href="#iptables">防火墙/selinux状态</a></li>

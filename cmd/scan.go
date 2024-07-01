@@ -23,7 +23,7 @@ func init() {
 	ScanCmd.Flags().IntP("chan", "c", 100, "并发数量")
 	ScanCmd.Flags().IntP("time", "t", 5, "超时等待时常/s")
 	ScanCmd.Flags().Bool("random", false, "打乱主机顺序")
-	ScanCmd.Flags().Bool("img", false, "此参数是不进行保存WEB截图")
+	ScanCmd.Flags().Bool("img", false, "此参数进行保存WEB截图")
 	ScanCmd.Flags().Bool("nocrack", false, "此参数是不进行弱口令扫描")
 	ScanCmd.Flags().Bool("nopoc", false, "此参数是不进行poc漏洞扫描")
 	ScanCmd.Flags().StringP("userfile", "", "", "此参数是自定义用户字典文件")
