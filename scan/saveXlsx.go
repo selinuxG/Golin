@@ -10,6 +10,7 @@ import (
 	"path/filepath"
 	"regexp"
 	"strconv"
+	"strings"
 	"time"
 )
 
@@ -86,11 +87,11 @@ func createIpSheet(f *excelize.File, sheet string, ipList []string) error {
 	}
 
 	setColWidths(f, sheet)
-	setHeaderValues(f, sheet, []string{"序号", "主机"})
+	setHeaderValues(f, sheet, []string{"序号", "主机", "资产标签"})
 
 	for i, ip := range ipList {
 		cell := i + 2
-		setCellValues(f, sheet, cell, []interface{}{i + 1, ip})
+		setCellValues(f, sheet, cell, []interface{}{i + 1, ip, TagAsset(ip)})
 	}
 
 	return nil
@@ -169,4 +170,65 @@ func setCellValues(f *excelize.File, sheet string, cell int, values []interface{
 func cleanProtocol(protocol string) string {
 	re := regexp.MustCompile(`\x1b\[[0-9;]*m`)
 	return re.ReplaceAllString(protocol, "")
+}
+
+// TagAsset 资产打标签
+func TagAsset(ip string) string {
+	// 将服务类型映射到端口号切片
+	servicePorts := map[string][]int{
+		"WEB服务器":  {80, 443, 8080},
+		"数据库服务器":  {3306, 1433, 5432, 1521, 5236},
+		"缓存服务器":   {6379, 27017},
+		"FTP服务器":  {21},
+		"VPN服务器":  {1194, 1723},
+		"监控服务器":   {9090, 3000}, // Prometheus (9090), Grafana (3000)
+		"消息队列服务器": {5672, 9092}, // RabbitMQ (5672), Kafka (9092)
+		"搜索引擎服务器": {8983, 9200}, // Solr (8983), Elasticsearch (9200)
+		"版本控制服务器": {9418, 3690}, // Git (9418), Subversion (3690)
+	}
+
+	// 使用map来去重和存储标签
+	var tagList = make(map[string]bool)
+
+	listenPorts := GetPortsByHost(infolist, ip)
+	// 遍历监听的端口
+	for _, portInfo := range listenPorts {
+		port, err := strconv.Atoi(portInfo)
+		if err != nil {
+			continue // 如果端口号不是有效的整数，跳过
+		}
+
+		// 检查端口属于哪个服务类型
+		for service, ports := range servicePorts {
+			for _, servicePort := range ports {
+				if port == servicePort {
+					tagList[service] = true
+					break
+				}
+			}
+		}
+	}
+
+	// 如果没有任何标签，也标记为应用服务器
+	if len(tagList) == 0 {
+		return ""
+	}
+	var tagListSlice []string
+	for tag := range tagList {
+		tagListSlice = append(tagListSlice, tag)
+	}
+
+	// 使用逗号分隔标签，创建一个单一字符串
+	return strings.Join(tagListSlice, ",")
+}
+
+// GetPortsByHost 根据主机返回所有匹配的端口
+func GetPortsByHost(infolist []INFO, host string) []string {
+	var ports []string
+	for _, info := range infolist {
+		if info.Host == host {
+			ports = append(ports, info.Port)
+		}
+	}
+	return ports
 }

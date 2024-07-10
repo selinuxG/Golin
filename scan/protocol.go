@@ -73,6 +73,7 @@ func defaultPort(port string) string {
 		"21":    "FTP",
 		"80":    "WEB应用",
 		"443":   "WEB应用",
+		"5236":  "数据库|达梦",
 		"61616": "ActiveMQ",
 	}
 	value, exists := defMap[port]

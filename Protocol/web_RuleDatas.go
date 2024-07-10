@@ -383,4 +383,6 @@ var RuleDatas = []RuleData{
 	{"HFS", "cookie", "HFS_SID_"},
 	{"Serv-U", "headers", "(Serv-U)"},
 	{"NexusManager", "body", "(Sonatype Nexus Repository)"},
+	{"clickhouse-client", "body", "(clickhouse-client)"},
+	{"clickhouse", "body", "Ok."},
 }
