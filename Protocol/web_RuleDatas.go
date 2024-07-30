@@ -385,4 +385,6 @@ var RuleDatas = []RuleData{
 	{"NexusManager", "body", "(Sonatype Nexus Repository)"},
 	{"clickhouse-client", "body", "(clickhouse-client)"},
 	{"clickhouse", "body", "Ok."},
+	{"天问物业ERP系统", "body", "/HM/M_main/Frame/login.aspx"},
+	{"天清汉马VPN", "body", `<p id="notice_content">欢迎使用VPN安全网关</p>`},
 }

