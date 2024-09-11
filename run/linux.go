@@ -86,7 +86,7 @@ func Linux(cmd *cobra.Command, args []string) {
 		return
 	}
 	if localhosttype {
-		LocalrunLinux(echorun, runcmd)
+		LocalrunLinux()
 		return
 	}
 

@@ -1,49 +1,53 @@
 package run
 
-import "html/template"
+import (
+	"html/template"
+)
 
 type Data struct {
-	CSS           template.CSS    //CSS样式
-	Name          string          //资产名
-	Info          ServerInfo      //服务器基本信息
-	SystemState   SystemInfo      //系统状态信息
-	User          []LinUser       //现有用户信息
-	Group         []LinGroup      //现有组信息
-	CreateUser    []Logindefs     //新创建用户时信息
-	Quality       Pwquality       ///etc/security/pwquality.conf安全配置
-	Port          []PortList      //开放端口信息
-	ConfigSSH     []SSH           //sshd_config安全配置信息
-	HostAllow     string          ///etc/hosts.allow
-	HostDeny      string          ///etc/hosts.Deny
-	FilePer       []FileListPer   //重要文件权限
-	FireWalld     []FireListWalld //防火墙/selinux
-	IptablesInfo  string          //防护墙策略
-	Address       string          //网卡信息
-	Disk          string          //磁盘信息
-	Dns           string          /////etc/resolv.conf文件信息
-	PamSSH        string          ///etc/pam.d/sshd文件信息
-	SSHAuthorized string          ///root/.ssh/authorized_keys文件信息
-	PamSystem     string          ///etc/pam.d/system-auth文件信息
-	PamPasswd     string          ///etc/pam.d/passwd文件信息
-	PwqualityConf string          ///etc/security/pwquality.conf文件信息
-	PS            string          //ps aux命令结果
-	Sudoers       string          //etc/sudoers文件结果
-	Rsyslog       string          //etc/rsyslog.conf文件结果
-	CronTab       string          //定时任务
-	Share         string          //文件共享
-	Env           string          //环境变量
-	RpmInstall    string          //rpm安装包
-	Version       string          //版本信息
-	Docker        string          //docker ps -a
-	ListUnit      string          //开机启动项
-	HeadLog       string          //前十行日志
-	TailLog       string          //后十行日志
-	Logrotate     string          //日志切割配置
-	AuditCtl      string          //审计日志规则
-	HomeLimits    string          //家目录权限检查
-	LastLog       string          //上次登录信息
-	XZ            bool            //xz-5.6.0 以及xz-5.6.1 存在CVE-2024-3094后门漏洞
-	CVE20246387   bool            //8.5p1 <= OpenSSH < 9.8p1
+	CSS              template.CSS    //CSS样式
+	Name             string          //资产名
+	Info             ServerInfo      //服务器基本信息
+	SystemState      SystemInfo      //系统状态信息
+	User             []LinUser       //现有用户信息
+	Group            []LinGroup      //现有组信息
+	CreateUser       []Logindefs     //新创建用户时信息
+	Quality          Pwquality       ///etc/security/pwquality.conf安全配置
+	Port             []PortList      //开放端口信息
+	ConfigSSH        []SSH           //sshd_config安全配置信息
+	HostAllow        string          ///etc/hosts.allow
+	HostDeny         string          ///etc/hosts.Deny
+	FilePer          []FileListPer   //重要文件权限
+	FireWalld        []FireListWalld //防火墙/selinux
+	IptablesInfo     string          //防护墙策略
+	Address          string          //网卡信息
+	Disk             string          //磁盘信息
+	Dns              string          /////etc/resolv.conf文件信息
+	PamSSH           string          ///etc/pam.d/sshd文件信息
+	SSHAuthorized    string          ///root/.ssh/authorized_keys文件信息
+	PamSystem        string          ///etc/pam.d/system-auth文件信息
+	PamPasswd        string          ///etc/pam.d/passwd文件信息
+	PwqualityConf    string          ///etc/security/pwquality.conf文件信息
+	PS               string          //ps aux命令结果
+	Sudoers          string          //etc/sudoers文件结果
+	Rsyslog          string          //etc/rsyslog.conf文件结果
+	CronTab          string          //定时任务
+	Share            string          //文件共享
+	Env              string          //环境变量
+	RpmInstall       string          //rpm安装包
+	Version          string          //版本信息
+	ListUnit         string          //开机启动项
+	HeadLog          string          //前十行日志
+	TailLog          string          //后十行日志
+	Logrotate        string          //日志切割配置
+	AuditCtl         string          //审计日志规则
+	HomeLimits       string          //家目录权限检查
+	LastLog          string          //上次登录信息
+	AuditD           AuditLog        //Audit日志信息
+	XZ               bool            //xz-5.6.0 以及xz-5.6.1 存在CVE-2024-
+	CVE20246387      bool            //8.5p1 <= OpenSSH < 9.8p1
+	DockerServerList []DockerServer  //docker服务
+	Docker           string
 }
 
 type SystemInfo struct {
@@ -147,4 +151,19 @@ func SSHConfig() SSH {
 		MaxAuthTries:           "6",
 		PubkeyAuthentication:   true,
 	}
+}
+
+type AuditLog struct {
+	Write   string //是否写入
+	Logfile string //写入路径
+	MaxSize string //每个文件最大大小
+	NumLOG  string //最大存储几个文件
+}
+
+type DockerServer struct {
+	Id     string
+	Image  string
+	Name   string
+	Status string
+	Run    bool
 }
