@@ -392,4 +392,5 @@ var RuleDatas = []RuleData{
 	{"天问物业ERP系统", "body", "/HM/M_main/Frame/login.aspx"},
 	{"神州数码DCME-320出口网关", "body", `style/blue/css/dcn_ui.css`},
 	{"Crocus系统", "body", `Plugin/RegisterLogin/Default.jsp`},
+	{"emlog博客", "body", `使用emlog搭建的站点`},
 }

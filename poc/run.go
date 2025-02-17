@@ -49,10 +49,14 @@ func CheckPoc(url, app string) {
 			go executeRequest(url, poc, &wg)
 		}
 	}
-
-	// 这是特定的poc漏洞
+	// CVE_2022_22947 远程命令执行
 	if strings.Contains(app, "spring") {
 		CVE_2022_22947(url, "pwd")
+	}
+
+	// 用户弱口令
+	if strings.Contains(app, "emlog") {
+		emlogDefaultPasswd(url)
 	}
 
 	// 这是未授权的漏洞
