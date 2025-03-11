@@ -143,8 +143,9 @@ golin scan -i 192.168.1.1/24 --noimg(不进行网站截图)
 golin scan -i 192.168.1.1/24 --nopoc(扫描c段端口但禁用扫描漏洞)
 golin dirsearch -u https://tegitst.com -f 字典.txt --code 200,404 (扫描状态码为200以及404的web目录)
 golin [linux、mysql、oracle、sqlserver、redis、windows...] (按照3级等保要求核查各项安全配置生成html形式报告)
-golin update (检查是否可更新)
 golin keylogger (键盘记录器,仅windows可用,保存到用户目录下Golin/dump.txt)
+golin users (输出用户信息,当前仅限windows,主要用于应急时获取影子用户)
+golin update (检查是否可更新)
 ```
 
 # Star Chart
