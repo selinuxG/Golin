@@ -47,12 +47,12 @@ func Runssh(sshname string, sshHost string, sshUser string, sshPasswrod string, 
 	}
 
 	firepath := filepath.Join(succpath, "Linux")
-
+	session.Setenv("PATH", "/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin")
 	// 自定义命令存在则只执行自定义文件
 	if runcmd != "" {
 		combo, err := session.CombinedOutput(cmd)
 		if err != nil {
-			return fmt.Errorf("%s:执行自定义命令失败->%s。", sshHost, cmd)
+			return fmt.Errorf("%s:执行命令失败->%s。错误详情: %v", sshHost, cmd, err)
 		}
 
 		//判断是否进行输出命令结果

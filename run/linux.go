@@ -6,6 +6,7 @@ import (
 	"go.uber.org/zap"
 	"golin/global"
 	"os"
+	"path"
 	"strings"
 )
 
@@ -15,6 +16,7 @@ var (
 )
 
 func Linux(cmd *cobra.Command, args []string) {
+	_ = global.MkdirAll(path.Join("采集完成目录", "Linux"))
 	//是否sudo权限执行
 	sudo, err := cmd.Flags().GetBool("sudo")
 	if err != nil {

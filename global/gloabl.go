@@ -91,3 +91,10 @@ func RemoveDuplicates(slice []string) []string {
 	}
 	return list
 }
+
+func MkdirAll(path string) bool {
+	if err := os.MkdirAll(path, 0750); err != nil {
+		return false
+	}
+	return true
+}
