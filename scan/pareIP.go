@@ -48,7 +48,7 @@ func parseIP(ip string) {
 			p = matchCIDR
 		} else {
 			matchIP := reIP.FindString(p)
-			if matchIP != "" {
+			if matchIP != "" && !strings.Contains(p, "-") {
 				p = matchIP
 			} else {
 				if index != -1 {
