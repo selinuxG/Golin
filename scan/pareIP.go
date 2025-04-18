@@ -153,8 +153,8 @@ func parseFileIP(path string) {
 }
 
 // parseFoFa 读取fofa数据
-func parseFoFa(cmd string) error {
-	fofaEmail, fofaKey, fofaSize := os.Getenv("fofa_email"), os.Getenv("fofa_key"), os.Getenv("fofa_size")
+func parseFoFa(cmd, size string) error {
+	fofaEmail, fofaKey, fofaSize := os.Getenv("fofa_email"), os.Getenv("fofa_key"), size
 	if fofaEmail == "" || fofaKey == "" {
 		return errors.New("环境变量为空")
 	}

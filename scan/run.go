@@ -20,6 +20,7 @@ var (
 	wg         = sync.WaitGroup{}
 	chancount  int    //并发数量
 	Timeout    int    //超时等待时常
+	Donetime   int    //端口扫描最大用时
 	random     bool   //打乱顺序
 	infolist   []INFO //成功的主机列表
 	allcount   uint32 //IP*PORT的总数量
@@ -40,9 +41,13 @@ func ParseFlags(cmd *cobra.Command, args []string) {
 	ipFile, _ := cmd.Flags().GetString("ipfile") //读取文件
 	parseFileIP(ipFile)
 
-	fofa, _ := cmd.Flags().GetString("fofa") //读取fofa数据
+	fofa, _ := cmd.Flags().GetString("fofa")  //读取fofa数据
+	size, _ := cmd.Flags().GetInt("fofasize") //数据条数
+	if size == 0 {
+		size = 100
+	}
 	if fofa != "" {
-		err := parseFoFa(fofa)
+		err := parseFoFa(fofa, fmt.Sprintf("%d", size))
 		if err != nil {
 			fmt.Println(err)
 			os.Exit(0)
@@ -93,6 +98,8 @@ func ParseFlags(cmd *cobra.Command, args []string) {
 	passwdfile, _ = cmd.Flags().GetString("passwdfile")
 	crack.Checkdistfile(userfile, passwdfile) //先读取是否有自定义的字典文件
 
-	scanPort()
+	done, _ := cmd.Flags().GetInt("done") //超时等待时常
+	Donetime = done
+	scanPort(done)
 
 }

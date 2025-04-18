@@ -8,6 +8,8 @@ import (
 	"golin/poc"
 	"golin/scan/crack"
 	"net"
+	"regexp"
+	"strconv"
 	"strings"
 	"sync/atomic"
 	"time"
@@ -16,7 +18,7 @@ import (
 const clearLine = "\033[2K\r"                                            //清除当前行
 const portformatString = clearLine + "\r| %-2s | %-15s | %-4s |%-50s \n" //端口存活的占位符
 
-func scanPort() {
+func scanPort(donetime int) {
 	defer func() {
 		global.Percent(donecount, allcount) //输出100%的进度条
 		echoCrack()                         //输出弱口令资产
@@ -32,10 +34,24 @@ func scanPort() {
 		for _, port := range portlist {
 			ch <- struct{}{}
 			wg.Add(1)
-			go IsPortOpen(ip, port) //启动线程扫描端口是否存活
+			go func(ip string, port string) {
+				defer wg.Done()
+				defer func() { <-ch }()
+				done := make(chan struct{}, 1)
+				go func() {
+					IsPortOpen(ip, port)
+					done <- struct{}{} //发送完成信号
+				}()
+
+				select {
+				case <-done: // 正常完成
+					return
+				case <-time.After(time.Duration(donetime) * time.Minute): // 超时
+					return
+				}
+			}(ip, port)
 		}
 	}
-
 	wg.Wait()
 
 }
@@ -44,8 +60,8 @@ func scanPort() {
 func IsPortOpen(host, port string) {
 
 	defer func() {
-		wg.Done()
-		<-ch
+		//wg.Done()
+		//<-ch
 		atomic.AddUint32(&donecount, 1)
 		global.Percent(donecount, allcount)
 	}()
@@ -91,6 +107,10 @@ func IsPortOpen(host, port string) {
 		if strings.Contains(protocol, "zookeeper") {
 			poc.ZookeeperCon(host, port)
 		}
+
+		if strings.Contains(protocol, "Rsync") {
+			crack.Rsync(host, port)
+		}
 	}
 
 }
@@ -133,10 +153,18 @@ func printGreen(format string, a ...interface{}) string {
 	return color.GreenString(format, a...)
 }
 
+func printRed(format string, a ...interface{}) string {
+	return color.RedString(format, a...)
+}
+
 // end 运行结束是输出,输出一些统计信息
 func end() {
-	fmt.Printf("\r[*] 扫描主机:%v 存活端口:%v ssh:%v rdp:%v web:%v 数据库:%v 弱口令:%v 漏洞:%v \n",
-		printGreen("%v", len(iplist)),
+	vulnerablehost, _ := calculateVulnerablePercentage(iplist, crack.MapCrackHost, poc.ListPocInfo)
+	fmt.Printf("\r+------------------------------------------------------------+\n")
+	fmt.Printf("\r[*] 漏洞主机:%v Linux:%v Windows:%v 存活端口:%v ssh:%v rdp:%v web:%v 数据库:%v 弱口令:%v 漏洞:%v \n",
+		printRed("%v%v", vulnerablehost, printGreen("/"+strconv.Itoa(len(iplist)))),
+		printGreen("%v", linuxcount),
+		printGreen("%v", windowscount),
 		printGreen("%v", len(infolist)),
 		printGreen("%v", protocolExistsAndCount("ssh")),
 		printGreen("%v", protocolExistsAndCount("rdp")),
@@ -153,4 +181,39 @@ func end() {
 		fmt.Printf("[*] Web扫描截图保存目录：%v 当前共计截图数量：%v\n",
 			printGreen("%v", global.SsaveIMGDIR), printGreen("%v", couunt))
 	}
+}
+
+// calculateVulnerablePercentage 计算有漏洞的IP数量和百分比
+func calculateVulnerablePercentage(iplist []string, crackHosts map[crack.HostPort]crack.SussCrack, pocInfos []poc.Flagcve) (int, float64) {
+	uniqueIPs := make(map[string]struct{})
+
+	// 正则表达式用于从URL中提取IP地址
+	ipRegex := regexp.MustCompile(`\b(?:\d{1,3}\.){3}\d{1,3}\b`)
+
+	// 从crack.MapCrackHost中收集所有Host
+	for hostPort := range crackHosts {
+		if ip := net.ParseIP(hostPort.Host); ip != nil {
+			uniqueIPs[hostPort.Host] = struct{}{}
+		}
+	}
+
+	// 从Flagcve的URL中提取IP地址
+	for _, pocInfo := range pocInfos {
+		if matches := ipRegex.FindStringSubmatch(pocInfo.Url); len(matches) > 0 {
+			if ip := net.ParseIP(matches[0]); ip != nil {
+				uniqueIPs[matches[0]] = struct{}{}
+			}
+		}
+	}
+
+	// 计算有漏洞的IP数量
+	vulnerableCount := len(uniqueIPs)
+	totalCount := len(iplist)
+
+	// 计算百分比
+	if totalCount == 0 {
+		return vulnerableCount, 0.0
+	}
+	percentage := (float64(vulnerableCount) / float64(totalCount)) * 100.0
+	return vulnerableCount, percentage
 }

@@ -28,6 +28,7 @@ func parseProtocol(conn net.Conn, host, port string, Poc bool) string {
 	if err != nil {
 		line = ""
 	}
+	line = strings.ReplaceAll(line, "\n", "")
 
 	switch {
 	case Protocol2.IsSSHProtocol(line):
@@ -46,7 +47,7 @@ func parseProtocol(conn net.Conn, host, port string, Poc bool) string {
 		return "数据库|PostgreSQL"
 
 	case Protocol2.IsRsyncProtocol(line):
-		return "rsync|" + line
+		return "Rsync|" + line
 
 	default:
 		isWeb := Protocol2.IsWeb(host, port, Timeout, Poc)
@@ -73,6 +74,7 @@ func defaultPort(port string) string {
 		"21":    "FTP",
 		"80":    "WEB应用",
 		"443":   "WEB应用",
+		"873":   "Rsync",
 		"5236":  "数据库|达梦",
 		"61616": "ActiveMQ",
 	}

@@ -22,6 +22,7 @@ func init() {
 	ScanCmd.Flags().Bool("noping", false, "此参数是禁止ping检测")
 	ScanCmd.Flags().IntP("chan", "c", 100, "并发数量")
 	ScanCmd.Flags().IntP("time", "t", 5, "超时等待时常/s")
+	ScanCmd.Flags().IntP("done", "", 10, "端口整体扫描最长用时/m")
 	ScanCmd.Flags().Bool("random", false, "打乱主机顺序")
 	ScanCmd.Flags().Bool("img", false, "此参数进行保存WEB截图")
 	ScanCmd.Flags().Bool("nocrack", false, "此参数是不进行弱口令扫描")
@@ -29,4 +30,6 @@ func init() {
 	ScanCmd.Flags().StringP("userfile", "", "", "此参数是自定义用户字典文件")
 	ScanCmd.Flags().StringP("passwdfile", "", "", "此参数是自定义密码字典文件")
 	ScanCmd.Flags().StringP("fofa", "", "", "此参数是调用fofa数据进行扫描")
+	ScanCmd.Flags().IntP("fofasize", "", 100, "获取多少条fofa数据")
+
 }
