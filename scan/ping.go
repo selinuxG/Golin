@@ -59,8 +59,8 @@ func checkPing() {
 		color.GreenString("%d", len(portlist)),
 		color.GreenString("%d", chancount),
 		color.GreenString("%d", len(iplist)*len(portlist)),
-		color.GreenString("%d/s", Timeout),
-		color.GreenString("%d/m", Timeout),
+		color.GreenString("%ds", Timeout),
+		color.GreenString("%dm", Timeout),
 	)
 	fmt.Println("+------------------------------------------------------------+")
 

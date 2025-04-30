@@ -28,7 +28,9 @@ var (
 	outputMux  sync.Mutex
 	userfile   string //user字典路径
 	passwdfile string //passwd字典路径
-
+	webport    bool   //网站端口
+	riskport   bool   //高危端口
+	dbsport    bool   //数据库端口
 )
 
 type INFO struct {
@@ -71,6 +73,9 @@ func ParseFlags(cmd *cobra.Command, args []string) {
 	removeIP(excludeiplist)
 
 	port, _ = cmd.Flags().GetString("port")
+	webport, _ = cmd.Flags().GetBool("web")
+	riskport, _ = cmd.Flags().GetBool("risk")
+	dbsport, _ = cmd.Flags().GetBool("dbs")
 	parsePort(port)
 
 	excludeport, _ := cmd.Flags().GetString("exclude") //去重端口以及排查过滤端口

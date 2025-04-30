@@ -31,5 +31,8 @@ func init() {
 	ScanCmd.Flags().StringP("passwdfile", "", "", "此参数是自定义密码字典文件")
 	ScanCmd.Flags().StringP("fofa", "", "", "此参数是调用fofa数据进行扫描")
 	ScanCmd.Flags().IntP("fofasize", "", 100, "获取多少条fofa数据")
+	ScanCmd.Flags().Bool("web", false, "此参数是仅扫描常用web端口")
+	ScanCmd.Flags().Bool("dbs", false, "此参数是仅扫描常用数据库端口")
+	ScanCmd.Flags().Bool("risk", false, "此参数是仅扫描高危端口")
 
 }

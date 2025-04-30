@@ -108,7 +108,6 @@ func executeRequest(URL string, config Config, wg *sync.WaitGroup) {
 			continue
 		}
 
-		defer resp.Body.Close()
 		if resp.StatusCode != config.Expression.Status { //状态码判断
 			//fmt.Println(errors.New(fmt.Sprintf("当前请求状态码为:%d,与yaml中%d不符!", resp.StatusCode, config.Expression.Status)))
 			continue
@@ -121,7 +120,12 @@ func executeRequest(URL string, config Config, wg *sync.WaitGroup) {
 			}
 		}
 
-		bodyBytes, _ := io.ReadAll(resp.Body)
+		bodyBytes, err := io.ReadAll(resp.Body)
+		if err != nil {
+			_ = resp.Body.Close()
+			continue
+		}
+
 		strBody := string(bodyBytes)
 
 		if len(config.Expression.BodyALL) >= 1 {
