@@ -7,8 +7,13 @@ import (
 	"golin/global"
 	"golin/poc"
 	"golin/scan/crack"
+	"html/template"
 	"net"
+	"os"
+	"os/exec"
+	"path/filepath"
 	"regexp"
+	"runtime"
 	"strconv"
 	"strings"
 	"sync/atomic"
@@ -173,13 +178,45 @@ func end() {
 		printGreen("%v", len(crack.MapCrackHost)),
 		printGreen("%v", len(poc.ListPocInfo)),
 	)
+	couunt := 0
 	if global.SaveIMG {
-		couunt, err := global.CountDirFiles(global.SsaveIMGDIR)
-		if err != nil {
-			couunt = 0
-		}
+		couunt, _ = global.CountDirFiles(global.SsaveIMGDIR)
 		fmt.Printf("[*] Web扫描截图保存目录：%v 当前共计截图数量：%v\n",
 			printGreen("%v", global.SsaveIMGDIR), printGreen("%v", couunt))
+	}
+	if len(iplist) == 0 {
+		return
+	}
+	// 生成HTML报告
+	html := generateHTMLReport(ReportData{
+		Time:            time.Now().Format("2006-01-02 15:04:05"),
+		TotalHosts:      len(iplist),
+		VulnHosts:       vulnerablehost,
+		LinuxCount:      linuxcount,
+		WindowsCount:    windowscount,
+		UnidentifiedOS:  len(iplist) - linuxcount - windowscount,
+		PortsCount:      len(infolist),
+		SSHCount:        protocolExistsAndCount("ssh"),
+		RDPCount:        protocolExistsAndCount("rdp"),
+		WebCount:        protocolExistsAndCount("WEB应用"),
+		DBCount:         protocolExistsAndCount("数据库"),
+		ScreenshotCount: couunt,
+		ScreenshotDir:   global.SsaveIMGDIR,
+		CrackList:       crack.MapCrackHost,
+		PocList:         poc.ListPocInfo,
+		PortServiceList: infolist,
+		IPList:          iplist,
+		ChartJS:         template.JS(chartJS),
+	})
+
+	filename := time.Now().Format("200601021504") + "-report.html"
+	filename = filepath.Join("ScanLog", filename)
+
+	if err := os.WriteFile(filename, []byte(html), 0644); err == nil {
+		if runtime.GOOS == "windows" {
+			cmd := exec.Command("cmd", "/c", "start", filename)
+			_ = cmd.Run()
+		}
 	}
 }
 
