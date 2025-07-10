@@ -394,4 +394,6 @@ var RuleDatas = []RuleData{
 	{"Crocus系统", "body", `Plugin/RegisterLogin/Default.jsp`},
 	{"emlog博客", "body", `使用emlog搭建的站点`},
 	{"IStoreOS软路由", "body", `- LuCI`},
+	{"Pichome", "body", `(<title>登录 - pichome </title>)`},
+	{"vite", "body", `/@vite/client"`},
 }
