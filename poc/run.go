@@ -49,9 +49,22 @@ func CheckPoc(url, app string) {
 			go executeRequest(url, poc, &wg)
 		}
 	}
+
 	// CVE_2022_22947 远程命令执行
 	if strings.Contains(app, "spring") {
 		CVE_2022_22947(url, "pwd")
+	}
+	//执行CVE_2024_23897
+	if strings.Contains(app, "jenkins") {
+		CVE_2024_23897(url)
+	}
+	//执行CVE_2024_23897
+	if strings.Contains(app, "ZABBIX") {
+		CVE_2022_23131(url)
+	}
+	//checkShiroCookie
+	if strings.Contains(app, "shiro") {
+		checkShiroCookie(url)
 	}
 
 	// 用户弱口令

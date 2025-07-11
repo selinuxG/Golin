@@ -42,7 +42,7 @@ func parseIP(ip string) {
 
 		//1、匹配CIDR子网掩码的地址 2、匹配IP 3、匹配第一个/之前的数据
 		reCIDR := regexp.MustCompile(`\b\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}/\d{1,2}\b`)
-		reIP := regexp.MustCompile(`\b\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\b`)
+		reIP := regexp.MustCompile(`\b\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}(-\d{1,3})?\b`)
 		matchCIDR := reCIDR.FindString(p)
 		if matchCIDR != "" {
 			p = matchCIDR

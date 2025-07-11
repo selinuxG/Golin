@@ -3,7 +3,9 @@ package Protocol
 import (
 	"bytes"
 	"context"
+	"crypto/md5"
 	"crypto/tls"
+	"encoding/hex"
 	"fmt"
 	"github.com/PuerkitoBio/goquery"
 	"github.com/fatih/color"
@@ -25,6 +27,7 @@ type WebInfo struct {
 	app         string   //组件
 	server      string   //server
 	cert        certInfo //ssl证书信息
+	icohash     string   //icohash
 }
 
 // certInfo 证书信息
@@ -135,8 +138,10 @@ func handleRequest(client *http.Client, info *WebInfo) ([]byte, error) {
 
 	info.statuscode = resp.StatusCode
 	info.ContentType = resp.Header.Get("Content-Type")
+	info.icohash, _ = HashMD5(info.url)
+
 	info.server = resp.Header.Get("Server")
-	info.app = CheckApp(string(body), resp.Header, resp.Cookies(), info.server) // 匹配组件
+	info.app = CheckApp(string(body), resp.Header, resp.Cookies(), info.server, info.icohash) // 匹配组件
 
 	if os.Getenv("html") == "on" {
 		fmt.Printf("-----> URL: %s HTML正文:\n%s\n", info.url, string(body))
@@ -177,7 +182,7 @@ func handlePocAndXss(ctx context.Context, info *WebInfo, body []byte) {
 }
 
 // CheckApp 基于返回的body、headers、cookies判定组件信息
-func CheckApp(body string, head map[string][]string, cookies []*http.Cookie, server string) string {
+func CheckApp(body string, head map[string][]string, cookies []*http.Cookie, server, icohash string) string {
 
 	var app []string
 	for _, rule := range RuleDatas {
@@ -210,7 +215,12 @@ func CheckApp(body string, head map[string][]string, cookies []*http.Cookie, ser
 			if strings.EqualFold(rule.Rule, server) {
 				app = append(app, rule.Name)
 			}
+		case "icohash":
+			if strings.EqualFold(rule.Rule, icohash) {
+				app = append(app, rule.Name)
+			}
 		}
+
 	}
 
 	return strings.Join(global.RemoveDuplicates(app), ",")
@@ -244,4 +254,36 @@ func chekwebinfo(info WebInfo) string {
 	}
 
 	return output
+}
+
+func HashMD5(url string) (string, error) {
+	transport := &http.Transport{
+		TLSClientConfig: &tls.Config{
+			InsecureSkipVerify: true, //跳过证书的验证
+		},
+		DisableKeepAlives: true, //禁用HTTP连接的keep-alive 特性
+	}
+
+	client := &http.Client{
+		Transport: transport,
+	}
+	req, err := http.NewRequest("GET", url+"/favicon.ico", nil)
+	if err != nil {
+		return "", err
+	}
+	resp, err := client.Do(req)
+	if err != nil {
+		return "", err
+	}
+	defer resp.Body.Close() // 确保响应体在函数结束时关闭
+
+	// 创建一个新的 MD5 哈希对象
+	hash := md5.New()
+	_, err = io.Copy(hash, resp.Body)
+	if err != nil {
+		fmt.Println("Error:", err)
+		return "", err
+	}
+	md5Hex := hex.EncodeToString(hash.Sum(nil))
+	return md5Hex, nil
 }

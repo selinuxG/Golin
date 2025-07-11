@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <title>Golin安全扫描报告</title>
+    <script>{{.ChartJS}}</script>
+    <style>
+        body {
+            font-family: "Segoe UI", sans-serif;
+            background: #f4f6f8;
+            margin: 0;
+            padding: 0;
+        }
+        header {
+            background-color: #2c3e50;
+            color: white;
+            text-align: center;
+            padding: 20px;
+        }
+        h1, h2 {
+            margin: 0;
+            padding-bottom: 10px;
+        }
+        .container {
+            max-width: 1000px;
+            margin: auto;
+            padding: 20px;
+        }
+        .card {
+            background: white;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background: #f0f0f0;
+        }
+        input[type="text"] {
+            width: 100%;
+            padding: 8px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        canvas {
+            max-height: 250px;
+        }
+        .toc {
+            position: fixed;
+            top: 80px;
+            right: 20px;
+            width: 200px;
+            background: #ecf0f1;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+            z-index: 999;
+        }
+        .toc h3 {
+            margin-top: 0;
+            font-size: 16px;
+        }
+        .toc a {
+            display: block;
+            margin: 8px 0;
+            color: #2c3e50;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        .toc a:hover {
+            text-decoration: underline;
+            color: #2980b9;
+        }
+        .green-text { color: #2ecc71; }
+        .red-text { color: red; }
+    </style>
+</head>
+<body>
+<header>
+    <h1>Golin安全扫描报告</h1>
+    <p>生成时间：{{.Time}}</p>
+</header>
+
+<!-- 🧭 目录 -->
+<div class="toc">
+    <h3>📘 目录</h3>
+    <a href="#stats">📊 基础统计</a>
+    <a href="#chart1">📈 协议分布</a>
+    <a href="#chart2">📊 主机与漏洞</a>
+    <a href="#chart3">🍰 系统占比</a>
+    <a href="#ports">📡 存活端口</a>
+    <a href="#ips">🌐 主机列表</a>
+    <a href="#weakpass">🔐 弱口令</a>
+    <a href="#vuln">🚨 漏洞信息</a>
+</div>
+
+<div class="container">
+
+    <div class="card" id="stats">
+        <h2>基础统计</h2>
+        <p>总主机：<span class="green-text">{{.TotalHosts}}</span>，漏洞主机：<span class="red-text">{{.VulnHosts}}</span>，Linux：{{.LinuxCount}}，Windows：{{.WindowsCount}}，未识别: {{.UnidentifiedOS}}</p>
+        <p>开放端口：{{.PortsCount}}，SSH：{{.SSHCount}}，RDP：{{.RDPCount}}，Web：{{.WebCount}}，数据库：{{.DBCount}}</p>
+        <p>截图数量：{{.ScreenshotCount}}，截图目录：{{.ScreenshotDir}}</p>
+    </div>
+
+    <div class="card" id="chart1">
+        <h2>协议分布图</h2>
+        <canvas id="protocolChart"></canvas>
+    </div>
+
+    <div class="card" id="chart2">
+        <h2>主机与漏洞</h2>
+        <canvas id="hostVulnChart"></canvas>
+    </div>
+
+    <div class="card" id="chart3">
+        <h2>操作系统占比</h2>
+        <canvas id="osPieChart"></canvas>
+    </div>
+
+    <div class="card" id="ports">
+        <h2>存活端口服务</h2>
+        <input type="text" id="searchPorts" placeholder="搜索主机或端口...">
+        <table id="portTable">
+            <tr><th>#</th><th>主机</th><th>端口</th><th>组件</th></tr>
+            {{range $i, $e := .PortServiceList}}
+            <tr>
+                <td>{{inc $i}}</td>
+                <td>{{$e.Host}}</td>
+                <td>{{$e.Port}}</td>
+                <td>{{removeColor $e.Protocol}}</td>
+            </tr>
+            {{end}}
+        </table>
+    </div>
+
+    <div class="card" id="ips">
+        <h2>主机列表</h2>
+        <table id="ipTable">
+            <tr><th>#</th><th>IP 地址</th></tr>
+            {{range $index, $ip := .IPList}}
+            <tr><td>{{inc $index}}</td><td>{{$ip}}</td></tr>
+            {{end}}
+        </table>
+    </div>
+
+    <div class="card" id="weakpass">
+        <h2>弱口令信息</h2>
+        <table>
+            <tr><th>主机</th><th>端口</th><th>用户</th><th>密码</th><th>模式</th></tr>
+            {{range $key, $val := .CrackList}}
+            <tr>
+                <td>{{$key.Host}}</td>
+                <td>{{$key.Port}}</td>
+                <td>{{$val.User}}</td>
+                <td>{{$val.Passwd}}</td>
+                <td>{{$val.Mode}}</td>
+            </tr>
+            {{end}}
+        </table>
+    </div>
+
+    <div class="card" id="vuln">
+        <h2>漏洞信息</h2>
+        <table>
+            <tr><th>漏洞URL</th><th>漏洞特征文件</th><th>漏洞信息</th></tr>
+            {{range .PocList}}
+            <tr>
+                <td>{{.Url}}</td>
+                <td>{{.Cve}}</td>
+                <td>{{.Flag}}</td>
+            </tr>
+            {{end}}
+        </table>
+    </div>
+
+</div>
+
+<script>
+    new Chart(document.getElementById('protocolChart'), {
+        type: 'bar',
+        data: {
+            labels: ['SSH', 'RDP', 'Web', '数据库'],
+            datasets: [{
+                label: '协议数量',
+                data: [{{.SSHCount}}, {{.RDPCount}}, {{.WebCount}}, {{.DBCount}}],
+    backgroundColor: ['#3498db', '#e67e22', '#2ecc71', '#9b59b6']
+    }]
+    },
+    options: {
+        responsive: true,
+            maintainAspectRatio: false,
+            scales: { y: { beginAtZero: true } }
+    }
+    });
+
+    new Chart(document.getElementById('hostVulnChart'), {
+        type: 'pie',
+        data: {
+            labels: ['安全主机', '漏洞主机'],  // 改标签更符合饼图语义
+            datasets: [{
+                label: '主机数量',
+                data: [{{.TotalHosts}} - {{.VulnHosts}}, {{.VulnHosts}}],
+    backgroundColor: ['#1abc9c', '#cb2110']
+    }]
+    },
+    options: {
+        responsive: true,
+            maintainAspectRatio: false,
+        // 饼图不需要 scales，可以删掉
+    }
+    });
+
+    new Chart(document.getElementById('osPieChart'), {
+        type: 'pie',
+        data: {
+            labels: ['Linux', 'Windows', '未识别'],
+            datasets: [{
+                label: '操作系统',
+                data: [{{.LinuxCount}}, {{.WindowsCount}}, {{.UnidentifiedOS}}],
+    backgroundColor: ['#2ecc71', '#3498db', '#95a5a6']
+    }]
+    },
+    options: {
+        responsive: true,
+            maintainAspectRatio: false
+    }
+    });
+
+    function setupSearch(inputId, tableId) {
+        const input = document.getElementById(inputId);
+        const table = document.getElementById(tableId);
+        input.addEventListener('keyup', () => {
+            const filter = input.value.toLowerCase();
+            const rows = table.getElementsByTagName('tr');
+            for (let i = 1; i < rows.length; i++) {
+                const cells = rows[i].getElementsByTagName('td');
+                let match = false;
+                for (let j = 0; j < cells.length; j++) {
+                    if (cells[j].textContent.toLowerCase().includes(filter)) {
+                        match = true;
+                        break;
+                    }
+                }
+                rows[i].style.display = match ? '' : 'none';
+            }
+        });
+    }
+
+    setupSearch('searchPorts', 'portTable');
+</script>
+</body>
+</html>
