@@ -10,24 +10,25 @@ import (
 )
 
 type ReportData struct {
-	Time            string
-	TotalHosts      int
-	VulnHosts       int
-	LinuxCount      int
-	WindowsCount    int
-	UnidentifiedOS  int
-	PortsCount      int
-	SSHCount        int
-	RDPCount        int
-	WebCount        int
-	DBCount         int
-	ScreenshotCount int
-	ScreenshotDir   string
-	CrackList       map[crack.HostPort]crack.SussCrack
-	PocList         []poc.Flagcve
-	PortServiceList []INFO
-	IPList          []string
-	ChartJS         template.JS
+	Time             string
+	TotalHosts       int
+	VulnHosts        int
+	LinuxCount       int
+	WindowsCount     int
+	UnidentifiedOS   int
+	PortsCount       int
+	SSHCount         int
+	RDPCount         int
+	WebCount         int
+	DBCount          int
+	ScreenshotCount  int
+	ScreenshotDir    string
+	CrackList        map[crack.HostPort]crack.SussCrack
+	PocList          []poc.Flagcve
+	PortServiceList  []INFO
+	IPList           []string
+	ChartJS          template.JS
+	ScreenshotImages []string
 }
 
 //go:embed template/*

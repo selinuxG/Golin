@@ -2,7 +2,9 @@ package global
 
 import (
 	"os"
+	"path/filepath"
 	"sync"
+	"time"
 )
 
 const (
@@ -27,7 +29,9 @@ var (
 	PrintLock        sync.RWMutex                                           //并发输出写入
 	WebURl           = ""                                                   //web扫描时临时后缀
 	SaveIMG          = false                                                //web扫描时是否进行截图,本地需要有chrom浏览器
-	SsaveIMGDIR      = "WebScreenshot"
+	SsaveIMGDIR      = filepath.Join("WebScreenshot", time.Now().Format("20060102150405"))
+	SsaveImgURLs     []string // 存储待截图URL
+	saveImgMu        sync.Mutex
 )
 
 // AppendToFile 创建追加写入函数
@@ -97,4 +101,11 @@ func MkdirAll(path string) bool {
 		return false
 	}
 	return true
+}
+
+// AppendScreenshotURL 安全添加待截图 URL
+func AppendScreenshotURL(url string) {
+	saveImgMu.Lock()
+	defer saveImgMu.Unlock()
+	SsaveImgURLs = append(SsaveImgURLs, url)
 }

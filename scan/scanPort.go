@@ -7,14 +7,7 @@ import (
 	"golin/global"
 	"golin/poc"
 	"golin/scan/crack"
-	"html/template"
 	"net"
-	"os"
-	"os/exec"
-	"path/filepath"
-	"regexp"
-	"runtime"
-	"strconv"
 	"strings"
 	"sync/atomic"
 	"time"
@@ -28,8 +21,10 @@ func scanPort(donetime int) {
 		global.Percent(donecount, allcount) //输出100%的进度条
 		echoCrack()                         //输出弱口令资产
 		echoPoc()                           //输出漏洞资产
-		end()                               //输出总体结果
+		endEcho()                           //输出总体结果
 		saveXlsx(infolist, iplist)          //结果保存文件
+		global.StartScreenshotWorkers(10)   //启动WEB截图
+		endHtml()                           //输出html
 	}()
 	checkPing()
 
@@ -160,97 +155,4 @@ func printGreen(format string, a ...interface{}) string {
 
 func printRed(format string, a ...interface{}) string {
 	return color.RedString(format, a...)
-}
-
-// end 运行结束是输出,输出一些统计信息
-func end() {
-	vulnerablehost, _ := calculateVulnerablePercentage(iplist, crack.MapCrackHost, poc.ListPocInfo)
-	fmt.Printf("\r+------------------------------------------------------------+\n")
-	fmt.Printf("\r[*] 漏洞主机:%v Linux:%v Windows:%v 存活端口:%v ssh:%v rdp:%v web:%v 数据库:%v 弱口令:%v 漏洞:%v \n",
-		printRed("%v%v", vulnerablehost, printGreen("/"+strconv.Itoa(len(iplist)))),
-		printGreen("%v", linuxcount),
-		printGreen("%v", windowscount),
-		printGreen("%v", len(infolist)),
-		printGreen("%v", protocolExistsAndCount("ssh")),
-		printGreen("%v", protocolExistsAndCount("rdp")),
-		printGreen("%v", protocolExistsAndCount("WEB应用")),
-		printGreen("%v", protocolExistsAndCount("数据库")),
-		printGreen("%v", len(crack.MapCrackHost)),
-		printGreen("%v", len(poc.ListPocInfo)),
-	)
-	couunt := 0
-	if global.SaveIMG {
-		couunt, _ = global.CountDirFiles(global.SsaveIMGDIR)
-		fmt.Printf("[*] Web扫描截图保存目录：%v 当前共计截图数量：%v\n",
-			printGreen("%v", global.SsaveIMGDIR), printGreen("%v", couunt))
-	}
-	if len(iplist) == 0 {
-		return
-	}
-	// 生成HTML报告
-	html := generateHTMLReport(ReportData{
-		Time:            time.Now().Format("2006-01-02 15:04:05"),
-		TotalHosts:      len(iplist),
-		VulnHosts:       vulnerablehost,
-		LinuxCount:      linuxcount,
-		WindowsCount:    windowscount,
-		UnidentifiedOS:  len(iplist) - linuxcount - windowscount,
-		PortsCount:      len(infolist),
-		SSHCount:        protocolExistsAndCount("ssh"),
-		RDPCount:        protocolExistsAndCount("rdp"),
-		WebCount:        protocolExistsAndCount("WEB应用"),
-		DBCount:         protocolExistsAndCount("数据库"),
-		ScreenshotCount: couunt,
-		ScreenshotDir:   global.SsaveIMGDIR,
-		CrackList:       crack.MapCrackHost,
-		PocList:         poc.ListPocInfo,
-		PortServiceList: infolist,
-		IPList:          iplist,
-		ChartJS:         template.JS(chartJS),
-	})
-
-	filename := time.Now().Format("200601021504") + "-report.html"
-	filename = filepath.Join("ScanLog", filename)
-
-	if err := os.WriteFile(filename, []byte(html), 0644); err == nil {
-		if runtime.GOOS == "windows" {
-			cmd := exec.Command("cmd", "/c", "start", filename)
-			_ = cmd.Run()
-		}
-	}
-}
-
-// calculateVulnerablePercentage 计算有漏洞的IP数量和百分比
-func calculateVulnerablePercentage(iplist []string, crackHosts map[crack.HostPort]crack.SussCrack, pocInfos []poc.Flagcve) (int, float64) {
-	uniqueIPs := make(map[string]struct{})
-
-	// 正则表达式用于从URL中提取IP地址
-	ipRegex := regexp.MustCompile(`\b(?:\d{1,3}\.){3}\d{1,3}\b`)
-
-	// 从crack.MapCrackHost中收集所有Host
-	for hostPort := range crackHosts {
-		if ip := net.ParseIP(hostPort.Host); ip != nil {
-			uniqueIPs[hostPort.Host] = struct{}{}
-		}
-	}
-
-	// 从Flagcve的URL中提取IP地址
-	for _, pocInfo := range pocInfos {
-		if matches := ipRegex.FindStringSubmatch(pocInfo.Url); len(matches) > 0 {
-			if ip := net.ParseIP(matches[0]); ip != nil {
-				uniqueIPs[matches[0]] = struct{}{}
-			}
-		}
-	}
-
-	// 计算有漏洞的IP数量
-	vulnerableCount := len(uniqueIPs)
-	totalCount := len(iplist)
-
-	// 计算百分比
-	if totalCount == 0 {
-		return vulnerableCount, 0.0
-	}
-	percentage := (float64(vulnerableCount) / float64(totalCount)) * 100.0
-	return vulnerableCount, percentage
 }
