@@ -3,9 +3,7 @@ package Protocol
 import (
 	"bytes"
 	"context"
-	"crypto/md5"
 	"crypto/tls"
-	"encoding/hex"
 	"fmt"
 	"github.com/PuerkitoBio/goquery"
 	"github.com/fatih/color"
@@ -70,11 +68,6 @@ func IsWeb(host, port string, timeout int, Poc bool) map[string]string {
 			continue
 		}
 
-		// 保存截图URl
-		if global.SaveIMG {
-			global.AppendScreenshotURL(info.url)
-		}
-
 		// 验证漏洞，只允许运行30秒
 		if Poc {
 			ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
@@ -101,6 +94,9 @@ func handleRequest(client *http.Client, info *WebInfo) ([]byte, error) {
 
 	doc, err := goquery.NewDocumentFromReader(bytes.NewReader(body)) //获取标题
 	if err == nil {
+		if global.SaveIMG {
+			global.AppendScreenshotURL(info.url)
+		}
 		info.title = strings.TrimSpace(doc.Find("title").Text())
 	}
 	//SSL信息
@@ -132,10 +128,12 @@ func handleRequest(client *http.Client, info *WebInfo) ([]byte, error) {
 
 	info.statuscode = resp.StatusCode
 	info.ContentType = resp.Header.Get("Content-Type")
-	info.icohash, _ = HashMD5(info.url)
+	info.icohash, _ = global.HashMD5(info.url)
 
 	info.server = resp.Header.Get("Server")
-	info.app = CheckApp(string(body), resp.Header, resp.Cookies(), info.server, info.icohash) // 匹配组件
+	if info.statuscode == 200 {
+		info.app = CheckApp(string(body), resp.Header, resp.Cookies(), info.server, info.icohash) // 匹配组件
+	}
 
 	if os.Getenv("html") == "on" {
 		fmt.Printf("-----> URL: %s HTML正文:\n%s\n", info.url, string(body))
@@ -185,6 +183,7 @@ func CheckApp(body string, head map[string][]string, cookies []*http.Cookie, ser
 			patterns, err := regexp.Compile(rule.Rule)
 			if err == nil && patterns.MatchString(body) {
 				app = append(app, rule.Name)
+				global.AppMatchedRules[rule.Name]++
 			}
 
 		case "headers":
@@ -193,6 +192,7 @@ func CheckApp(body string, head map[string][]string, cookies []*http.Cookie, ser
 					patterns, err := regexp.Compile(`(?i)` + rule.Rule) //不区分大小写
 					if err == nil && patterns.MatchString(value) || patterns.MatchString(k) {
 						app = append(app, rule.Name)
+						global.AppMatchedRules[rule.Name]++
 					}
 				}
 			}
@@ -202,16 +202,19 @@ func CheckApp(body string, head map[string][]string, cookies []*http.Cookie, ser
 				patterns, err := regexp.Compile(`(?i)` + rule.Rule) //不区分大小写
 				if err == nil && patterns.MatchString(cookie.Name) {
 					app = append(app, rule.Name)
+					global.AppMatchedRules[rule.Name]++
 				}
 			}
 
 		case "server":
 			if strings.EqualFold(rule.Rule, server) {
 				app = append(app, rule.Name)
+				global.AppMatchedRules[rule.Name]++
 			}
 		case "icohash":
 			if strings.EqualFold(rule.Rule, icohash) {
 				app = append(app, rule.Name)
+				global.AppMatchedRules[rule.Name]++
 			}
 		}
 
@@ -248,36 +251,4 @@ func chekwebinfo(info WebInfo) string {
 	}
 
 	return output
-}
-
-func HashMD5(url string) (string, error) {
-	transport := &http.Transport{
-		TLSClientConfig: &tls.Config{
-			InsecureSkipVerify: true, //跳过证书的验证
-		},
-		DisableKeepAlives: true, //禁用HTTP连接的keep-alive 特性
-	}
-
-	client := &http.Client{
-		Transport: transport,
-	}
-	req, err := http.NewRequest("GET", url+"/favicon.ico", nil)
-	if err != nil {
-		return "", err
-	}
-	resp, err := client.Do(req)
-	if err != nil {
-		return "", err
-	}
-	defer resp.Body.Close() // 确保响应体在函数结束时关闭
-
-	// 创建一个新的 MD5 哈希对象
-	hash := md5.New()
-	_, err = io.Copy(hash, resp.Body)
-	if err != nil {
-		fmt.Println("Error:", err)
-		return "", err
-	}
-	md5Hex := hex.EncodeToString(hash.Sum(nil))
-	return md5Hex, nil
 }

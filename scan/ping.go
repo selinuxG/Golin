@@ -3,6 +3,7 @@ package scan
 import (
 	"fmt"
 	"github.com/fatih/color"
+	"golin/global"
 	"math/rand"
 	"net"
 	"os/exec"
@@ -49,25 +50,29 @@ func checkPing() {
 		fmt.Printf("%s\n", color.RedString("%s", "[-] 通过尝试PING探测存活主机为0！可通过--noping跳过PING尝试"))
 		return
 	}
+	scancount := len(iplist) * len(portlist)
+	ch = make(chan struct{}, global.CalcConcurrency(scancount))
+	chancount = cap(ch)
 
 	fmt.Println("+------------------------------------------------------------+")
-	fmt.Printf("[*] Linux设备:%v Windows设备:%v 未识别:%v 共计扫描:%v\n[*] 开始扫描端口:%v 最大并发数:%v 共计尝试:%v 端口连接超时:%v 端口扫描最大用时:%v \n",
+	fmt.Printf("[*] 存活主机:%v Linux:%v Windows:%v 未知:%v\n[*] 开始扫描端口:%v CPU:%v 动态并发数:%v 任务总数:%v 端口连接超时:%v 端口扫描最大用时:%v \n",
+		color.GreenString("%d", len(iplist)),
 		color.GreenString("%d", linuxcount),
 		color.GreenString("%d", windowscount),
 		color.RedString("%d", len(iplist)-linuxcount-windowscount),
-		color.GreenString("%d", len(iplist)),
 		color.GreenString("%d", len(portlist)),
+		color.GreenString("%d", runtime.NumCPU()),
 		color.GreenString("%d", chancount),
 		color.GreenString("%d", len(iplist)*len(portlist)),
 		color.GreenString("%ds", Timeout),
-		color.GreenString("%dm", Timeout),
+		color.GreenString("%dm", Donetime),
 	)
 	fmt.Println("+------------------------------------------------------------+")
 
 }
 
 func SanPing() {
-	pingch = make(chan struct{}, chancount)
+	pingch = make(chan struct{}, global.CalcConcurrency(len(iplist)))
 	for _, ip := range iplist {
 		pingch <- struct{}{}
 		pingwg.Add(1)

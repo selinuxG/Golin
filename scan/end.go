@@ -20,7 +20,8 @@ import (
 // end 运行结束是输出,输出一些统计信息
 func endEcho() {
 	vulnerablehost, _ := calculateVulnerablePercentage(iplist, crack.MapCrackHost, poc.ListPocInfo)
-	fmt.Printf("\r[*] 漏洞主机:%v Linux:%v Windows:%v 存活端口:%v ssh:%v rdp:%v web:%v 数据库:%v 弱口令:%v 漏洞:%v \n",
+	fmt.Printf("\r+------------------------------------------------------------+\n"+
+		"[*] 漏洞主机:%v Linux:%v Windows:%v 存活端口:%v ssh:%v rdp:%v web:%v 指纹:%v 数据库:%v 弱口令:%v 漏洞:%v \n",
 		printRed("%v%v", vulnerablehost, printGreen("/"+strconv.Itoa(len(iplist)))),
 		printGreen("%v", linuxcount),
 		printGreen("%v", windowscount),
@@ -28,9 +29,10 @@ func endEcho() {
 		printGreen("%v", protocolExistsAndCount("ssh")),
 		printGreen("%v", protocolExistsAndCount("rdp")),
 		printGreen("%v", protocolExistsAndCount("WEB应用")),
+		printGreen("%v", len(global.AppMatchedRules)),
 		printGreen("%v", protocolExistsAndCount("数据库")),
-		printGreen("%v", len(crack.MapCrackHost)),
-		printGreen("%v", len(poc.ListPocInfo)),
+		printRed("%v", len(crack.MapCrackHost)),
+		printRed("%v", len(poc.ListPocInfo)),
 	)
 }
 
@@ -66,6 +68,7 @@ func endHtml() {
 		SSHCount:         protocolExistsAndCount("ssh"),
 		RDPCount:         protocolExistsAndCount("rdp"),
 		WebCount:         protocolExistsAndCount("WEB应用"),
+		AppCount:         len(global.AppMatchedRules),
 		DBCount:          protocolExistsAndCount("数据库"),
 		ScreenshotCount:  couunt,
 		ScreenshotDir:    screenshotDir,
@@ -75,6 +78,7 @@ func endHtml() {
 		PortServiceList:  infolist,
 		IPList:           iplist,
 		ChartJS:          template.JS(chartJS),
+		ChartJSPlugin:    template.JS(chartJSPlugin),
 	})
 
 	filename := filepath.Join("ScanLog", time.Now().Format("200601021504")+"-report.html")

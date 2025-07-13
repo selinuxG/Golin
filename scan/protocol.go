@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"fmt"
 	Protocol2 "golin/Protocol"
+	"golin/global"
 	"net"
 	"strings"
 	"time"
@@ -28,7 +29,7 @@ func parseProtocol(conn net.Conn, host, port string, Poc bool) string {
 	if err != nil {
 		line = ""
 	}
-	line = strings.ReplaceAll(line, "\n", "")
+	line = strings.TrimSpace(line)
 
 	switch {
 	case Protocol2.IsSSHProtocol(line):
@@ -55,6 +56,13 @@ func parseProtocol(conn net.Conn, host, port string, Poc bool) string {
 			if v != "" {
 				return fmt.Sprintf("%-5s| %s", "WEB应用", v)
 			}
+		}
+		// 判断是否是 HTTP 响应（以 "HTTP/" 开头）
+		if strings.HasPrefix(line, "HTTP/") || strings.Contains(line, "200 OK") || port == "80" || port == "443" {
+			if global.SaveIMG {
+				global.AppendScreenshotURL(fmt.Sprintf("http://%s:%s", host, port))
+			}
+			return fmt.Sprintf("%-5s", "WEB应用")
 		}
 
 	}

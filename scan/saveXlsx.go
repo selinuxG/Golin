@@ -155,15 +155,16 @@ func setColWidths(f *excelize.File, sheet string) {
 
 func setHeaderValues(f *excelize.File, sheet string, headers []string) {
 	for i, header := range headers {
-		colLetter := string('A' + i)
+		colLetter, _ := excelize.ColumnNumberToName(i + 1) // Excel列是从 1 开始的
 		f.SetCellValue(sheet, colLetter+"1", header)
 	}
 }
 
 func setCellValues(f *excelize.File, sheet string, cell int, values []interface{}) {
 	for i, value := range values {
-		colLetter := string('A' + i)
-		f.SetCellValue(sheet, fmt.Sprintf("%s%d", colLetter, cell), value)
+		colLetter, _ := excelize.ColumnNumberToName(i + 1)
+		cellRef := fmt.Sprintf("%s%d", colLetter, cell)
+		f.SetCellValue(sheet, cellRef, value)
 	}
 }
 

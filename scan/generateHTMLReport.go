@@ -20,6 +20,7 @@ type ReportData struct {
 	SSHCount         int
 	RDPCount         int
 	WebCount         int
+	AppCount         int
 	DBCount          int
 	ScreenshotCount  int
 	ScreenshotDir    string
@@ -28,6 +29,7 @@ type ReportData struct {
 	PortServiceList  []INFO
 	IPList           []string
 	ChartJS          template.JS
+	ChartJSPlugin    template.JS
 	ScreenshotImages []string
 }
 
@@ -36,6 +38,9 @@ var content embed.FS
 
 //go:embed template/chat.js
 var chartJS []byte
+
+//go:embed template/chaplugin.js
+var chartJSPlugin []byte
 
 func generateHTMLReport(data ReportData) string {
 	funcMap := template.FuncMap{

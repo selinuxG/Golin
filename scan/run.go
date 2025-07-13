@@ -48,6 +48,9 @@ func ParseFlags(cmd *cobra.Command, args []string) {
 	if size == 0 {
 		size = 100
 	}
+	if size >= 10000 {
+		size = 9999
+	}
 	if fofa != "" {
 		err := parseFoFa(fofa, fmt.Sprintf("%d", size))
 		if err != nil {
@@ -83,8 +86,7 @@ func ParseFlags(cmd *cobra.Command, args []string) {
 
 	NoPing, _ = cmd.Flags().GetBool("noping")
 
-	chancount, _ = cmd.Flags().GetInt("chan") //并发数量
-	ch = make(chan struct{}, chancount)
+	global.GrowthFactor, _ = cmd.Flags().GetFloat64("chan") //并发增长速率
 
 	Timeout, _ = cmd.Flags().GetInt("time") //超时等待时常
 
@@ -96,8 +98,8 @@ func ParseFlags(cmd *cobra.Command, args []string) {
 
 	random, _ = cmd.Flags().GetBool("random") //打乱顺序
 
-	imgsave, _ := cmd.Flags().GetBool("img") //保存网页截图
-	global.SaveIMG = imgsave
+	noimg, _ := cmd.Flags().GetBool("noimg") // 是否禁用截图
+	global.SaveIMG = !noimg
 
 	userfile, _ = cmd.Flags().GetString("userfile")
 	passwdfile, _ = cmd.Flags().GetString("passwdfile")

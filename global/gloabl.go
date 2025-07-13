@@ -28,10 +28,12 @@ var (
 	Denynametype     = []string{"\\", "\\/", "*", "?", "\"", "<", ">", "|"} //windos下不允许创建名称的特殊符号。
 	PrintLock        sync.RWMutex                                           //并发输出写入
 	WebURl           = ""                                                   //web扫描时临时后缀
-	SaveIMG          = false                                                //web扫描时是否进行截图,本地需要有chrom浏览器
+	SaveIMG          = true                                                 //web扫描时是否进行截图,本地需要有chrom浏览器
 	SsaveIMGDIR      = filepath.Join("WebScreenshot", time.Now().Format("20060102150405"))
 	SsaveImgURLs     []string // 存储待截图URL
 	saveImgMu        sync.Mutex
+	AppMatchedRules  = make(map[string]int)
+	GrowthFactor     = 0.8 //并发增长速率
 )
 
 // AppendToFile 创建追加写入函数

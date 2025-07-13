@@ -43,6 +43,6 @@ func init() {
 		color.GreenString("%s %s", global.Version, global.Releasenotes),
 		color.BlueString("%s", "https://github.com/selinuxG/Golin"),
 		color.MagentaString("%s", "gaoyeshang -> VX:SelinuxG"),
-		color.RedString("%s", "本软件仅用于经授权的渗透测试，禁止使用本工具实施未授权测试，若违法使用导致任何责任，与软件作者无关，均由用户自行承担。"),
+		color.RedString("%s", "本软件仅用于经授权的测试，禁止使用本工具实施未授权测试，若违法使用导致任何责任，与软件作者无关，均由用户自行承担"),
 	)
 }

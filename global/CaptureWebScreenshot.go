@@ -6,7 +6,9 @@ import (
 	"github.com/chromedp/cdproto/page"
 	"github.com/chromedp/chromedp"
 	"os"
+	"os/exec"
 	"path/filepath"
+	"runtime"
 	"strings"
 	"sync"
 	"sync/atomic"
@@ -27,6 +29,13 @@ func StartScreenshotWorkers(workers int) {
 	if len(SsaveImgURLs) < workers {
 		workers = len(SsaveImgURLs)
 	}
+
+	_, err := DetectChromePath() //检测Chrome是否按照
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+
 	InitBrowser()
 	defer ShutdownBrowser()
 
@@ -114,7 +123,7 @@ func StartScreenshotWorkers(workers int) {
 	if couunt == 0 && err != nil {
 		return
 	}
-	fmt.Printf("[*] Web扫描截图保存目录：%v 当前共计截图数量：%v\n", SsaveIMGDIR, couunt)
+	fmt.Printf("\033[2K\r[*] Web扫描截图保存目录：%v 当前共计截图数量：%v\n", SsaveIMGDIR, couunt)
 }
 
 // InitBrowser 初始化共享 Chrome 实例
@@ -157,7 +166,7 @@ func CaptureScreenshot(url string, quality int64, dir string) error {
 	defer cancel()
 
 	// 设置超时时间
-	ctx, cancel = context.WithTimeout(ctx, 15*time.Second)
+	ctx, cancel = context.WithTimeout(ctx, 30*time.Second)
 	defer cancel()
 
 	// 导航 + 截图
@@ -195,4 +204,36 @@ func CaptureScreenshot(url string, quality int64, dir string) error {
 	// 保存 PNG 文件
 	output := filepath.Join(dir, filename+".png")
 	return os.WriteFile(output, buf, 0644)
+}
+
+func DetectChromePath() (string, error) {
+	var locations []string
+	switch runtime.GOOS {
+	case "darwin":
+		locations = []string{
+			"/Applications/Chromium.app/Contents/MacOS/Chromium",
+			"/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
+		}
+	case "windows":
+		locations = []string{
+			"chrome", "chrome.exe",
+			`C:\Program Files (x86)\Google\Chrome\Application\chrome.exe`,
+			`C:\Program Files\Google\Chrome\Application\chrome.exe`,
+			filepath.Join(os.Getenv("USERPROFILE"), `AppData\Local\Google\Chrome\Application\chrome.exe`),
+			filepath.Join(os.Getenv("USERPROFILE"), `AppData\Local\Chromium\Application\chrome.exe`),
+		}
+	default:
+		locations = []string{
+			"headless_shell", "headless-shell", "chromium", "chromium-browser",
+			"google-chrome", "google-chrome-stable", "google-chrome-beta", "google-chrome-unstable",
+			"/usr/bin/google-chrome", "/usr/local/bin/chrome", "/snap/bin/chromium", "chrome",
+		}
+	}
+
+	for _, name := range locations {
+		if path, err := exec.LookPath(name); err == nil {
+			return path, nil
+		}
+	}
+	return "", fmt.Errorf("[✘] 未找到 Chrome 可执行文件，请安装 Google Chrome 或 Chromium")
 }

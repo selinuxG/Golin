@@ -27,7 +27,7 @@ func ZookeeperCon(host, port string) {
 
 	response := string(buffer[:n])
 	// 如果响应中包含 "Environment"，则是 Zookeeper 服务
-	if n > 0 && response[0:11] == "Environment" {
+	if n >= 11 && response[:11] == "Environment" {
 		flags := Flagcve{fmt.Sprintf("%s:%s", host, port), "Zookeeper未授权访问", "可通过nc参数执行conf、envi等命令验证"}
 		echoFlag(flags)
 	}

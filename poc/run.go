@@ -63,7 +63,7 @@ func CheckPoc(url, app string) {
 		CVE_2022_23131(url)
 	}
 	//checkShiroCookie
-	if strings.Contains(app, "shiro") {
+	if strings.Contains(app, "shiro") || strings.Contains(app, "若依") {
 		checkShiroCookie(url)
 	}
 
@@ -159,6 +159,10 @@ func executeRequest(URL string, config Config, wg *sync.WaitGroup) {
 			if elapsedtime > config.Expression.Time { //实际请求如果小于规定的时间则不存在延迟注入
 				continue
 			}
+		}
+
+		if config.Method == "GET" {
+			global.AppendScreenshotURL(baseurl)
 		}
 
 		if os.Getenv("poc") == "on" {

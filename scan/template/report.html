@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <title>Golin安全扫描报告</title>
     <script>{{.ChartJS}}</script>
+    <script>{{.ChartJSPlugin}}</script>
     <style>
         body {
             font-family: "Segoe UI", sans-serif;
@@ -172,6 +173,38 @@
             font-weight: bold;
             cursor: pointer;
         }
+        .modal-nav {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 40px;
+            color: white;
+            cursor: pointer;
+            padding: 10px;
+            z-index: 10000;
+            user-select: none;
+        }
+
+        .modal-prev {
+            left: 30px;
+        }
+
+        .modal-next {
+            right: 30px;
+        }
+        .card-row {
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .card-row .card {
+            flex: 1;
+            min-width: 280px;
+            max-width: 48%;
+            box-sizing: border-box;
+        }
 
     </style>
 </head>
@@ -200,24 +233,32 @@
     <div class="card" id="stats">
         <h2>基础统计</h2>
         <p>总主机：<span class="green-text">{{.TotalHosts}}</span>，漏洞主机：<span class="red-text">{{.VulnHosts}}</span>，Linux：{{.LinuxCount}}，Windows：{{.WindowsCount}}，未识别: {{.UnidentifiedOS}}</p>
-        <p>开放端口：{{.PortsCount}}，SSH：{{.SSHCount}}，RDP：{{.RDPCount}}，Web：{{.WebCount}}，数据库：{{.DBCount}}</p>
+        <p>开放端口：{{.PortsCount}}，SSH：{{.SSHCount}}，RDP：{{.RDPCount}}，Web：{{.WebCount}}，组件：{{.AppCount}}，数据库：{{.DBCount}}</p>
         <p>截图数量：{{.ScreenshotCount}}，截图目录：{{.ScreenshotDir}}</p>
     </div>
 
-    <div class="card" id="chart1">
-        <h2>协议分布图</h2>
-        <canvas id="protocolChart"></canvas>
+    <div class="card-row">
+        <div class="card" id="chart2">
+            <h2>主机与漏洞</h2>
+            <canvas id="hostVulnChart"></canvas>
+        </div>
+        <div class="card" id="chart4">
+            <h2>高危端口分布</h2>
+            <canvas id="portDangerChart"></canvas>
+        </div>
     </div>
 
-    <div class="card" id="chart2">
-        <h2>主机与漏洞</h2>
-        <canvas id="hostVulnChart"></canvas>
+    <div class="card-row">
+        <div class="card" id="chart1">
+            <h2>协议分布图</h2>
+            <canvas id="protocolChart" height="300"></canvas>
+        </div>
+        <div class="card" id="chart3">
+            <h2>操作系统占比</h2>
+            <canvas id="osPieChart"></canvas>
+        </div>
     </div>
 
-    <div class="card" id="chart3">
-        <h2>操作系统占比</h2>
-        <canvas id="osPieChart"></canvas>
-    </div>
 
     <div class="card" id="ports">
         <h2>存活端口服务</h2>
@@ -280,7 +321,7 @@
         <div class="screenshot-grid">
             {{range .ScreenshotImages}}
             <div class="screenshot-item">
-                <img src="../{{.}}" alt="{{.}}" class="thumbnail" onclick="showModal('../{{.}}')">
+                <img src="../{{.}}" alt="{{.}}" class="thumbnail" data-src="../{{.}}" onclick="showModal(this)">
                 <div class="filename">{{.}}</div>
             </div>
             {{end}}
@@ -291,31 +332,80 @@
 
 <div id="modal" class="modal" onclick="hideModal()">
     <span class="close">&times;</span>
+    <span class="modal-nav modal-prev" onclick="prevImage(event)">&#10094;</span> <!-- 左箭头 -->
     <img class="modal-content" id="modal-img">
+    <span class="modal-nav modal-next" onclick="nextImage(event)">&#10095;</span> <!-- 右箭头 -->
 </div>
 
+
 <script>
+    // 从模板中直接构造 JS 数组
+    const rawProtocols = [
+        {{range .PortServiceList}}"{{js .Protocol}}",{{end}}
+    ];
+
+    const protocols = rawProtocols.map(p => {
+        // 去除 ANSI 转义颜色码
+        p = p.replace(/\x1b\[[0-9;]*m/g, "");
+        p = p.trim();
+
+        // 如果包含 |，只保留 | 前的部分
+        if (p.includes("|")) {
+            p = p.split("|")[0].trim();
+        }
+
+        return p;
+    });
+
+    const protocolMap = {};
+    protocols.forEach(p => {
+        if (!p) return;
+        protocolMap[p] = (protocolMap[p] || 0) + 1;
+    });
+
+    const labels = Object.keys(protocolMap);
+    const data = Object.values(protocolMap);
+    const backgroundColors = labels.map((_, i) =>
+        ['#3498db', '#2ecc71', '#e67e22', '#9b59b6', '#f1c40f', '#34495e', '#1abc9c'][i % 7]
+    );
+
     new Chart(document.getElementById('protocolChart'), {
-        type: 'bar',
+        type: 'pie',
         data: {
-            labels: ['SSH', 'RDP', 'Web', '数据库'],
+            labels: labels,
             datasets: [{
-                label: '协议数量',
-                data: [{{.SSHCount}}, {{.RDPCount}}, {{.WebCount}}, {{.DBCount}}],
-    backgroundColor: ['#3498db', '#e67e22', '#2ecc71', '#9b59b6']
-    }]
-    },
-    options: {
-        responsive: true,
+                label: '协议分布',
+                data: data,
+                backgroundColor: backgroundColors
+            }]
+        },
+        options: {
+            responsive: true,
             maintainAspectRatio: false,
-            scales: { y: { beginAtZero: true } }
-    }
+            plugins: {
+                legend: { position: 'right' },
+                datalabels: {
+                    formatter: (value, ctx) => {
+                        const label = ctx.chart.data.labels[ctx.dataIndex];
+                        const total = ctx.chart.data.datasets[0].data.reduce((a, b) => a + b, 0);
+                        const percent = ((value / total) * 100).toFixed(1) + '%';
+                        return `${label}\n${value} (${percent})`;
+                    },
+                    color: '#fff',
+                    font: {
+                        weight: 'bold',
+                        size: 12
+                    }
+                }
+            }
+        },
+        plugins: [ChartDataLabels]
     });
 
     new Chart(document.getElementById('hostVulnChart'), {
         type: 'pie',
         data: {
-            labels: ['安全主机', '漏洞主机'],  // 改标签更符合饼图语义
+            labels: ['安全主机', '漏洞主机'],
             datasets: [{
                 label: '主机数量',
                 data: [{{.TotalHosts}} - {{.VulnHosts}}, {{.VulnHosts}}],
@@ -325,8 +415,24 @@
     options: {
         responsive: true,
             maintainAspectRatio: false,
-        // 饼图不需要 scales，可以删掉
-    }
+            plugins: {
+            datalabels: {
+                formatter: (value, ctx) => {
+                    const label = ctx.chart.data.labels[ctx.dataIndex];
+                    const total = ctx.chart.data.datasets[0].data.reduce((a, b) => a + b, 0);
+                    const percent = ((value / total) * 100).toFixed(1) + '%';
+                    return `${label}\n${value} (${percent})`;
+                },
+                    color: '#fff',
+                    font: {
+                    weight: 'bold',
+                        size: 12
+                }
+            },
+            legend: { position: 'right' }
+        }
+    },
+    plugins: [ChartDataLabels]
     });
 
     new Chart(document.getElementById('osPieChart'), {
@@ -341,8 +447,64 @@
     },
     options: {
         responsive: true,
-            maintainAspectRatio: false
-    }
+            maintainAspectRatio: false,
+            plugins: {
+            datalabels: {
+                formatter: (value, ctx) => {
+                    const label = ctx.chart.data.labels[ctx.dataIndex];
+                    const total = ctx.chart.data.datasets[0].data.reduce((a, b) => a + b, 0);
+                    const percent = ((value / total) * 100).toFixed(1) + '%';
+                    return `${label}\n${value} (${percent})`;
+                },
+                    color: '#fff',
+                    font: {
+                    weight: 'bold',
+                        size: 12
+                }
+            },
+            legend: { position: 'right' }
+        }
+    },
+    plugins: [ChartDataLabels]
+    });
+
+    const rawPorts = [
+        {{range .PortServiceList}}{{.Port}},{{end}}
+    ];
+    const dangerPorts = ['135', '136', '137', '138', '139', '445'];
+    const dangerMap = {};
+    rawPorts.forEach(p => {
+        const port = String(p);
+        if (dangerPorts.includes(port)) {
+            dangerMap[port] = (dangerMap[port] || 0) + 1;
+        }
+    });
+    const dangerLabels = Object.keys(dangerMap);
+    const dangerData = Object.values(dangerMap);
+
+    new Chart(document.getElementById('portDangerChart'), {
+        type: 'pie',
+        data: {
+            labels: dangerLabels,
+            datasets: [{
+                label: '高危端口占比',
+                data: dangerData,
+                backgroundColor: ['#e74c3c', '#e67e22', '#f1c40f', '#9b59b6', '#3498db', '#2ecc71']
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { position: 'right' },
+                datalabels: {
+                    formatter: (value, ctx) => `${ctx.chart.data.labels[ctx.dataIndex]} (${value})`,
+                    color: '#fff',
+                    font: { weight: 'bold', size: 12 }
+                }
+            }
+        },
+        plugins: [ChartDataLabels]
     });
 
     function setupSearch(inputId, tableId) {
@@ -388,17 +550,48 @@
         }
     });
 
-    function showModal(src) {
-        var modal = document.getElementById("modal");
-        var modalImg = document.getElementById("modal-img");
-        modal.style.display = "block";
-        modalImg.src = src;
-    }
-
     function hideModal() {
         var modal = document.getElementById("modal");
         modal.style.display = "none";
     }
+    let currentIndex = -1;
+    let imageList = [];
+
+    function showModal(imgElement) {
+        const modal = document.getElementById("modal");
+        const modalImg = document.getElementById("modal-img");
+
+        if (imageList.length === 0) {
+            // 只在第一次点击时初始化
+            imageList = Array.from(document.querySelectorAll(".screenshot-item img")).map(img => img.getAttribute("data-src"));
+        }
+
+        const src = imgElement.getAttribute("data-src");
+        currentIndex = imageList.indexOf(src);
+        if (currentIndex === -1) currentIndex = 0;
+
+        modal.style.display = "block";
+        modalImg.src = imageList[currentIndex];
+    }
+
+
+
+    function prevImage(event) {
+        event.stopPropagation();
+        if (currentIndex > 0) {
+            currentIndex--;
+            document.getElementById("modal-img").src = imageList[currentIndex];
+        }
+    }
+
+    function nextImage(event) {
+        event.stopPropagation();
+        if (currentIndex < imageList.length - 1) {
+            currentIndex++;
+            document.getElementById("modal-img").src = imageList[currentIndex];
+        }
+    }
+
 </script>
 </body>
 </html>

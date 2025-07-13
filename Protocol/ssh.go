@@ -20,5 +20,5 @@ func IsSSHProtocolApp(str string) string {
 	if strings.Contains(str, "Cisco") {
 		return fmt.Sprintf("%-5s|%s", "Cisco", str)
 	}
-	return str
+	return fmt.Sprintf("%-5s|%s", "SSH", str)
 }

@@ -20,11 +20,11 @@ func init() {
 	ScanCmd.Flags().StringP("exclude", "e", "", "此参数排除扫描的端口,格式支持:1,2,3")
 	ScanCmd.Flags().StringP("excludeip", "", "noip.txt", "此参数排除扫描的IP")
 	ScanCmd.Flags().Bool("noping", false, "此参数是禁止ping检测")
-	ScanCmd.Flags().IntP("chan", "c", 100, "并发数量")
+	ScanCmd.Flags().Float64("chan", 0.8, "并发增长速率,越大并发越高")
 	ScanCmd.Flags().IntP("time", "t", 5, "超时等待时常/s")
 	ScanCmd.Flags().IntP("done", "", 10, "端口整体扫描最长用时/m")
 	ScanCmd.Flags().Bool("random", false, "打乱主机顺序")
-	ScanCmd.Flags().Bool("img", false, "此参数进行保存WEB截图")
+	ScanCmd.Flags().Bool("noimg", false, "此参数不进行WEB截图")
 	ScanCmd.Flags().Bool("nocrack", false, "此参数是不进行弱口令扫描")
 	ScanCmd.Flags().Bool("nopoc", false, "此参数是不进行poc漏洞扫描")
 	ScanCmd.Flags().StringP("userfile", "", "", "此参数是自定义用户字典文件")
@@ -34,5 +34,4 @@ func init() {
 	ScanCmd.Flags().Bool("web", false, "此参数是仅扫描常用web端口")
 	ScanCmd.Flags().Bool("dbs", false, "此参数是仅扫描常用数据库端口")
 	ScanCmd.Flags().Bool("risk", false, "此参数是仅扫描高危端口")
-
 }

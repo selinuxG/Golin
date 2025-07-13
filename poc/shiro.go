@@ -241,10 +241,10 @@ func checkShiroCookie(URL string) {
 			req.Header.Set("Cookie", fmt.Sprintf("JSESSIONID=%s"+";"+"rememberMe=%s", randstr, payload))
 			resp, err := client.Do(req)
 			if err != nil {
-				//fmt.Println("Error sending request :", err)
 				continue
 			}
-			defer resp.Body.Close()
+			io.Copy(io.Discard, resp.Body) // 读取完避免连接池阻塞（推荐）
+			resp.Body.Close()
 
 			setCookieHeaders := resp.Header["Set-Cookie"]
 			allContainRememberMe := true

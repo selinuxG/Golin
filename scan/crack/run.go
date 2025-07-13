@@ -47,7 +47,7 @@ var connectionFuncs = map[string]ConnectionFunc{
 }
 
 func Run(host, port string, Timeout, chanCount int, mode string) {
-	ch := make(chan struct{}, chanCount)
+	ch := make(chan struct{}, global.CalcConcurrency(len(Userlist(mode))*len(Passwdlist())))
 	wg := sync.WaitGroup{}
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*time.Duration(Timeout))
 	defer cancel() //确保所有的goroutine都已经退出

@@ -1,6 +1,7 @@
 package dirscan
 
 import (
+	"crypto/tls"
 	"embed"
 	"fmt"
 	"github.com/parnurzeal/gorequest"
@@ -30,6 +31,10 @@ var (
 var urlData embed.FS
 
 func ParseFlags(cmd *cobra.Command, args []string) {
+	tlsConfig := &tls.Config{
+		InsecureSkipVerify: true,
+	}
+
 	url, _ := cmd.Flags().GetString("url")
 	url = strings.TrimSuffix(url, "/") // 删除最后的/
 
@@ -43,9 +48,14 @@ func ParseFlags(cmd *cobra.Command, args []string) {
 
 	proxyurl, _ = cmd.Flags().GetString("proxy") //不为空则设置代理
 	if proxyurl != "" {
-		request = gorequest.New().Proxy(proxyurl).Timeout(time.Duration(timeout) * time.Second)
+		request = gorequest.New().
+			Proxy(proxyurl).
+			Timeout(time.Duration(timeout) * time.Second).
+			TLSClientConfig(tlsConfig)
 	} else {
-		request = gorequest.New().Timeout(time.Duration(timeout) * time.Second)
+		request = gorequest.New().
+			Timeout(time.Duration(timeout) * time.Second).
+			TLSClientConfig(tlsConfig)
 	}
 	Agent, _ := cmd.Flags().GetString("Agent") //如果Agent不为空则自定义User-Agent
 	if Agent != "" {
