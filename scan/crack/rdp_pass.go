@@ -1,4 +1,4 @@
-//go:build !rdp
+//go:build nordp && linux
 
 package crack
 

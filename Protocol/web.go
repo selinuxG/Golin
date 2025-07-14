@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"github.com/PuerkitoBio/goquery"
 	"github.com/fatih/color"
+	"golang.org/x/net/html"
 	"golin/global"
 	"golin/poc"
 	"io"
@@ -132,7 +133,7 @@ func handleRequest(client *http.Client, info *WebInfo) ([]byte, error) {
 
 	info.server = resp.Header.Get("Server")
 	if info.statuscode == 200 {
-		info.app = CheckApp(string(body), resp.Header, resp.Cookies(), info.server, info.icohash) // 匹配组件
+		info.app = CheckApp(string(body), resp.Header, resp.Cookies(), info.server, info.icohash, info.cert.certIssuer) // 匹配组件
 	}
 
 	if os.Getenv("html") == "on" {
@@ -174,7 +175,7 @@ func handlePocAndXss(ctx context.Context, info *WebInfo, body []byte) {
 }
 
 // CheckApp 基于返回的body、headers、cookies判定组件信息
-func CheckApp(body string, head map[string][]string, cookies []*http.Cookie, server, icohash string) string {
+func CheckApp(body string, head map[string][]string, cookies []*http.Cookie, server, icohash, certIssuer string) string {
 
 	var app []string
 	for _, rule := range RuleDatas {
@@ -211,8 +212,26 @@ func CheckApp(body string, head map[string][]string, cookies []*http.Cookie, ser
 				app = append(app, rule.Name)
 				global.AppMatchedRules[rule.Name]++
 			}
+
 		case "icohash":
 			if strings.EqualFold(rule.Rule, icohash) {
+				app = append(app, rule.Name)
+				global.AppMatchedRules[rule.Name]++
+			}
+
+		case "cert":
+			if certIssuer == "" {
+				continue
+			}
+			if ruleMatch(rule.Rule, certIssuer) {
+				app = append(app, rule.Name)
+				global.AppMatchedRules[rule.Name]++
+			}
+
+		case "title":
+			title := extractTitleFromHTML(body)
+			pattern, err := regexp.Compile(`(?i)` + rule.Rule)
+			if err == nil && pattern.MatchString(title) {
 				app = append(app, rule.Name)
 				global.AppMatchedRules[rule.Name]++
 			}
@@ -251,4 +270,39 @@ func chekwebinfo(info WebInfo) string {
 	}
 
 	return output
+}
+
+// ruleMatch 不区分大小写匹配规则
+func ruleMatch(rule string, target string) bool {
+	ruleLower := strings.ToLower(rule)
+	targetLower := strings.ToLower(target)
+	return strings.Contains(targetLower, ruleLower) || strings.Contains(ruleLower, targetLower)
+}
+
+// extractTitleFromHTML 获取HTML标题
+func extractTitleFromHTML(body string) string {
+	if body == "" {
+		return ""
+	}
+
+	doc, err := html.Parse(strings.NewReader(body))
+	if err != nil {
+		return ""
+	}
+
+	var f func(*html.Node) string
+	f = func(n *html.Node) string {
+		if n.Type == html.ElementNode && n.Data == "title" && n.FirstChild != nil {
+			return n.FirstChild.Data
+		}
+		for c := n.FirstChild; c != nil; c = c.NextSibling {
+			result := f(c)
+			if result != "" {
+				return result
+			}
+		}
+		return ""
+	}
+
+	return f(doc)
 }

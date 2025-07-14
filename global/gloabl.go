@@ -34,6 +34,7 @@ var (
 	saveImgMu        sync.Mutex
 	AppMatchedRules  = make(map[string]int)
 	GrowthFactor     = 0.8 //并发增长速率
+	CrackRDP         = false
 )
 
 // AppendToFile 创建追加写入函数

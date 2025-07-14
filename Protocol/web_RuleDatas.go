@@ -585,5 +585,6 @@ var RuleDatas = []RuleData{
 	{"开源-OpenTSDB", "icohash", "7f4338a0648aaefcdb73240e8420387b"},
 	{"开源-RockMongo", "icohash", "58f12fe033e8baa53bd56c6759687db2"},
 	{"联软科技-UniAccess终端安全管理系统", "icohash", "da9ce98e9a52ccb605d112c0437bcbc1"},
-	{"RustDesk远程工具", "body", `<title>RustDesk Console</title>|<title>Rustdesk API Admin</title>`},
+	{"RustDesk远程工具", "title", `.*RustDesk.*`},
+	{"火绒", "cert", "huorong.cn"},
 }

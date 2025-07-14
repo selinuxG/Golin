@@ -93,6 +93,8 @@ func ParseFlags(cmd *cobra.Command, args []string) {
 	nocrack, _ := cmd.Flags().GetBool("nocrack") //弱口令扫描
 	Carck = !nocrack
 
+	global.CrackRDP, _ = cmd.Flags().GetBool("rdp") //rdp弱口令扫描
+
 	nopoc, _ := cmd.Flags().GetBool("nopoc") //poc扫描
 	Poc = !nopoc
 
