@@ -11,6 +11,17 @@ const (
 	XlsxTemplateName = "golin上传文件模板文件.xlsx"
 )
 
+type TaskJob struct {
+	StartTime          string // 开始时间（默认零值，调用时设置）
+	EndTime            string // 结束时间（默认零值）
+	IpJob              string // IP扫描任务清单
+	PortJob            string // 端口扫描任务清单
+	PocJob             bool   // 是否启用漏洞（PoC）扫描
+	VulnerabilityCount int    // 漏洞数量
+	CrackJob           bool   // 是否启用弱口令扫描
+	CrackCount         int    // 弱口令数量
+}
+
 // 公共变量
 var (
 	SuccessLog       = "log.log"                                            //运行记录
@@ -35,6 +46,7 @@ var (
 	AppMatchedRules  = make(map[string]int)
 	GrowthFactor     = 0.8 //并发增长速率
 	CrackRDP         = false
+	Job              = TaskJob{}
 )
 
 // AppendToFile 创建追加写入函数

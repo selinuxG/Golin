@@ -7,6 +7,7 @@ import (
 	"golin/scan/crack"
 	"os"
 	"sync"
+	"time"
 )
 
 var (
@@ -109,6 +110,28 @@ func ParseFlags(cmd *cobra.Command, args []string) {
 
 	done, _ := cmd.Flags().GetInt("done") //超时等待时常
 	Donetime = done
+
+	global.Job = global.TaskJob{
+		StartTime: time.Now().Format("2006-01-02 15:04:05"),
+		IpJob: func() string {
+			if ip != "" {
+				return ip
+			}
+			switch {
+			case fofa != "":
+				return fmt.Sprintf("fofa语句:%s", fofa)
+			case ipFile != "":
+				return ipFile
+			}
+			return ""
+		}(),
+		PortJob:            port,
+		PocJob:             Poc,
+		CrackJob:           Carck,
+		VulnerabilityCount: 0, // 初始为0，扫描过程中更新
+		CrackCount:         0, // 初始为0，扫描过程中更新
+	}
+
 	scanPort(done)
 
 }

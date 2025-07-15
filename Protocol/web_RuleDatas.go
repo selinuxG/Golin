@@ -587,4 +587,5 @@ var RuleDatas = []RuleData{
 	{"联软科技-UniAccess终端安全管理系统", "icohash", "da9ce98e9a52ccb605d112c0437bcbc1"},
 	{"RustDesk远程工具", "title", `.*RustDesk.*`},
 	{"火绒", "cert", "huorong.cn"},
+	{"深信服", "cert", "SANGFOR"},
 }

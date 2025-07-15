@@ -57,7 +57,7 @@ func endHtml() {
 	}
 
 	// 生成HTML报告
-	html := generateHTMLReport(ReportData{
+	html, err := generateHTMLReport(ReportData{
 		Time:             time.Now().Format("2006-01-02 15:04:05"),
 		TotalHosts:       len(iplist),
 		VulnHosts:        vulnerablehost,
@@ -79,7 +79,12 @@ func endHtml() {
 		IPList:           iplist,
 		ChartJS:          template.JS(chartJS),
 		ChartJSPlugin:    template.JS(chartJSPlugin),
+		Job:              global.Job,
 	})
+	if err != nil {
+		fmt.Printf("[!] 生成HTML扫描报告失败: %s\n", err)
+		return
+	}
 
 	filename := filepath.Join("ScanLog", time.Now().Format("200601021504")+"-report.html")
 	if err := os.WriteFile(filename, []byte(html), 0644); err == nil {

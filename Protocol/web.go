@@ -224,8 +224,10 @@ func CheckApp(body string, head map[string][]string, cookies []*http.Cookie, ser
 				continue
 			}
 			if ruleMatch(rule.Rule, certIssuer) {
-				app = append(app, rule.Name)
-				global.AppMatchedRules[rule.Name]++
+				if !strings.Contains(strings.Join(app, ""), rule.Name) {
+					app = append(app, rule.Name)
+					global.AppMatchedRules[rule.Name]++
+				}
 			}
 
 		case "title":

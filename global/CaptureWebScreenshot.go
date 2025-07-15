@@ -7,6 +7,7 @@ import (
 	"github.com/chromedp/chromedp"
 	"os"
 	"os/exec"
+	"os/signal"
 	"path/filepath"
 	"runtime"
 	"strings"
@@ -22,17 +23,32 @@ var (
 	browserCtx  context.Context
 )
 
+var ScreenshotCtx context.Context
+var ScreenshotCancel context.CancelFunc
+
+func init() {
+	if SaveIMG {
+		ScreenshotCtx, ScreenshotCancel = context.WithCancel(context.Background())
+		// 监听 Ctrl+C
+		go func() {
+			sigChan := make(chan os.Signal, 1)
+			signal.Notify(sigChan, os.Interrupt)
+			<-sigChan
+			CancelScreenshot()
+		}()
+	}
+}
+
 func StartScreenshotWorkers(workers int) {
-	if len(SsaveImgURLs) == 0 {
+	if len(SsaveImgURLs) == 0 { //不判断是否开启是因为漏洞截图不受状态影响
 		return
 	}
 	if len(SsaveImgURLs) < workers {
 		workers = len(SsaveImgURLs)
 	}
 
-	_, err := DetectChromePath() //检测Chrome是否按照
+	_, err := DetectChromePath()
 	if err != nil {
-		fmt.Println(err)
 		return
 	}
 
@@ -46,7 +62,7 @@ func StartScreenshotWorkers(workers int) {
 	var wg sync.WaitGroup
 	taskChan := make(chan string, total)
 
-	var lastStatus atomic.Value // 显示“✔ https://...”或“✘ https://...”
+	var lastStatus atomic.Value
 
 	printProgress := func(done, total int32, status string) {
 		barWidth := 40
@@ -54,7 +70,6 @@ func StartScreenshotWorkers(workers int) {
 		doneBlocks := int(percent * float64(barWidth))
 		bar := strings.Repeat("█", doneBlocks) + strings.Repeat("░", barWidth-doneBlocks)
 
-		// 截断状态内容，最多显示50个字符，避免粘连或终端混乱
 		truncate := func(s string, max int) string {
 			if len(s) <= max {
 				return s
@@ -63,12 +78,10 @@ func StartScreenshotWorkers(workers int) {
 		}
 		shortStatus := truncate(status, 50)
 
-		// 输出进度并清除行尾（使用 ANSI 的 \033[K）
-		fmt.Printf("\r📸 截图进度 [%s] %d/%d (%.1f%%) %s\033[K",
+		fmt.Printf("\r[-] 📸 截图进度 [%s] %d/%d (%.1f%%) %s(可随时CTRL+C取消此项)\033[K",
 			bar, done, total, percent*100, shortStatus)
 	}
 
-	// 刷新进度条
 	stopChan := make(chan struct{})
 	go func() {
 		ticker := time.NewTicker(100 * time.Millisecond)
@@ -78,52 +91,66 @@ func StartScreenshotWorkers(workers int) {
 			case <-ticker.C:
 				status, _ := lastStatus.Load().(string)
 				printProgress(atomic.LoadInt32(&finished), int32(total), status)
-			case <-stopChan:
-				fmt.Printf("\r\033[2K") // 直接清除进度条这一整行
-				//
-				//status, _ := lastStatus.Load().(string)
-				//printProgress(atomic.LoadInt32(&finished), int32(total), status)
-				//time.Sleep(100 * time.Millisecond)
-				//fmt.Printf("\r\033[2K\n") //清除整行 + 换行
+			case <-ScreenshotCtx.Done():
+				//fmt.Printf("\r\033[2K[!] 已中断截图任务\n")
 				return
-
+			case <-stopChan:
+				fmt.Printf("\r\033[2K")
+				return
 			}
 		}
 	}()
 
-	// 启动 worker
+	// worker
 	for i := 0; i < workers; i++ {
 		wg.Add(1)
 		go func() {
 			defer wg.Done()
-			for url := range taskChan {
-				err := CaptureScreenshot(url, 90, SsaveIMGDIR)
-				if err != nil {
-					lastStatus.Store(fmt.Sprintf("✘ %s", url))
-				} else {
-					lastStatus.Store(fmt.Sprintf("✔ %s", url))
+			for {
+				select {
+				case <-ScreenshotCtx.Done():
+					return
+				case url, ok := <-taskChan:
+					if !ok {
+						return
+					}
+					err = CaptureScreenshot(url, 90, SsaveIMGDIR)
+					if err != nil {
+						lastStatus.Store(fmt.Sprintf("✘ %s", url))
+					} else {
+						lastStatus.Store(fmt.Sprintf("✔ %s", url))
+					}
+					atomic.AddInt32(&finished, 1)
 				}
-				atomic.AddInt32(&finished, 1)
 			}
 		}()
 	}
 
-	// 启动任务
+	// 分发任务
 	saveImgMu.Lock()
 	for _, url := range SsaveImgURLs {
-		taskChan <- url
+		select {
+		case <-ScreenshotCtx.Done():
+			break
+		default:
+			taskChan <- url
+		}
 	}
 	saveImgMu.Unlock()
 	close(taskChan)
 
 	wg.Wait()
 	close(stopChan)
-
-	couunt, err := CountDirFiles(SsaveIMGDIR)
-	if couunt == 0 && err != nil {
+	count, err := CountDirFiles(SsaveIMGDIR)
+	if count == 0 && err != nil {
 		return
 	}
-	fmt.Printf("\033[2K\r[*] Web扫描截图保存目录：%v 当前共计截图数量：%v\n", SsaveIMGDIR, couunt)
+	if ScreenshotCtx.Err() != nil {
+		fmt.Printf("[!] 截图任务被取消，跳过剩余任务")
+		fmt.Printf("\033[2K\r[*] Web扫描截图保存目录：%v 当前共计截图数量：%v\n", SsaveIMGDIR, count)
+		return
+	}
+	fmt.Printf("\033[2K\r[*] Web扫描截图保存目录：%v 当前共计截图数量：%v\n", SsaveIMGDIR, count)
 }
 
 // InitBrowser 初始化共享 Chrome 实例
@@ -236,4 +263,12 @@ func DetectChromePath() (string, error) {
 		}
 	}
 	return "", fmt.Errorf("[✘] 未找到 Chrome 可执行文件，请安装 Google Chrome 或 Chromium")
+}
+
+// CancelScreenshot 中断截图任务
+func CancelScreenshot() {
+	if ScreenshotCancel != nil {
+		fmt.Printf("\r[!] 用户按下 Ctrl+C,已中断截图任务,请等待已下发任务结束%s", strings.Repeat(" ", 50))
+		ScreenshotCancel()
+	}
 }

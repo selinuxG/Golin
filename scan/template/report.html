@@ -205,7 +205,15 @@
             max-width: 48%;
             box-sizing: border-box;
         }
+        .green-text {
+            color: #28a745;
+            font-weight: bold;
+        }
 
+        .red-text {
+            color: #dc3545;
+            font-weight: bold;
+        }
     </style>
 </head>
 <body>
@@ -222,19 +230,37 @@
     <a href="#chart2">📊 主机与漏洞</a>
     <a href="#chart3">🍰 系统占比</a>
     <a href="#ports">📡 存活端口</a>
-    <a href="#ips">🌐 主机列表</a>
     <a href="#weakpass">🔐 弱口令</a>
     <a href="#vuln">🚨 漏洞信息</a>
     <a href="#screenshots">📸 截图展示</a>
+    <a href="#ips">🌐 存活主机</a>
 </div>
 
 <div class="container">
 
     <div class="card" id="stats">
+        <h2>任务信息</h2>
+        <p>扫描时间：{{.Job.StartTime}}  -  {{.Job.EndTime}}</p>
+        <p>扫描任务：{{.Job.IpJob}}，扫描端口：{{.Job.PortJob}}</p>
+        <p>是否启用口令扫描:
+            {{if .Job.CrackJob}}
+            <span class="green-text">是</span> 弱口令资产数：<span class="red-text">{{.Job.CrackCount}}</span>
+            {{else}}
+            <span class="red-text">否</span>
+            {{end}}
+        </p>
+        <p>是否启用漏洞扫描:
+            {{if .Job.PocJob}}
+            <span class="green-text">是</span>，漏洞资产数：<span class="red-text">{{.Job.VulnerabilityCount}}</span>
+            {{else}}
+            <span class="red-text">否</span>
+            {{end}}
+        </p>
+
         <h2>基础统计</h2>
-        <p>总主机：<span class="green-text">{{.TotalHosts}}</span>，漏洞主机：<span class="red-text">{{.VulnHosts}}</span>，Linux：{{.LinuxCount}}，Windows：{{.WindowsCount}}，未识别: {{.UnidentifiedOS}}</p>
-        <p>开放端口：{{.PortsCount}}，SSH：{{.SSHCount}}，RDP：{{.RDPCount}}，Web：{{.WebCount}}，组件：{{.AppCount}}，数据库：{{.DBCount}}</p>
-        <p>截图数量：{{.ScreenshotCount}}，截图目录：{{.ScreenshotDir}}</p>
+        <p>存活主机：<span class="green-text">{{.TotalHosts}}</span>，漏洞主机：<span class="red-text">{{.VulnHosts}}</span>，Linux：{{.LinuxCount}}，Windows：{{.WindowsCount}}，未识别: {{.UnidentifiedOS}}</p>
+        <p>开放端口：<span class="green-text">{{.PortsCount}}</span>，SSH：{{.SSHCount}}，RDP：{{.RDPCount}}，Web：{{.WebCount}}，组件：{{.AppCount}}，数据库：{{.DBCount}}</p>
+        <p>截图数量：<span class="green-text">{{.ScreenshotCount}}</span>，截图目录：{{.ScreenshotDir}}</p>
     </div>
 
     <div class="card-row">
@@ -272,16 +298,6 @@
                 <td>{{$e.Port}}</td>
                 <td>{{removeColor $e.Protocol}}</td>
             </tr>
-            {{end}}
-        </table>
-    </div>
-
-    <div class="card" id="ips">
-        <h2>主机列表</h2>
-        <table id="ipTable">
-            <tr><th>#</th><th>IP 地址</th></tr>
-            {{range $index, $ip := .IPList}}
-            <tr><td>{{inc $index}}</td><td>{{$ip}}</td></tr>
             {{end}}
         </table>
     </div>
@@ -326,6 +342,17 @@
             </div>
             {{end}}
         </div>
+    </div>
+
+
+    <div class="card" id="ips">
+        <h2>存活主机列表</h2>
+        <table id="ipTable">
+            <tr><th>#</th><th>IP 地址</th></tr>
+            {{range $index, $ip := .IPList}}
+            <tr><td>{{inc $index}}</td><td>{{$ip}}</td></tr>
+            {{end}}
+        </table>
     </div>
 
 </div>

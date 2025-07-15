@@ -3,6 +3,7 @@ package scan
 import (
 	"bytes"
 	"embed"
+	"golin/global"
 	"golin/poc"
 	"golin/scan/crack"
 	"html/template"
@@ -31,6 +32,7 @@ type ReportData struct {
 	ChartJS          template.JS
 	ChartJSPlugin    template.JS
 	ScreenshotImages []string
+	Job              global.TaskJob
 }
 
 //go:embed template/*
@@ -42,7 +44,7 @@ var chartJS []byte
 //go:embed template/chaplugin.js
 var chartJSPlugin []byte
 
-func generateHTMLReport(data ReportData) string {
+func generateHTMLReport(data ReportData) (string, error) {
 	funcMap := template.FuncMap{
 		"removeColor": func(input string) string {
 			re := regexp.MustCompile(`\x1b\[[0-9;]*m`)
@@ -55,12 +57,12 @@ func generateHTMLReport(data ReportData) string {
 
 	tmpl, err := template.New("report.html").Funcs(funcMap).ParseFS(content, "template/report.html")
 	if err != nil {
-		return ""
+		return "", err
 	}
 
 	var buf bytes.Buffer
 	if err := tmpl.Execute(&buf, data); err != nil {
-		return ""
+		return "", err
 	}
-	return buf.String()
+	return buf.String(), nil
 }

@@ -17,13 +17,17 @@ const portformatString = clearLine + "\r| %-2s | %-15s | %-4s |%-50s \n" //端�
 
 func scanPort(donetime int) {
 	defer func() {
-		global.Percent(donecount, allcount) //输出100%的进度条
+		global.Percent(donecount, allcount) //输出100%的进度条,并且补全任务信息
 		echoCrack()                         //输出弱口令资产
 		echoPoc()                           //输出漏洞资产
 		endEcho()                           //输出总体结果
 		saveXlsx(infolist, iplist)          //结果保存文件
 		global.StartScreenshotWorkers(10)   //启动WEB截图
-		endHtml()                           //输出html
+		// 补全任务信息
+		global.Job.EndTime = time.Now().Format("2006-01-02 15:04:05")
+		global.Job.VulnerabilityCount = len(poc.ListPocInfo)
+		global.Job.CrackCount = len(crack.MapCrackHost)
+		endHtml() //输出html
 	}()
 	checkPing()
 
