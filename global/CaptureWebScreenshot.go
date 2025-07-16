@@ -26,19 +26,6 @@ var (
 var ScreenshotCtx context.Context
 var ScreenshotCancel context.CancelFunc
 
-func init() {
-	if SaveIMG {
-		ScreenshotCtx, ScreenshotCancel = context.WithCancel(context.Background())
-		// 监听 Ctrl+C
-		go func() {
-			sigChan := make(chan os.Signal, 1)
-			signal.Notify(sigChan, os.Interrupt)
-			<-sigChan
-			CancelScreenshot()
-		}()
-	}
-}
-
 func StartScreenshotWorkers(workers int) {
 	if len(SsaveImgURLs) == 0 { //不判断是否开启是因为漏洞截图不受状态影响
 		return
@@ -46,6 +33,15 @@ func StartScreenshotWorkers(workers int) {
 	if len(SsaveImgURLs) < workers {
 		workers = len(SsaveImgURLs)
 	}
+
+	ScreenshotCtx, ScreenshotCancel = context.WithCancel(context.Background())
+	// 监听 Ctrl+C
+	go func() {
+		sigChan := make(chan os.Signal, 1)
+		signal.Notify(sigChan, os.Interrupt)
+		<-sigChan
+		CancelScreenshot()
+	}()
 
 	_, err := DetectChromePath()
 	if err != nil {
@@ -268,7 +264,7 @@ func DetectChromePath() (string, error) {
 // CancelScreenshot 中断截图任务
 func CancelScreenshot() {
 	if ScreenshotCancel != nil {
-		fmt.Printf("\r[!] 用户按下 Ctrl+C,已中断截图任务,请等待已下发任务结束%s", strings.Repeat(" ", 50))
+		fmt.Printf("\r[!] 用户按下 Ctrl+C,已中断截图任务,请等待已下发任务结束%s", strings.Repeat(" ", 80))
 		ScreenshotCancel()
 	}
 }

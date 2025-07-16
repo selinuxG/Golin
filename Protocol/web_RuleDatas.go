@@ -588,4 +588,5 @@ var RuleDatas = []RuleData{
 	{"RustDesk远程工具", "title", `.*RustDesk.*`},
 	{"火绒", "cert", "huorong.cn"},
 	{"深信服", "cert", "SANGFOR"},
+	{"xui", "body", `basePath\s*\+\s*'xui/'`},
 }
