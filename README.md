@@ -155,6 +155,7 @@ golin keylogger (键盘记录器,仅windows可用,保存到用户目录下Golin/
 golin users (输出用户信息,当前仅限windows,主要用于应急时获取影子用户)
 golin navicat (输出navicat连接信息)
 golin xshell (输出xshell连接信息)
+golin wifi (输出本机连接过的WiFi信息)
 golin update (检查是否可更新)
 ```
 
