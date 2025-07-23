@@ -61,7 +61,7 @@ func StartScreenshotWorkers(workers int) {
 	var lastStatus atomic.Value
 
 	printProgress := func(done, total int32, status string) {
-		barWidth := 40
+		barWidth := 20
 		percent := float64(done) / float64(total)
 		doneBlocks := int(percent * float64(barWidth))
 		bar := strings.Repeat("█", doneBlocks) + strings.Repeat("░", barWidth-doneBlocks)
@@ -73,8 +73,7 @@ func StartScreenshotWorkers(workers int) {
 			return s[:max] + "..."
 		}
 		shortStatus := truncate(status, 50)
-
-		fmt.Printf("\r[-] 📸 截图进度 [%s] %d/%d (%.1f%%) %s(可随时CTRL+C取消此项)\033[K",
+		fmt.Printf("\r[-] 📸 [%s]%d/%d (%.1f%%) %s(可随时CTRL+C取消此项)\033[K",
 			bar, done, total, percent*100, shortStatus)
 	}
 

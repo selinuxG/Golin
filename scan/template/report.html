@@ -241,7 +241,11 @@
     <div class="card" id="stats">
         <h2>任务信息</h2>
         <p>扫描时间：{{.Job.StartTime}}  -  {{.Job.EndTime}}</p>
-        <p>扫描任务：{{.Job.IpJob}}，扫描端口：{{.Job.PortJob}}</p>
+        <p>扫描任务：{{.Job.IpJob}}，扫描端口：
+            <span id="port-count"></span>
+            <span id="port-list" style="display:none;"></span>
+            <a href="javascript:void(0);" id="toggle-btn" onclick="togglePorts()">[展开]</a>
+        </p>
         <p>是否启用口令扫描:
             {{if .Job.CrackJob}}
             <span class="green-text">是</span> 弱口令资产数：<span class="red-text">{{.Job.CrackCount}}</span>
@@ -324,7 +328,7 @@
             <tr><th>漏洞URL</th><th>漏洞特征文件</th><th>漏洞信息</th></tr>
             {{range .PocList}}
             <tr>
-                <td>{{.Url}}</td>
+                <td><a href="{{.Url}}" target="_blank">{{.Url}}</a></td>
                 <td>{{.Cve}}</td>
                 <td>{{.Flag}}</td>
             </tr>
@@ -619,6 +623,47 @@
         }
     }
 
+    function formatUrl(raw) {
+        let lastSlashIndex = raw.lastIndexOf('/');
+        let s = lastSlashIndex !== -1 ? raw.substring(lastSlashIndex + 1) : raw;
+        s = s.replace(/\.png$/, '');
+        s = s.replace(/____/g, 's://');
+        s = s.replace(/___/g, '://');
+        s = s.replace(/_/g, ':');
+        return s;
+    }
+
+    document.addEventListener("DOMContentLoaded", function() {
+        const filenameDivs = document.querySelectorAll('.filename');
+        filenameDivs.forEach(div => {
+            const raw = div.textContent.trim();
+            const url = formatUrl(raw);
+            div.innerHTML = `<a href="${url}" target="_blank" rel="noopener noreferrer">${url}</a>`;
+        });
+    });
+
+    function togglePorts() {
+        const portList = document.getElementById("port-list");
+        const toggleBtn = document.getElementById("toggle-btn");
+
+        if (portList.style.display === "none") {
+            portList.style.display = "inline";
+            toggleBtn.textContent = "[收起]";
+        } else {
+            portList.style.display = "none";
+            toggleBtn.textContent = "[展开]";
+        }
+    }
+
+    // 页面加载后，处理端口数量和内容
+    document.addEventListener("DOMContentLoaded", function() {
+        const raw = `{{.Job.PortJob}}`; // 例如: "8018,443,8080,888,800,8888"
+        const ports = raw.split(",").filter(p => p.trim() !== "");
+        const count = ports.length;
+
+        document.getElementById("port-count").textContent = `共 ${count} 个端口`;
+        document.getElementById("port-list").textContent = `（${ports.join(", ")}）`;
+    });
 </script>
 </body>
 </html>

@@ -58,7 +58,7 @@ func parseProtocol(conn net.Conn, host, port string, Poc bool) string {
 			}
 		}
 		// 判断是否是 HTTP 响应（以 "HTTP/" 开头）
-		if strings.HasPrefix(line, "HTTP/") || strings.Contains(line, "200 OK") || port == "80" || port == "443" {
+		if strings.HasPrefix(line, "HTTP/") || strings.Contains(line, "200 OK") {
 			if global.SaveIMG {
 				global.AppendScreenshotURL(fmt.Sprintf("http://%s:%s", host, port))
 			}
@@ -77,11 +77,11 @@ func parseProtocol(conn net.Conn, host, port string, Poc bool) string {
 
 func defaultPort(port string) string {
 	defMap := map[string]string{
-		"3306":  "数据库|MySQL",
-		"23":    "Telnet",
-		"21":    "FTP",
-		"80":    "WEB应用",
-		"443":   "WEB应用",
+		"3306": "数据库|MySQL",
+		"23":   "Telnet",
+		"21":   "FTP",
+		//"80":    "WEB应用",
+		//"443":   "WEB应用",
 		"873":   "Rsync",
 		"5236":  "数据库|达梦",
 		"61616": "ActiveMQ",

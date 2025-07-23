@@ -6,6 +6,7 @@ import (
 	"golin/global"
 	"golin/scan/crack"
 	"os"
+	"strings"
 	"sync"
 	"time"
 )
@@ -125,7 +126,7 @@ func ParseFlags(cmd *cobra.Command, args []string) {
 			}
 			return ""
 		}(),
-		PortJob:            port,
+		PortJob:            strings.Join(portlist, ","),
 		PocJob:             Poc,
 		CrackJob:           Carck,
 		VulnerabilityCount: 0, // 初始为0，扫描过程中更新

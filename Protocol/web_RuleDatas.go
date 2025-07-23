@@ -589,4 +589,5 @@ var RuleDatas = []RuleData{
 	{"火绒", "cert", "huorong.cn"},
 	{"深信服", "cert", "SANGFOR"},
 	{"xui", "body", `basePath\s*\+\s*'xui/'`},
+	{"ikuai产品(无线网络)", "cert", "ikuai8.com"},
 }
