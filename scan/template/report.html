@@ -627,11 +627,15 @@
         let lastSlashIndex = raw.lastIndexOf('/');
         let s = lastSlashIndex !== -1 ? raw.substring(lastSlashIndex + 1) : raw;
         s = s.replace(/\.png$/, '');
-        s = s.replace(/____/g, 's://');
-        s = s.replace(/___/g, '://');
-        s = s.replace(/_/g, ':');
+
+        // 替换顺序：从最长的替代符到最短的，防止冲突
+        s = s.replace(/___/g, '://');  // 协议
+        s = s.replace(/__/g, '/');     // 路径
+        s = s.replace(/_/g, ':');      // 端口或用户名密码中的冒号
+
         return s;
     }
+
 
     document.addEventListener("DOMContentLoaded", function() {
         const filenameDivs = document.querySelectorAll('.filename');

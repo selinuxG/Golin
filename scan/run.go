@@ -6,6 +6,8 @@ import (
 	"golin/global"
 	"golin/scan/crack"
 	"os"
+	"path/filepath"
+	"runtime"
 	"strings"
 	"sync"
 	"time"
@@ -111,6 +113,23 @@ func ParseFlags(cmd *cobra.Command, args []string) {
 
 	done, _ := cmd.Flags().GetInt("done") //超时等待时常
 	Donetime = done
+
+	// 调整报告名称
+	outname, _ := cmd.Flags().GetString("outname")
+	timestamp := time.Now().Format("200601021504")
+	if outname == "" {
+		outname = timestamp
+	} else if runtime.GOOS == "windows" {
+		outname = strings.Map(func(r rune) rune {
+			if r == '/' || r == ':' || r == '?' || r == '&' {
+				return '_'
+			}
+			return r
+		}, outname)
+	}
+	global.SsaveIMGDIR = filepath.Join("WebScreenshot", outname)
+	global.XlsxFileName = outname + "-GoLin.xlsx"
+	global.HtmlFileName = outname + "-GoLin.html"
 
 	global.Job = global.TaskJob{
 		StartTime: time.Now().Format("2006-01-02 15:04:05"),

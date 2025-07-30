@@ -86,7 +86,7 @@ func endHtml() {
 		return
 	}
 
-	filename := filepath.Join("ScanLog", time.Now().Format("200601021504")+"-report.html")
+	filename := filepath.Join("ScanLog", global.HtmlFileName)
 	if err := os.WriteFile(filename, []byte(html), 0644); err == nil {
 		if runtime.GOOS == "windows" {
 			_ = exec.Command("cmd", "/c", "start", filename).Run()

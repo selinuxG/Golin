@@ -35,4 +35,6 @@ func init() {
 	ScanCmd.Flags().Bool("web", false, "此参数是仅扫描常用web端口")
 	ScanCmd.Flags().Bool("dbs", false, "此参数是仅扫描常用数据库端口")
 	ScanCmd.Flags().Bool("risk", false, "此参数是仅扫描高危端口")
+	ScanCmd.Flags().StringP("outname", "", "", "此参数是指定输出报告名字,默认为时间命名")
+
 }

@@ -58,23 +58,14 @@ func StartScreenshotWorkers(workers int) {
 	var wg sync.WaitGroup
 	taskChan := make(chan string, total)
 
-	var lastStatus atomic.Value
-
-	printProgress := func(done, total int32, status string) {
-		barWidth := 20
+	printProgress := func(done, total int32) {
+		barWidth := 30
 		percent := float64(done) / float64(total)
 		doneBlocks := int(percent * float64(barWidth))
 		bar := strings.Repeat("█", doneBlocks) + strings.Repeat("░", barWidth-doneBlocks)
 
-		truncate := func(s string, max int) string {
-			if len(s) <= max {
-				return s
-			}
-			return s[:max] + "..."
-		}
-		shortStatus := truncate(status, 50)
-		fmt.Printf("\r[-] 📸 [%s]%d/%d (%.1f%%) %s(可随时CTRL+C取消此项)\033[K",
-			bar, done, total, percent*100, shortStatus)
+		fmt.Printf("\r[-] 📸 [%s]%d/%d (%.1f%%)(可随时CTRL+C取消此项)\033[K",
+			bar, done, total, percent*100)
 	}
 
 	stopChan := make(chan struct{})
@@ -84,8 +75,7 @@ func StartScreenshotWorkers(workers int) {
 		for {
 			select {
 			case <-ticker.C:
-				status, _ := lastStatus.Load().(string)
-				printProgress(atomic.LoadInt32(&finished), int32(total), status)
+				printProgress(atomic.LoadInt32(&finished), int32(total))
 			case <-ScreenshotCtx.Done():
 				//fmt.Printf("\r\033[2K[!] 已中断截图任务\n")
 				return
@@ -109,12 +99,7 @@ func StartScreenshotWorkers(workers int) {
 					if !ok {
 						return
 					}
-					err = CaptureScreenshot(url, 90, SsaveIMGDIR)
-					if err != nil {
-						lastStatus.Store(fmt.Sprintf("✘ %s", url))
-					} else {
-						lastStatus.Store(fmt.Sprintf("✔ %s", url))
-					}
+					_ = CaptureScreenshot(url, 90, SsaveIMGDIR)
 					atomic.AddInt32(&finished, 1)
 				}
 			}
@@ -216,12 +201,7 @@ func CaptureScreenshot(url string, quality int64, dir string) error {
 	}
 
 	// 生成合法文件名
-	filename := strings.Map(func(r rune) rune {
-		if r == '/' || r == ':' || r == '?' || r == '&' {
-			return '_'
-		}
-		return r
-	}, url)
+	filename := EncodeURL(url)
 
 	// 保存 PNG 文件
 	output := filepath.Join(dir, filename+".png")
@@ -266,4 +246,13 @@ func CancelScreenshot() {
 		fmt.Printf("\r[!] 用户按下 Ctrl+C,已中断截图任务,请等待已下发任务结束%s", strings.Repeat(" ", 80))
 		ScreenshotCancel()
 	}
+}
+
+func EncodeURL(url string) string {
+	replacer := strings.NewReplacer(
+		"://", "___", // 协议
+		"/", "__", // 路径
+		":", "_", // 端口
+	)
+	return replacer.Replace(url)
 }

@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/xuri/excelize/v2"
+	"golin/global"
 	"golin/poc"
 	"golin/scan/crack"
 	"os"
@@ -11,7 +12,6 @@ import (
 	"regexp"
 	"strconv"
 	"strings"
-	"time"
 )
 
 var (
@@ -40,8 +40,7 @@ func saveXlsx(infoList []INFO, ipList []string) {
 		}
 	}
 
-	filename := time.Now().Format("200601021504") + "-GoLin.xlsx"
-	filename = filepath.Join("ScanLog", filename)
+	filename := filepath.Join("ScanLog", global.XlsxFileName)
 	if err := f.SaveAs(filename); err != nil {
 		fmt.Printf("[-] 保存文件失败！1、文件是否已打开？ 2、是否有权限\n")
 		fmt.Println(err)
