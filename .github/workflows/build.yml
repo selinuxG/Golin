@@ -25,19 +25,11 @@ jobs:
       with:
         go-version: ${{ env.GO_VERSION }}
 
-    # 暂时禁用缓存以避免 tar 错误
-    # - name: Cache Go modules
-    #   uses: actions/cache@v4
-    #   with:
-    #     path: |
-    #       ~/.cache/go-build
-    #       ~/go/pkg/mod
-    #     key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}-v2
-    #     restore-keys: |
-    #       ${{ runner.os }}-go-
-
     - name: Download dependencies
-      run: go mod download
+      run: |
+        # 清理可能损坏的缓存
+        go clean -modcache || true
+        go mod download
 
     - name: Run tests
       run: |
@@ -103,19 +95,11 @@ jobs:
       with:
         go-version: ${{ env.GO_VERSION }}
 
-    # 暂时禁用缓存以避免 tar 错误
-    # - name: Cache Go modules
-    #   uses: actions/cache@v4
-    #   with:
-    #     path: |
-    #       ~/.cache/go-build
-    #       ~/go/pkg/mod
-    #     key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}-v2
-    #     restore-keys: |
-    #       ${{ runner.os }}-go-
-
     - name: Download dependencies
-      run: go mod download
+      run: |
+        # 清理可能损坏的缓存
+        go clean -modcache || true
+        go mod download
 
     - name: Get version
       id: version
