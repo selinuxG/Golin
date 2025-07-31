@@ -15,6 +15,7 @@ jobs:
     name: Build for ${{ matrix.goos }}-${{ matrix.goarch }}
     runs-on: ${{ matrix.os }}
     strategy:
+      fail-fast: false  # 不要因为一个失败就取消所有构建
       matrix:
         include:
           # Windows builds
@@ -22,32 +23,32 @@ jobs:
             goarch: amd64
             os: windows-latest
             ext: '.exe'
-            
+
           - goos: windows
             goarch: arm64
             os: windows-latest
             ext: '.exe'
-            
+
           # Linux builds
           - goos: linux
             goarch: amd64
             os: ubuntu-latest
             ext: ''
-            
+
           - goos: linux
             goarch: arm64
             os: ubuntu-latest
             ext: ''
-            
+
           # macOS builds
           - goos: darwin
             goarch: amd64
-            os: macos-latest
+            os: macos-13  # 使用稳定的 macOS 版本
             ext: ''
-            
+
           - goos: darwin
             goarch: arm64
-            os: macos-latest
+            os: macos-14  # 使用支持 ARM64 的 macOS 版本
             ext: ''
 
     steps:
@@ -72,14 +73,21 @@ jobs:
     - name: Get dependencies
       run: go mod download
 
+    - name: Verify Go installation
+      run: |
+        go version
+        go env GOOS GOARCH
+
     - name: Build binary
       env:
         GOOS: ${{ matrix.goos }}
         GOARCH: ${{ matrix.goarch }}
         CGO_ENABLED: 0
       run: |
+        echo "Building for ${{ matrix.goos }}/${{ matrix.goarch }}"
         mkdir -p dist
-        go build -ldflags="-s -w" -o dist/${{ env.PROJECT_NAME }}-${{ matrix.goos }}-${{ matrix.goarch }}${{ matrix.ext }} .
+        go build -v -ldflags="-s -w" -o dist/${{ env.PROJECT_NAME }}-${{ matrix.goos }}-${{ matrix.goarch }}${{ matrix.ext }} .
+        ls -la dist/
 
     - name: Create archive (Windows)
       if: matrix.goos == 'windows'
@@ -106,7 +114,7 @@ jobs:
     name: Create Release
     needs: build
     runs-on: ubuntu-latest
-    if: startsWith(github.ref, 'refs/tags/')
+    if: startsWith(github.ref, 'refs/tags/') && always()  # 即使部分构建失败也继续
     
     steps:
     - name: Checkout code
@@ -116,24 +124,53 @@ jobs:
       uses: actions/download-artifact@v4
       with:
         path: artifacts
+      continue-on-error: true
 
     - name: Prepare release assets
       run: |
         mkdir -p release-assets
-        find artifacts -name "*.zip" -o -name "*.tar.gz" | xargs -I {} cp {} release-assets/
-        ls -la release-assets/
+        echo "Available artifacts:"
+        find artifacts -type f 2>/dev/null || echo "No artifacts directory found"
+
+        # 复制所有可用的压缩包
+        find artifacts -name "*.zip" -o -name "*.tar.gz" 2>/dev/null | while read file; do
+          echo "Copying: $file"
+          cp "$file" release-assets/ 2>/dev/null || echo "Failed to copy $file"
+        done
+
+        echo "Release assets:"
+        ls -la release-assets/ || echo "No release assets found"
 
     - name: Generate checksums
       run: |
         cd release-assets
-        sha256sum * > checksums.txt
-        cat checksums.txt
+        if [ "$(ls -A .)" ]; then
+          sha256sum * > checksums.txt
+          echo "Generated checksums:"
+          cat checksums.txt
+        else
+          echo "No files to generate checksums for"
+          echo "# No release assets available" > checksums.txt
+        fi
 
     - name: Get tag name
       id: tag
       run: echo "tag=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
 
+    - name: Check if we have assets to release
+      id: check_assets
+      run: |
+        cd release-assets
+        if [ "$(ls -A . | grep -v checksums.txt)" ]; then
+          echo "has_assets=true" >> $GITHUB_OUTPUT
+          echo "Found assets to release"
+        else
+          echo "has_assets=false" >> $GITHUB_OUTPUT
+          echo "No assets found to release"
+        fi
+
     - name: Create Release
+      if: steps.check_assets.outputs.has_assets == 'true'
       uses: softprops/action-gh-release@v2
       with:
         tag_name: ${{ steps.tag.outputs.tag }}
