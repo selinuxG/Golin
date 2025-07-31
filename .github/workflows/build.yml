@@ -25,15 +25,16 @@ jobs:
       with:
         go-version: ${{ env.GO_VERSION }}
 
-    - name: Cache Go modules
-      uses: actions/cache@v4
-      with:
-        path: |
-          ~/.cache/go-build
-          ~/go/pkg/mod
-        key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
-        restore-keys: |
-          ${{ runner.os }}-go-
+    # 暂时禁用缓存以避免 tar 错误
+    # - name: Cache Go modules
+    #   uses: actions/cache@v4
+    #   with:
+    #     path: |
+    #       ~/.cache/go-build
+    #       ~/go/pkg/mod
+    #     key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}-v2
+    #     restore-keys: |
+    #       ${{ runner.os }}-go-
 
     - name: Download dependencies
       run: go mod download
@@ -102,15 +103,16 @@ jobs:
       with:
         go-version: ${{ env.GO_VERSION }}
 
-    - name: Cache Go modules
-      uses: actions/cache@v4
-      with:
-        path: |
-          ~/.cache/go-build
-          ~/go/pkg/mod
-        key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
-        restore-keys: |
-          ${{ runner.os }}-go-
+    # 暂时禁用缓存以避免 tar 错误
+    # - name: Cache Go modules
+    #   uses: actions/cache@v4
+    #   with:
+    #     path: |
+    #       ~/.cache/go-build
+    #       ~/go/pkg/mod
+    #     key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}-v2
+    #     restore-keys: |
+    #       ${{ runner.os }}-go-
 
     - name: Download dependencies
       run: go mod download
@@ -153,12 +155,12 @@ jobs:
         path: ${{ env.APP_NAME }}-${{ matrix.goos }}-${{ matrix.goarch }}${{ matrix.suffix }}
         retention-days: 30
 
-  # 发布版本（仅在推送标签时）
+  # 发布版本（标签时正式发布，主分支时预发布）
   release:
     name: Create Release
     needs: build
     runs-on: ubuntu-latest
-    if: startsWith(github.ref, 'refs/tags/')
+    if: startsWith(github.ref, 'refs/tags/') || (github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'))
 
     steps:
     - name: Checkout code
@@ -172,8 +174,15 @@ jobs:
     - name: Get version
       id: version
       run: |
-        VERSION=${GITHUB_REF#refs/tags/}
+        if [[ $GITHUB_REF == refs/tags/* ]]; then
+          VERSION=${GITHUB_REF#refs/tags/}
+          echo "is_prerelease=false" >> $GITHUB_OUTPUT
+        else
+          VERSION="dev-${GITHUB_SHA::8}"
+          echo "is_prerelease=true" >> $GITHUB_OUTPUT
+        fi
         echo "version=$VERSION" >> $GITHUB_OUTPUT
+        echo "Building version: $VERSION"
 
     - name: Prepare release files
       run: |
@@ -202,10 +211,11 @@ jobs:
       uses: softprops/action-gh-release@v2
       with:
         tag_name: ${{ steps.version.outputs.version }}
-        name: Release ${{ steps.version.outputs.version }}
+        name: ${{ steps.version.outputs.is_prerelease == 'true' && format('Pre-release {0}', steps.version.outputs.version) || format('Release {0}', steps.version.outputs.version) }}
         draft: false
-        prerelease: false
+        prerelease: ${{ steps.version.outputs.is_prerelease == 'true' }}
         generate_release_notes: true
+        body: ${{ steps.version.outputs.is_prerelease == 'true' && '⚠️ 这是一个开发版本，可能不稳定。仅用于测试目的。' || '' }}
         files: |
           release/*
       env:
