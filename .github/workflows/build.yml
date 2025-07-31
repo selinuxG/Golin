@@ -39,7 +39,13 @@ jobs:
       run: go mod download
 
     - name: Run tests
-      run: go test -v ./...
+      run: |
+        # 运行测试，如果没有测试文件则跳过
+        if find . -name "*_test.go" | grep -q .; then
+          go test -v ./...
+        else
+          echo "No test files found, skipping tests"
+        fi
 
     - name: Run go vet
       run: go vet ./...
@@ -51,6 +57,11 @@ jobs:
           gofmt -s -l .
           exit 1
         fi
+
+    - name: Build check
+      run: |
+        # 验证代码可以编译
+        go build -v .
 
   # 构建多平台版本
   build:
