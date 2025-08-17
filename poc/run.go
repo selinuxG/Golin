@@ -67,9 +67,14 @@ func CheckPoc(url, app string) {
 		checkShiroCookie(url)
 	}
 
-	// 用户弱口令
+	// emlog弱口令
 	if strings.Contains(app, "emlog") {
 		emlogDefaultPasswd(url)
+	}
+
+	// xui弱口令
+	if strings.Contains(app, "xui") {
+		xuiCrackPasswd(url)
 	}
 
 	// 这是未授权的漏洞

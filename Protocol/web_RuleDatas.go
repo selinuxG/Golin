@@ -590,4 +590,6 @@ var RuleDatas = []RuleData{
 	{"深信服", "cert", "SANGFOR"},
 	{"xui", "body", `basePath\s*\+\s*'xui/'`},
 	{"ikuai产品(无线网络)", "cert", "ikuai8.com"},
+	{"GeoServer", "body", `(?i)geoserver`},
+	{"xui", "body", `location.href = basePath + 'xui/'`},
 }

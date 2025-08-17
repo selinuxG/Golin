@@ -5,9 +5,6 @@ import (
 	"context"
 	"crypto/tls"
 	"fmt"
-	"github.com/PuerkitoBio/goquery"
-	"github.com/fatih/color"
-	"golang.org/x/net/html"
 	"golin/global"
 	"golin/poc"
 	"io"
@@ -16,6 +13,10 @@ import (
 	"regexp"
 	"strings"
 	"time"
+
+	"github.com/PuerkitoBio/goquery"
+	"github.com/fatih/color"
+	"golang.org/x/net/html"
 )
 
 type WebInfo struct {
@@ -71,7 +72,7 @@ func IsWeb(host, port string, timeout int, Poc bool) map[string]string {
 
 		// 验证漏洞，只允许运行30秒
 		if Poc {
-			ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+			ctx, cancel := context.WithTimeout(context.Background(), 1*time.Minute)
 			handlePocAndXss(ctx, &info, body)
 			cancel()
 		}
@@ -132,9 +133,7 @@ func handleRequest(client *http.Client, info *WebInfo) ([]byte, error) {
 	info.icohash, _ = global.HashMD5(info.url)
 
 	info.server = resp.Header.Get("Server")
-	if info.statuscode == 200 {
-		info.app = CheckApp(string(body), resp.Header, resp.Cookies(), info.server, info.icohash, info.cert.certIssuer) // 匹配组件
-	}
+	info.app = CheckApp(string(body), resp.Header, resp.Cookies(), info.server, info.icohash, info.cert.certIssuer) // 匹配组件
 
 	if os.Getenv("html") == "on" {
 		fmt.Printf("-----> URL: %s HTML正文:\n%s\n", info.url, string(body))
