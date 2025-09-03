@@ -592,4 +592,5 @@ var RuleDatas = []RuleData{
 	{"ikuai产品(无线网络)", "cert", "ikuai8.com"},
 	{"GeoServer", "body", `(?i)geoserver`},
 	{"xui", "body", `location.href = basePath + 'xui/'`},
+	{"九思OA", "body", "location.href.*?/jsoa/login.jsp"},
 }

