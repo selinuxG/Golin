@@ -10,6 +10,12 @@ import (
 	"regexp"
 )
 
+type HostInfo struct {
+	IP  string
+	OS  string
+	Tag string
+}
+
 type ReportData struct {
 	Time             string
 	TotalHosts       int
@@ -28,11 +34,11 @@ type ReportData struct {
 	CrackList        map[crack.HostPort]crack.SussCrack
 	PocList          []poc.Flagcve
 	PortServiceList  []INFO
-	IPList           []string
 	ChartJS          template.JS
 	ChartJSPlugin    template.JS
 	ScreenshotImages []string
 	Job              global.TaskJob
+	HostInfos        []HostInfo
 }
 
 //go:embed template/*

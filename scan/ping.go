@@ -96,6 +96,7 @@ func SanPing() {
 				case "Windows":
 					windowscount += 1
 				}
+				IPListOS.Store(ip, pingOS)
 				outputMux.Unlock()
 			}
 		}()

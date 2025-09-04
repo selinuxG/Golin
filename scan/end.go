@@ -56,6 +56,18 @@ func endHtml() {
 		}
 	}
 
+	var hostInfos []HostInfo
+	for _, ip := range iplist {
+		o := "未知"
+		if v, ok := IPListOS.Load(ip); ok {
+			o = v.(string)
+		}
+		hostInfos = append(hostInfos, HostInfo{
+			IP:  ip,
+			OS:  o,
+			Tag: TagAsset(ip),
+		})
+	}
 	// 生成HTML报告
 	html, err := generateHTMLReport(ReportData{
 		Time:             time.Now().Format("2006-01-02 15:04:05"),
@@ -76,10 +88,10 @@ func endHtml() {
 		CrackList:        crack.MapCrackHost,
 		PocList:          poc.ListPocInfo,
 		PortServiceList:  infolist,
-		IPList:           iplist,
 		ChartJS:          template.JS(chartJS),
 		ChartJSPlugin:    template.JS(chartJSPlugin),
 		Job:              global.Job,
+		HostInfos:        hostInfos,
 	})
 	if err != nil {
 		fmt.Printf("[!] 生成HTML扫描报告失败: %s\n", err)

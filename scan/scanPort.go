@@ -81,6 +81,15 @@ func IsPortOpen(host, port string) {
 	infolist = append(infolist, INFO{host, port, thisINFO.Protocol})
 	outputMux.Unlock()
 	// 永恒之蓝检测
+
+	switch port {
+	case "3389":
+		// 探测Windows系统版本
+		yes, version := VersionRdp(host, port)
+		if yes {
+			IPListOS.Store(host, version)
+		}
+	}
 	if port == "445" {
 		if crack.MS17010Scan(host) {
 			outputMux.Lock()

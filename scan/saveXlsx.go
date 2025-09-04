@@ -86,11 +86,16 @@ func createIpSheet(f *excelize.File, sheet string, ipList []string) error {
 	}
 
 	setColWidths(f, sheet)
-	setHeaderValues(f, sheet, []string{"序号", "主机", "资产标签"})
+	setHeaderValues(f, sheet, []string{"序号", "主机", "操作系统", "资产标签"})
 
 	for i, ip := range ipList {
 		cell := i + 2
-		setCellValues(f, sheet, cell, []interface{}{i + 1, ip, TagAsset(ip)})
+		setCellValues(f, sheet, cell, []interface{}{
+			i + 1,
+			ip,
+			global.LoadOrDefault(&IPListOS, ip, "未知"),
+			TagAsset(ip),
+		})
 	}
 
 	return nil

@@ -30,11 +30,12 @@ var (
 	allcount   uint32 //IP*PORT的总数量
 	donecount  uint32 //线程技术的数量
 	outputMux  sync.Mutex
-	userfile   string //user字典路径
-	passwdfile string //passwd字典路径
-	webport    bool   //网站端口
-	riskport   bool   //高危端口
-	dbsport    bool   //数据库端口
+	userfile   string   //user字典路径
+	passwdfile string   //passwd字典路径
+	webport    bool     //网站端口
+	riskport   bool     //高危端口
+	dbsport    bool     //数据库端口
+	IPListOS   sync.Map //IP及操作系统
 )
 
 type INFO struct {

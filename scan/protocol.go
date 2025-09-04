@@ -33,6 +33,21 @@ func parseProtocol(conn net.Conn, host, port string, Poc bool) string {
 
 	switch {
 	case Protocol2.IsSSHProtocol(line):
+		lineLower := strings.ToLower(line)
+		switch {
+		case strings.Contains(lineLower, "ubuntu"):
+			IPListOS.Store(host, "Ubuntu")
+		case strings.Contains(lineLower, "redhat"):
+			IPListOS.Store(host, "RedHat")
+		case strings.Contains(lineLower, "centos"):
+			IPListOS.Store(host, "CentOS")
+		case strings.Contains(lineLower, "windows"):
+			IPListOS.Store(host, "Windows")
+		case strings.Contains(lineLower, "debian"):
+			IPListOS.Store(host, "Debian")
+		case strings.Contains(lineLower, "freebsd"):
+			IPListOS.Store(host, "FreeBSD")
+		}
 		return Protocol2.IsSSHProtocolApp(line)
 
 	case strings.HasPrefix(line, "220"):

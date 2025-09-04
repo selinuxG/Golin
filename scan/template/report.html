@@ -351,13 +351,20 @@
 
     <div class="card" id="ips">
         <h2>存活主机列表</h2>
-        <table id="ipTable">
-            <tr><th>#</th><th>IP 地址</th></tr>
-            {{range $index, $ip := .IPList}}
-            <tr><td>{{inc $index}}</td><td>{{$ip}}</td></tr>
+        <input type="text" id="searchOS" placeholder="搜索主机或操作系统及标签...">
+        <table id="ipOS">
+            <tr><th>#</th><th>IP 地址</th><th>操作系统</th><th>标签</th></tr>
+            {{range $index, $host := .HostInfos}}
+            <tr>
+                <td>{{inc $index}}</td>
+                <td>{{$host.IP}}</td>
+                <td>{{$host.OS}}</td>
+                <td>{{$host.Tag}}</td>
+            </tr>
             {{end}}
         </table>
     </div>
+
 
 </div>
 
@@ -559,6 +566,7 @@
     }
 
     setupSearch('searchPorts', 'portTable');
+    setupSearch('searchOS', 'ipOS');
 
     document.querySelectorAll(".screenshot-link").forEach(function(link) {
         link.addEventListener("click", function(e) {
