@@ -597,4 +597,6 @@ var RuleDatas = []RuleData{
 	{"ApacheFlinkDashboard", "body", "<title>Apache Flink Web Dashboard</title>"},
 	{"天融信", "icohash", "1ec31972ec65a65470d3b5d790c1f401"},
 	{"青龙面板", "icohash", "(cbac8d7b2741338c959be28d032593b0|4f16f0ca1a3ec23078bd9eac624c5ad3|94cd18160e1a771c7ba9d37bb984cb66|66208df4ed43a7ab0ae367181d9a4ef7|44e9361d20c61f44d4f6556c41279768|6936ddb77c9e5ac4760de3b3a586b799)"},
+	{"n8n", "icohash", "d665b505040ba65e94aa55b9776af33a"},
+	{"n8n", "title", "n8n.io - Workflow Automation"},
 }
