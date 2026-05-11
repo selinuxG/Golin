@@ -1,0 +1,206 @@
+name: Build and Release
+
+on:
+  push:
+    branches: [ main, master ]
+    tags: [ 'v*' ]
+  pull_request:
+    branches: [ main, master ]
+
+env:
+  GO_VERSION: '1.23'
+  APP_NAME: 'golin'
+
+jobs:
+  # 代码质量检查
+  test:
+    name: Test and Lint
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up Go
+      uses: actions/setup-go@v5
+      with:
+        go-version: ${{ env.GO_VERSION }}
+
+    - name: Download dependencies
+      run: |
+        # 清理可能损坏的缓存
+        go clean -modcache || true
+        go mod download
+
+    - name: Run tests
+      run: |
+        # 运行测试，如果没有测试文件则跳过
+        if find . -name "*_test.go" | grep -q .; then
+          go test -v ./...
+        else
+          echo "No test files found, skipping tests"
+        fi
+
+    - name: Run go vet
+      run: go vet ./...
+
+    - name: Run go fmt check
+      run: |
+        if [ "$(gofmt -s -l . | wc -l)" -gt 0 ]; then
+          echo "Code is not formatted properly:"
+          gofmt -s -l .
+          exit 1
+        fi
+
+    - name: Build check
+      run: |
+        # 验证代码可以编译
+        go build -v .
+
+  # 构建多平台版本
+  build:
+    name: Build
+    needs: test
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        include:
+          # Windows
+          - goos: windows
+            goarch: amd64
+            suffix: .exe
+          - goos: windows
+            goarch: arm64
+            suffix: .exe
+          # Linux
+          - goos: linux
+            goarch: amd64
+            suffix: ""
+          - goos: linux
+            goarch: arm64
+            suffix: ""
+          # macOS
+          - goos: darwin
+            goarch: amd64
+            suffix: ""
+          - goos: darwin
+            goarch: arm64
+            suffix: ""
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up Go
+      uses: actions/setup-go@v5
+      with:
+        go-version: ${{ env.GO_VERSION }}
+
+    - name: Download dependencies
+      run: |
+        # 清理可能损坏的缓存
+        go clean -modcache || true
+        go mod download
+
+    - name: Get version
+      id: version
+      run: |
+        if [[ $GITHUB_REF == refs/tags/* ]]; then
+          VERSION=${GITHUB_REF#refs/tags/}
+        else
+          VERSION=${GITHUB_SHA::8}
+        fi
+        echo "version=$VERSION" >> $GITHUB_OUTPUT
+        echo "Building version: $VERSION"
+
+    - name: Build binary
+      env:
+        GOOS: ${{ matrix.goos }}
+        GOARCH: ${{ matrix.goarch }}
+        CGO_ENABLED: 0
+      run: |
+        BINARY_NAME="${{ env.APP_NAME }}-${{ matrix.goos }}-${{ matrix.goarch }}${{ matrix.suffix }}"
+        echo "Building $BINARY_NAME"
+
+        # 设置构建标志
+        LDFLAGS="-s -w -X main.version=${{ steps.version.outputs.version }}"
+
+        go build -ldflags="$LDFLAGS" -o "$BINARY_NAME" .
+
+        # 验证二进制文件
+        if [ "${{ matrix.goos }}" = "linux" ] && [ "${{ matrix.goarch }}" = "amd64" ]; then
+          file "$BINARY_NAME"
+          ls -la "$BINARY_NAME"
+        fi
+
+    - name: Upload build artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: ${{ env.APP_NAME }}-${{ matrix.goos }}-${{ matrix.goarch }}
+        path: ${{ env.APP_NAME }}-${{ matrix.goos }}-${{ matrix.goarch }}${{ matrix.suffix }}
+        retention-days: 30
+
+  # 发布版本（标签时正式发布，主分支时预发布）
+  release:
+    name: Create Release
+    needs: build
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/tags/') || (github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'))
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Download all artifacts
+      uses: actions/download-artifact@v4
+      with:
+        path: ./artifacts
+
+    - name: Get version
+      id: version
+      run: |
+        if [[ $GITHUB_REF == refs/tags/* ]]; then
+          VERSION=${GITHUB_REF#refs/tags/}
+          echo "is_prerelease=false" >> $GITHUB_OUTPUT
+        else
+          VERSION="dev-${GITHUB_SHA::8}"
+          echo "is_prerelease=true" >> $GITHUB_OUTPUT
+        fi
+        echo "version=$VERSION" >> $GITHUB_OUTPUT
+        echo "Building version: $VERSION"
+
+    - name: Prepare release files
+      run: |
+        mkdir -p release
+        cd artifacts
+        for dir in */; do
+          if [ -d "$dir" ]; then
+            cp "$dir"/* ../release/ 2>/dev/null || true
+          fi
+        done
+        cd ../release
+        ls -la
+
+    - name: Generate checksums
+      run: |
+        cd release
+        for file in *; do
+          if [ -f "$file" ] && [ "$file" != "checksums.txt" ]; then
+            sha256sum "$file" >> checksums.txt
+          fi
+        done
+        echo "Generated checksums:"
+        cat checksums.txt
+
+    - name: Create Release
+      uses: softprops/action-gh-release@v2
+      with:
+        tag_name: ${{ steps.version.outputs.version }}
+        name: ${{ steps.version.outputs.is_prerelease == 'true' && format('Pre-release {0}', steps.version.outputs.version) || format('Release {0}', steps.version.outputs.version) }}
+        draft: false
+        prerelease: ${{ steps.version.outputs.is_prerelease == 'true' }}
+        generate_release_notes: true
+        body: ${{ steps.version.outputs.is_prerelease == 'true' && '⚠️ 这是一个开发版本，可能不稳定。仅用于测试目的。' || '' }}
+        files: |
+          release/*
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
