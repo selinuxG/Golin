@@ -44,6 +44,7 @@ type Data struct {
 	HomeLimits       string          //家目录权限检查
 	LastLog          string          //上次登录信息
 	AuditD           AuditLog        //Audit日志信息
+	ExtraCheck       []SecCheck      //核查结论：标题即检查的配置/命令，结论由已采集的数据计算（只有 sshd -T、时间同步需要额外命令）
 	XZ               bool            //xz-5.6.0 以及xz-5.6.1 存在CVE-2024-
 	CVE20246387      bool            //8.5p1 <= OpenSSH < 9.8p1
 	DockerServerList []DockerServer  //docker服务
@@ -70,6 +71,7 @@ type LinUser struct {
 	PasswdExpired string //密码过期时间
 	UserExpired   string //账户过期时间
 	MaxPasswd     string //两次改变密码之间相距的最大天数
+	Kind          string //账号类型：root / 默认账号 / 系统账号 / 普通账号
 }
 
 type LinGroup struct {

@@ -2,6 +2,7 @@ package run
 
 import (
 	"fmt"
+	"go.uber.org/zap"
 	"golang.org/x/crypto/ssh"
 	"golin/global"
 	"html/template"
@@ -10,8 +11,15 @@ import (
 	"path/filepath"
 	"regexp"
 	"strings"
+	"sync"
 	"time"
 )
+
+// hostLoginPass 记录主机 -> SSH 登录口令，供内置采集模式下 --sudo-login-pass 逐条命令取用
+var hostLoginPass sync.Map
+
+// hostShell 记录主机 -> 常驻提权shell（内置采集模式的命令都在里面跑，省掉每条命令一次 su/sudo）
+var hostShell sync.Map
 
 // Runssh 通过调用ssh协议执行命令，写入到文件,并减一个线程数
 func Runssh(sshname string, sshHost string, sshUser string, sshPasswrod string, sshPort int, cmd string) (err error) {
@@ -50,10 +58,14 @@ func Runssh(sshname string, sshHost string, sshUser string, sshPasswrod string, 
 	session.Setenv("PATH", "/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin")
 	// 自定义命令存在则只执行自定义文件
 	if runcmd != "" {
-		combo, err := session.CombinedOutput(cmd)
+		//按 -u / --sudo-pass / --sudo-login-pass / --su-pass 套提权外壳
+		realcmd, showcmd := wrapCmd(cmd, sshHost, sshPasswrod)
+		combo, err := session.CombinedOutput(realcmd)
 		if err != nil {
-			return fmt.Errorf("%s:执行命令失败->%s。错误详情: %v", sshHost, cmd, err)
+			return fmt.Errorf("%s:执行命令失败->%s。错误详情: %v", sshHost, showcmd, err)
 		}
+		//su 会把 Password: 提示打在输出开头，这里去掉，避免污染采集结果
+		combo = []byte(stripSuPrompt(string(combo)))
 
 		//判断是否进行输出命令结果
 		if echorun {
@@ -65,6 +77,28 @@ func Runssh(sshname string, sshHost string, sshUser string, sshPasswrod string, 
 			return fmt.Errorf("%s:保存文件失败。", sshHost)
 		}
 		return nil
+	}
+
+	// 内置采集模式（不带 -c）：先建一个常驻提权shell，七十多条命令都在里面跑；
+	// 建不起来才回退成"--sudo-login-pass 口令表 + 逐条命令各自提权"
+	// 注意 key 用本连接的本地地址：同一台主机在清单里出现多次（并发采集）时各连接互不干扰
+	sessKey := sshClient.LocalAddr().String()
+	hostLoginPass.Store(sessKey, sshPasswrod)
+	defer hostLoginPass.Delete(sessKey)
+	mode, pwd := privMode(sshHost, sshPasswrod)
+	if mode == "" {
+		mode = "none" //不提权的主机也开一个常驻 shell，省掉每条命令一次 SSH 回连（起不来会回退）
+	}
+	if mode != "" {
+		if sh, shErr := newPrivShell(sshClient, mode, suuser, pwd); shErr == nil {
+			hostShell.Store(sessKey, sh)
+			defer func() {
+				hostShell.Delete(sessKey)
+				sh.Close()
+			}()
+		} else {
+			zlog.Warn("提权shell创建失败，回退为逐条命令提权", zap.String("IP", sshHost), zap.Error(shErr))
+		}
 	}
 
 	// 执行模板文件
@@ -149,6 +183,11 @@ func Runssh(sshname string, sshHost string, sshUser string, sshPasswrod string, 
 		if len(userinfo) != 7 {
 			continue
 		}
+		//#root:x:0:0:... 这种把账号注释掉的写法会被当成用户，后面 chage -l #root 里的 #
+		//会起注释，实际执行的是 "chage -l"，然后卡在等 stdin 直到超时
+		if !validAccountName(userinfo[0]) {
+			continue
+		}
 		var Login bool
 		if userinfo[6] == "/bin/bash" || userinfo[6] == "/bin/zsh" {
 			Login = true
@@ -158,6 +197,10 @@ func Runssh(sshname string, sshHost string, sshUser string, sshPasswrod string, 
 			continue
 		}
 		passwdstatus := strings.Split(runCmd(fmt.Sprintf("passwd -S %s", userinfo[0]), sshClient), " ")
+		//命令失败/输出异常时 passwdstatus 会不足 8 段，直接切片会 panic（与 linux_local.go 保持一致）
+		if len(passwdstatus) < 8 {
+			continue
+		}
 		passwdremark := strings.Join(passwdstatus[7:], "")
 		passwdremark = strings.ReplaceAll(passwdremark, "\n", "")
 		user := LinUser{
@@ -173,13 +216,14 @@ func Runssh(sshname string, sshHost string, sshUser string, sshPasswrod string, 
 			PasswdExpired: strings.Split(shadow[1], ":")[1],
 			UserExpired:   strings.Split(shadow[3], ":")[1],
 			MaxPasswd:     strings.Split(shadow[5], ":")[1],
+			Kind:          accountKind(userinfo[0], userinfo[2]),
 		}
 		data.User = append(data.User, user)
 	}
 
 	//组信息
 	for _, v := range strings.Split(runCmd("cat /etc/group", sshClient), "\n") {
-		if len(strings.Split(v, ":")) != 4 {
+		if len(strings.Split(v, ":")) != 4 || !validAccountName(strings.Split(v, ":")[0]) {
 			continue
 		}
 		group := LinGroup{
@@ -288,6 +332,8 @@ func Runssh(sshname string, sshHost string, sshUser string, sshPasswrod string, 
 	}
 
 	defer newFile.Close()
+	// 等保补充核查项（每项独立兜底，单项异常不影响整份报告）
+	data.ExtraCheck = buildSummary(&data, sshClient)
 	// 将模板执行的结果写入新的文件
 	err = tmpl.Execute(newFile, data)
 	if err != nil {
@@ -296,20 +342,132 @@ func Runssh(sshname string, sshHost string, sshUser string, sshPasswrod string, 
 	return nil
 }
 
+// shellQuote 把命令包成 POSIX 单引号形式，内部单引号转义为 '\”
+func shellQuote(s string) string {
+	return "'" + strings.ReplaceAll(s, "'", "'\\''") + "'"
+}
+
+// maskPass 把命令里的口令替换掉，避免明文口令写进日志
+func maskPass(cmd string, pwd string) string {
+	if pwd == "" {
+		return cmd
+	}
+	return strings.ReplaceAll(cmd, pwd, "******")
+}
+
+// privMode 返回该主机的提权方式与口令：
+// su / sudo（有密）/ sudo-nopass（免密）/ 空（不提权）
+// 优先级：--su-pass-file 命中 > --su-pass > --sudo-login-pass > --sudo-pass > -u
+func privMode(sshHost string, loginPass string) (string, string) {
+	if len(supassmap) > 0 || supass != "" {
+		if p, ok := supassmap[sshHost]; ok && p != "" {
+			return "su", p
+		}
+		if supass != "" {
+			return "su", supass
+		}
+	}
+	if sudologin && loginPass != "" {
+		return "sudo", loginPass
+	}
+	if sudopass != "" {
+		return "sudo", sudopass
+	}
+	if sudorun {
+		return "sudo-nopass", ""
+	}
+	return "", ""
+}
+
+// validAccountName 过滤 /etc/passwd、/etc/group 里的注释行和非法名字（只允许字母数字 . _ -）
+func validAccountName(name string) bool {
+	if name == "" || len(name) > 64 {
+		return false
+	}
+	for _, c := range name {
+		switch {
+		case c >= 'a' && c <= 'z':
+		case c >= 'A' && c <= 'Z':
+		case c >= '0' && c <= '9':
+		case c == '.' || c == '_' || c == '-':
+		default:
+			return false
+		}
+	}
+	return true
+}
+
+// noStdin 让内层命令从 /dev/null 读标准输入：
+// chage -l / passwd 这类命令没给参数时会等输入，卡住就把整台主机的采集拖到超时。
+func noStdin(cmd string) string {
+	return "{ " + cmd + " ; } </dev/null"
+}
+
+// wrapCmd 给命令套提权外壳，同时返回脱敏版供日志/错误信息使用
+// sudo 免密用 sudo -n，避免无 tty 时 sudo 卡在等口令
+func wrapCmd(cmd string, sshHost string, loginPass string) (string, string) {
+	mode, pwd := privMode(sshHost, loginPass)
+	switch mode {
+	case "su":
+		w := "echo " + shellQuote(pwd) + " | su -l " + suuser + " -c " + shellQuote(noStdin(cmd))
+		return w, maskPass(w, pwd)
+	case "sudo":
+		w := "echo " + shellQuote(pwd) + " | sudo -S -p '' sh -c " + shellQuote(noStdin(cmd))
+		return w, maskPass(w, pwd)
+	case "sudo-nopass":
+		w := "sudo -n sh -c " + shellQuote(noStdin(cmd))
+		return w, w
+	}
+	return cmd, cmd
+}
+
 func runCmd(cmd string, Client *ssh.Client) string {
+	host := hostOf(Client)
+	sessKey := Client.LocalAddr().String()
+	//优先用常驻提权shell：一次提权跑完全部命令（key 按连接取，同 IP 多并发互不影响）
+	if v, ok := hostShell.Load(sessKey); ok {
+		if sh, ok := v.(*privShell); ok {
+			if out, err := sh.run(cmd); err == nil {
+				return stripSuPrompt(out)
+			}
+		}
+	}
 	newClient, err := Client.NewSession()
 	if err != nil {
 		return ""
 	}
 	defer newClient.Close()
-	if sudorun {
-		cmd = "sudo " + cmd
+	//回退：逐条命令各自提权；--sudo-login-pass 的口令从 hostLoginPass 取
+	loginPass := ""
+	if v, ok := hostLoginPass.Load(sessKey); ok {
+		if s, ok := v.(string); ok {
+			loginPass = s
+		}
 	}
-	combo, err := newClient.CombinedOutput(cmd)
+	realcmd, _ := wrapCmd(cmd, host, loginPass)
+	combo, err := newClient.CombinedOutput(realcmd)
 	if err != nil {
 		return ""
 	}
-	return string(combo)
+	return stripSuPrompt(string(combo))
+}
+
+// hostOf 从 ssh.Client 取出远端 IP（runCmd 里用于查 --su-pass-file）
+func hostOf(Client *ssh.Client) string {
+	if Client == nil {
+		return ""
+	}
+	addr := Client.RemoteAddr().String()
+	if i := strings.LastIndex(addr, ":"); i > 0 {
+		return addr[:i]
+	}
+	return addr
+}
+
+// stripSuPrompt 去掉 su 打在输出里的 "Password: " 提示，避免污染内置报告字段
+func stripSuPrompt(s string) string {
+	s = strings.TrimPrefix(s, "Password: ")
+	return strings.ReplaceAll(s, "\rPassword: ", "")
 }
 
 // CVE_2024_6387  OpenSSH远程代码执行漏洞

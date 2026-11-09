@@ -134,6 +134,8 @@ func LocalrunLinux() {
 			PasswdExpired: strings.Split(shadow[1], ":")[1],
 			UserExpired:   strings.Split(shadow[3], ":")[1],
 			MaxPasswd:     strings.Split(shadow[5], ":")[1],
+
+			Kind: accountKind(userinfo[0], userinfo[2]),
 		}
 		data.User = append(data.User, user)
 	}
@@ -243,6 +245,7 @@ func LocalrunLinux() {
 		data.DockerServerList = append(data.DockerServerList, info)
 	}
 
+	data.ExtraCheck = buildSummary(&data, nil)
 	asString, _ := OutputTemplateAsString(data)
 	if _, err := os.Stat("采集完成目录/Linux"); os.IsNotExist(err) {
 		_ = os.MkdirAll("采集完成目录/Linux", 0644) //如果目录不存在，使用 MkdirAll 创建目录和任何必需的父目录

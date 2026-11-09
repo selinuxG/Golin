@@ -23,5 +23,10 @@ func init() {
 	linuxCmd.Flags().StringP("cmdvalue", "C", "", "此参数是自定义执行命令（比-c优先级高）")
 	linuxCmd.Flags().BoolP("echo", "e", false, "此参数是控制控制台是否输出结果,默认不进行输出")
 	linuxCmd.Flags().BoolP("localhost", "l", false, "此参数是控制本机采集的模式")
-	linuxCmd.Flags().BoolP("sudo", "u", false, "此参数是使用sudo权限执行命令")
+	linuxCmd.Flags().BoolP("sudo", "u", false, "此参数是使用sudo免密权限执行命令")
+	linuxCmd.Flags().String("sudo-pass", "", "此参数是sudo提权口令(当前用户口令),设置后自定义命令以 sudo -S 提权执行")
+	linuxCmd.Flags().Bool("sudo-login-pass", false, "此参数表示sudo口令直接使用该主机的SSH登录口令")
+	linuxCmd.Flags().String("su-pass", "", "此参数是su提权口令(root口令),设置后自定义命令以 su -l root 提权执行")
+	linuxCmd.Flags().String("su-user", "root", "此参数是su提权的目标用户,默认root")
+	linuxCmd.Flags().String("su-pass-file", "", "此参数是按主机指定su口令的文件,每行 ip~root口令,未命中回退--su-pass")
 }

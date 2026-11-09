@@ -11,19 +11,86 @@ import (
 )
 
 var (
-	echorun bool
-	sudorun bool
+	echorun   bool
+	sudorun   bool
+	sudopass  string            // sudo 提权固定口令
+	sudologin bool              // sudo 口令取该主机的SSH登录口令
+	supass    string            // su 提权固定口令（root口令）
+	suuser    = "root"          // su 提权目标用户
+	supassmap map[string]string // ip -> root 口令（--su-pass-file）
 )
+
+// loadSuPassFile 读取"每台主机一个su口令"的文件，格式每行 ip~口令（也支持 ip,口令）
+func loadSuPassFile(p string) (map[string]string, error) {
+	fire, err := os.ReadFile(p)
+	if err != nil {
+		return nil, err
+	}
+	m := make(map[string]string)
+	for _, line := range strings.Split(string(fire), "\n") {
+		line = strings.TrimSpace(line)
+		if line == "" || strings.HasPrefix(line, "#") {
+			continue
+		}
+		ip, pw := "", ""
+		if i := strings.Index(line, "~"); i > 0 {
+			ip, pw = line[:i], line[i+1:]
+		} else if i := strings.Index(line, ","); i > 0 {
+			ip, pw = line[:i], line[i+1:]
+		} else {
+			continue
+		}
+		if ip = strings.TrimSpace(ip); ip != "" {
+			m[ip] = strings.TrimSpace(pw)
+		}
+	}
+	return m, nil
+}
 
 func Linux(cmd *cobra.Command, args []string) {
 	_ = global.MkdirAll(path.Join("采集完成目录", "Linux"))
-	//是否sudo权限执行
+	//是否sudo免密权限执行
 	sudo, err := cmd.Flags().GetBool("sudo")
 	if err != nil {
 		fmt.Println(err)
 		return
 	}
 	sudorun = sudo
+
+	//sudo有密 / su 提权参数
+	if v, e := cmd.Flags().GetString("sudo-pass"); e == nil {
+		sudopass = v
+	}
+	if v, e := cmd.Flags().GetBool("sudo-login-pass"); e == nil {
+		sudologin = v
+	}
+	if v, e := cmd.Flags().GetString("su-pass"); e == nil {
+		supass = v
+	}
+	if v, e := cmd.Flags().GetString("su-user"); e == nil && v != "" {
+		suuser = v
+	}
+	if v, e := cmd.Flags().GetString("su-pass-file"); e == nil && v != "" {
+		m, e2 := loadSuPassFile(v)
+		if e2 != nil {
+			zlog.Warn("读取 --su-pass-file 失败，将回退 --su-pass", zap.String("文件", v), zap.Error(e2))
+		} else {
+			supassmap = m
+			zlog.Info("已加载按主机指定的su口令", zap.Int("数量", len(m)))
+		}
+	}
+	//互斥优先级：su-pass-file/--su-pass > --sudo-login-pass > --sudo-pass > -u
+	if len(supassmap) > 0 || supass != "" {
+		if sudopass != "" || sudologin || sudorun {
+			zlog.Warn("同时设置了su与sudo提权参数，按su提权执行")
+			sudopass, sudologin, sudorun = "", false, false
+		}
+	} else if sudologin {
+		if sudopass != "" {
+			zlog.Warn("同时设置了 --sudo-login-pass 与 --sudo-pass，按登录口令执行")
+			sudopass = ""
+		}
+	}
 
 	//确认结果是否输出
 	echotype, err := cmd.Flags().GetBool("echo")
